@@ -1,4 +1,5 @@
-﻿using System.Windows;
+﻿using AVIOTSystem;
+using System.Windows;
 
 namespace AVIOT
 {
@@ -7,10 +8,11 @@ namespace AVIOT
     /// </summary>
     public partial class MainWindow : Window
     {
+        IoTConsistencyControler consistencyControler;
         public MainWindow()
         {
             InitializeComponent();
-
+            consistencyControler = new IoTConsistencyControler();
 
 
         }
@@ -22,7 +24,9 @@ namespace AVIOT
 
         private void Btn_VerifyStatus_Click(object sender, RoutedEventArgs e)
         {
-
+            IoTConsistencyControler consistencyHandler = new IoTConsistencyControler();
+            //consistencyHandler.FindAllConnectedIoTDevices();
+            consistencyHandler.SearchForConnectedDevices();
         }
     }
 }

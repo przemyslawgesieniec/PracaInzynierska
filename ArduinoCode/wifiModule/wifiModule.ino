@@ -8,14 +8,18 @@ const char READY[] PROGMEM = "ready";
 byte readCommand(int timeout, const char* text1 = NULL, const char* text2 = NULL);
 unsigned int localPort = 2390;
 
-const char* ssid = "PENTAGRAM_P6362";
-const char* pass = "#mopsik123";
-//const char* ssid = "G4c";
-//const char* pass = "prosiaczek";
+
+//const char* ssid = "PENTAGRAM_P6362";
+//const char* pass = "#mopsik123";
+const char* ssid = "G4c";
+const char* pass = "prosiaczek";
 
 //char packetBuffer[255]; //buffer to hold incoming packet
-char  ReplyBuffer[] = "acknowledged";       // a string to send back
+//char  ReplyBuffer[] = "acknowledged";       // a string to send back
+//char * ReplyBuffer;
+String ReplyBuffer = "empty";
 
+IPAddress broadcastIp(255,255,255,255);
 
 WiFiUDP Udp;
 
@@ -42,6 +46,7 @@ void setup() {
   Serial.println(local_ip);
   Udp.begin(localPort);
   Serial.print("UDP begun");
+  SendPresenceMessage();
 }
 
 void loop() {
@@ -50,18 +55,23 @@ void loop() {
     String msg = receiveUDPPacket();
     if(msg=="abcde")
     {
-      Serial.println("Wlaczam swiatlo");
       msg="";
       digitalWrite(2, HIGH); 
-      SendAReply();
+      ReplyBuffer = "MsgONRcvd";   
+      SendAReply(); 
     }
     if(msg=="edcba")
     {
-      Serial.println("Gasze swiatlo");
       msg="";
       digitalWrite(2, LOW); 
+      ReplyBuffer = "MsgOFFRcvd";
       SendAReply();
     }
+    if(msg == "bbb")
+    {
+      Serial.println("Otrzymalem msg z broadcasu HEHE");
+    }
+    
   }
   else
   {
@@ -96,7 +106,20 @@ void SendAReply()
 {
     Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
     Serial.println(ReplyBuffer);
-    Udp.write(ReplyBuffer);
+    int replyMsgLenght = ReplyBuffer.length();
+    char *replyMsg = new char[replyMsgLenght];
+    ReplyBuffer.toCharArray(replyMsg,replyMsgLenght);
+    Udp.write(replyMsg);
+    delete [] replyMsg;
+    ReplyBuffer= "empty";
     Udp.endPacket();
 }
-
+void SendPresenceMessage()
+{
+  char presenceMsg[] = "Iamonline";    
+  Serial.println("Send presence message");
+  Udp.beginPacket(broadcastIp, 11000);
+  Udp.write(presenceMsg);
+  Udp.endPacket();
+}
+//void StringToCharTableConverter

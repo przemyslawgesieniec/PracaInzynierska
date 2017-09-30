@@ -31,7 +31,7 @@ namespace AVIOT.ViewResouces
         {
 
             var client = new UdpClient();
-            IPEndPoint ep = new IPEndPoint(IPAddress.Parse("192.168.1.109"), 2390); // endpoint where server is listening
+            IPEndPoint ep = new IPEndPoint(IPAddress.Parse("192.168.43.235"), 2390); // endpoint where server is listening
             client.Connect(ep);
             if(TriggerButton.Content.ToString() == "OFF")
             {
@@ -46,9 +46,8 @@ namespace AVIOT.ViewResouces
                 TriggerButton.Background = Brushes.MediumVioletRed;
                
             }
-            //client.Send(new byte[] { 97, 98, 99, 100, 101 }, 5);
-            //client.Send(new byte[] { 101, 100, 99, 98, 97 }, 5);
             var receivedData = client.Receive(ref ep);
+            MessageBox.Show(receivedData.ToString());
             client.Close();
         }
     }

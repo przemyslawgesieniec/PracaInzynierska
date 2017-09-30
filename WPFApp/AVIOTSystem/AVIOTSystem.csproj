@@ -54,6 +54,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="IoTConsistencyControler.cs" />
     <Compile Include="ViewResouces\HwWiFiModuleInstance.xaml.cs">
       <DependentUpon>HwWiFiModuleInstance.xaml</DependentUpon>
     </Compile>
