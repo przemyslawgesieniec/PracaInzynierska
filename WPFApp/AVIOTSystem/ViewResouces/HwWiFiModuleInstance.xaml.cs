@@ -22,8 +22,12 @@ namespace AVIOT.ViewResouces
     /// </summary>
     public partial class HwWiFiModuleInstance : UserControl
     {
-        public HwWiFiModuleInstance()
+        
+        public HwWiFiModuleInstance(IPAddress deviceIpAddress, String deviceName)
         {
+            _deviceIpAddress = deviceIpAddress;
+            _deviceName = deviceName;
+
             InitializeComponent();
         }
 
@@ -31,7 +35,7 @@ namespace AVIOT.ViewResouces
         {
 
             var client = new UdpClient();
-            IPEndPoint ep = new IPEndPoint(IPAddress.Parse("192.168.43.235"), 2390); // endpoint where server is listening
+            IPEndPoint ep = new IPEndPoint(_deviceIpAddress, 2390); // endpoint where server is listening
             client.Connect(ep);
             if(TriggerButton.Content.ToString() == "OFF")
             {
@@ -47,8 +51,9 @@ namespace AVIOT.ViewResouces
                
             }
             var receivedData = client.Receive(ref ep);
-            MessageBox.Show(receivedData.ToString());
             client.Close();
         }
+        private IPAddress _deviceIpAddress;
+        private String _deviceName { get; set; }
     }
 }
