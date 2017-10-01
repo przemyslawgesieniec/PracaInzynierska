@@ -27,8 +27,8 @@ namespace AVIOT.ViewResouces
         {
             _deviceIpAddress = deviceIpAddress;
             _deviceName = deviceName;
-
             InitializeComponent();
+            AppendDataToUI();
         }
 
         private void TriggerButton_Click(object sender, RoutedEventArgs e)
@@ -52,6 +52,11 @@ namespace AVIOT.ViewResouces
             }
             var receivedData = client.Receive(ref ep);
             client.Close();
+        }
+        private void AppendDataToUI()
+        {
+            tb_deviceName.Text = _deviceName;
+            tb_deviceIp.Text = _deviceIpAddress.ToString();
         }
         private IPAddress _deviceIpAddress;
         private String _deviceName { get; set; }

@@ -9,8 +9,9 @@
     <Grid>
         <Rectangle Fill="#FF1F2324" HorizontalAlignment="Left" Height="70" VerticalAlignment="Top" Width="300"/>
         <Separator HorizontalAlignment="Left" Height="100" Margin="0,18,0,-38" VerticalAlignment="Top" Width="300"/>
-        <TextBlock HorizontalAlignment="Left" Margin="15,15,0,0" TextWrapping="Wrap" Text="Kitchen" VerticalAlignment="Top" Height="40" Width="171" Foreground="White" FontSize="28"/>
+        <TextBlock x:Name="tb_deviceName" HorizontalAlignment="Left" Margin="10,3,0,0" TextWrapping="Wrap" Text="Device" VerticalAlignment="Top" Height="36" Width="171" Foreground="White" FontSize="28"/>
         <Button x:Name="TriggerButton" Content="OFF" HorizontalAlignment="Left" Margin="215,24,0,0" VerticalAlignment="Top" Width="75" Background="#FFAD1212" Click="TriggerButton_Click"/>
+        <TextBlock x:Name="tb_deviceIp" HorizontalAlignment="Left" Margin="10,39,0,0" TextWrapping="Wrap" Text="IP:" VerticalAlignment="Top" Height="36" Width="171" Foreground="White"/>
 
 
     </Grid>

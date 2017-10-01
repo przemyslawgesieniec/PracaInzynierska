@@ -67,7 +67,8 @@ namespace AVIOTSystem
         {
             foreach (var ip in connectedDevicesList)
             {
-                if (ip == senderAddr)
+
+                if (ip.Equals(senderAddr))
                 {
                     return false;
                 }
