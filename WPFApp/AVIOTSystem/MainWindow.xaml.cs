@@ -21,22 +21,17 @@ namespace AVIOT
 
         private void ConsistencyControler_IoTDeviceConnected(object source, IoTConsistencyControlerEventArgs args)
         {
-           Dispatcher.Invoke( () => { WiFiItemList.Children.Add(new ViewResouces.HwWiFiModuleInstance(args.address, args.moduleName)); } );
+           Dispatcher.Invoke( () => { WiFiItemList.Children.Add(new ViewResouces.HwWiFiModuleInstance(args.Address, args.ModuleName)); } );
         }
 
         private void Btn_AddNewModule_Click(object sender, RoutedEventArgs e)
         {
-          // WiFiItemList.Children.Add(new ViewResouces.HwWiFiModuleInstance());
+
         }
 
         private void Btn_VerifyStatus_Click(object sender, RoutedEventArgs e)
         {
-            //IoTConsistencyControler consistencyHandler = new IoTConsistencyControler();
-            //consistencyHandler.SearchForConnectedDevices();
+
         }
-        //public void OnIoTDeviceConnected(object sender, IoTConsistencyControlerEventArgs args)
-        //{
-        //    WiFiItemList.Children.Add(new ViewResouces.HwWiFiModuleInstance(args.address, args.moduleName));
-        //}
     }
 }

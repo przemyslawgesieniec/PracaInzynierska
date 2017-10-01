@@ -24,15 +24,15 @@ namespace AVIOTSystem
 
         public List<IPAddress> ConnectedDevicesList { get => connectedDevicesList; set => connectedDevicesList = value; }
 
-        public void FindAllConnectedIoTDevices()
-        {
-            UdpClient client = new UdpClient();
-            IPEndPoint ip = new IPEndPoint(IPAddress.Broadcast, 15000);
-            MessageBox.Show(IPAddress.Broadcast.ToString());
-            byte[] bytes = Encoding.ASCII.GetBytes("bbb");
-            client.Send(bytes, bytes.Length, ip);
-            client.Close();
-        }
+        //public void FindAllConnectedIoTDevices()
+        //{
+        //    UdpClient client = new UdpClient();
+        //    IPEndPoint ip = new IPEndPoint(IPAddress.Broadcast, 15000);
+        //    MessageBox.Show(IPAddress.Broadcast.ToString());
+        //    byte[] bytes = Encoding.ASCII.GetBytes("bbb");
+        //    client.Send(bytes, bytes.Length, ip);
+        //    client.Close();
+        //}
         public void SearchForConnectedDevices()
         {
             int PORT = 11000;   
@@ -48,15 +48,31 @@ namespace AVIOTSystem
                 while (true)
                 {
                     var recvBuffer = udpClient.Receive(ref sender);
-                    MessageBox.Show(Encoding.UTF8.GetString(recvBuffer) + "from" + sender.Address.ToString());
-                    connectedDevicesList.Add(sender.Address);
-                    OnIoTDeviceConnected(sender.Address,"IoTDevice");
+                    if(Encoding.UTF8.GetString(recvBuffer) == "ESP8266")
+                    {
+                        if(CheckForDuplicates(sender.Address))
+                        {
+                            connectedDevicesList.Add(sender.Address);
+                            OnIoTDeviceConnected(sender.Address, "IoTDevice");
+                        }
+                    }    
                 }
             });
         }
         protected virtual void OnIoTDeviceConnected(IPAddress ip, String name)
         {
-            IoTDeviceConnected?.Invoke(this, new IoTConsistencyControlerEventArgs() { address = ip, moduleName = name} );//invoke check if there is any subscriber for the event
+            IoTDeviceConnected?.Invoke(this, new IoTConsistencyControlerEventArgs() { Address = ip, ModuleName = name} );//invoke check if there is any subscriber for the event
+        }
+        protected bool CheckForDuplicates(IPAddress senderAddr)
+        {
+            foreach (var ip in connectedDevicesList)
+            {
+                if (ip == senderAddr)
+                {
+                    return false;
+                }
+            }
+            return true;
         }
         
     }

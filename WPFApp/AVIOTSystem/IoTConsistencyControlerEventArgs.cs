@@ -9,7 +9,7 @@ namespace AVIOTSystem
 {
     public class IoTConsistencyControlerEventArgs
     {
-        public IPAddress address { get; set; }
-        public String moduleName { get; set; }
+        public IPAddress Address { get; set; }
+        public String ModuleName { get; set; }
     }
 }

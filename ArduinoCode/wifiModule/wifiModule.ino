@@ -116,7 +116,7 @@ void SendAReply()
 }
 void SendPresenceMessage()
 {
-  char presenceMsg[] = "Iamonline";    
+  char presenceMsg[] = "ESP8266";    
   Serial.println("Send presence message");
   Udp.beginPacket(broadcastIp, 11000);
   Udp.write(presenceMsg);
