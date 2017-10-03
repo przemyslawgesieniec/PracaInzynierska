@@ -66,13 +66,7 @@ namespace AVIOTSystem
         protected bool CheckForDuplicates(IPAddress senderAddr)
         {
             foreach (var ip in connectedDevicesList)
-            {
-
-                if (ip.Equals(senderAddr))
-                {
-                    return false;
-                }
-            }
+                if (ip.Equals(senderAddr)) return false;
             return true;
         }
         

@@ -35,7 +35,7 @@ namespace AVIOT.ViewResouces
         {
 
             var client = new UdpClient();
-            IPEndPoint ep = new IPEndPoint(_deviceIpAddress, 2390); // endpoint where server is listening
+            IPEndPoint ep = new IPEndPoint(_deviceIpAddress, 2390); 
             client.Connect(ep);
             if(TriggerButton.Content.ToString() == "OFF")
             {
@@ -56,7 +56,7 @@ namespace AVIOT.ViewResouces
         private void AppendDataToUI()
         {
             tb_deviceName.Text = _deviceName;
-            tb_deviceIp.Text = _deviceIpAddress.ToString();
+            tb_deviceIp.Text += _deviceIpAddress.ToString();
         }
         private IPAddress _deviceIpAddress;
         private String _deviceName { get; set; }

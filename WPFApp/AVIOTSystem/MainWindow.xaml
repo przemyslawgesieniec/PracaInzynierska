@@ -26,7 +26,9 @@
 
         </Rectangle>
         <TextBlock Canvas.Left="510" TextWrapping="Wrap" Text="Module" Canvas.Top="63" Height="30" Width="130" Foreground="#FF8F8F8F" FontSize="18"/>
-        <TextBlock Canvas.Left="690" TextWrapping="Wrap" Canvas.Top="63" Height="32" Width="130" Foreground="#FF8F8F8F" Text="Status" FontSize="18"/>
+        <TextBlock Canvas.Left="706" TextWrapping="Wrap" Canvas.Top="63" Height="32" Width="130" Foreground="#FF8F8F8F" Text="Status" FontSize="18"/>
+        <StackPanel Height="185" Canvas.Left="120" Canvas.Top="315" Width="280"/>
+        <TextBlock Canvas.Left="120" TextWrapping="Wrap" Text="--Console--" Canvas.Top="300" FontSize="10" Foreground="#FF2A8375"/>
 
     </Canvas>
 </Window>
