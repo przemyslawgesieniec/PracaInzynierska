@@ -33,25 +33,22 @@ namespace AVIOT.ViewResouces
 
         private void TriggerButton_Click(object sender, RoutedEventArgs e)
         {
-
-            var client = new UdpClient();
-            IPEndPoint ep = new IPEndPoint(_deviceIpAddress, 2390); 
-            client.Connect(ep);
-            if(TriggerButton.Content.ToString() == "OFF")
+            if (TriggerButton.Content.ToString() == "OFF")
             {
-                client.Send(new byte[] { 97, 98, 99, 100, 101 }, 5);
-                TriggerButton.Content = "ON";
-                TriggerButton.Background = Brushes.LightSeaGreen;
+                if(AVIOTSystem.MessageHandler.SendMsgAndReciveConfirmation(_deviceIpAddress, 2390, AVIOTSystem.MessaeOut.SET_PIN_ON) == AVIOTSystem.MessaeIn.ON_ACK)
+                {
+                    TriggerButton.Content = "ON";
+                    TriggerButton.Background = Brushes.LightSeaGreen;
+                } 
             }
             else
             {
-                client.Send(new byte[] { 101, 100, 99, 98, 97 }, 5);
-                TriggerButton.Content = "OFF";
-                TriggerButton.Background = Brushes.MediumVioletRed;
-               
+                if (AVIOTSystem.MessageHandler.SendMsgAndReciveConfirmation(_deviceIpAddress, 2390, AVIOTSystem.MessaeOut.SET_PIN_OFF) == AVIOTSystem.MessaeIn.OFF_ACK)
+                {
+                    TriggerButton.Content = "OFF";
+                    TriggerButton.Background = Brushes.MediumVioletRed;
+                }
             }
-            var receivedData = client.Receive(ref ep);
-            client.Close();
         }
         private void AppendDataToUI()
         {

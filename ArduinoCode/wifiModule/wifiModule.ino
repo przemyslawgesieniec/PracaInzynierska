@@ -1,25 +1,22 @@
 
 #include <ESP8266WiFi.h>
-#include <WiFiUdp.h> 
+#include <WiFiUdp.h>
 
 const char IPD[] PROGMEM = "IPD,";
 const char READY[] PROGMEM = "ready";
 
+unsigned long oldTimerStatus = 0;
+const int attachRequestResendTimer = 4000;
+
 byte readCommand(int timeout, const char* text1 = NULL, const char* text2 = NULL);
 unsigned int localPort = 2390;
 
+const char* ssid = "DESKTOP_WIFI";
+const char* pass = "przemek123";
 
-//const char* ssid = "PENTAGRAM_P6362";
-//const char* pass = "#mopsik123";
-const char* ssid = "G4c";
-const char* pass = "prosiaczek";
-
-//char packetBuffer[255]; //buffer to hold incoming packet
-//char  ReplyBuffer[] = "acknowledged";       // a string to send back
-//char * ReplyBuffer;
 String ReplyBuffer = "empty";
 
-IPAddress broadcastIp(255,255,255,255);
+IPAddress broadcastIp(255, 255, 255, 255);
 
 WiFiUDP Udp;
 
@@ -27,8 +24,9 @@ WiFiUDP Udp;
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
   pinMode(2, OUTPUT);
-  digitalWrite(2, LOW); 
+  digitalWrite(2, LOW);
   Serial.begin(115200);
+  Serial.println("");
   Serial.println("Starting module ESP01-0");
 
   WiFi.begin(ssid, pass);
@@ -46,36 +44,31 @@ void setup() {
   Serial.println(local_ip);
   Udp.begin(localPort);
   Serial.print("UDP begun");
-  SendPresenceMessage();
+  WaitForApplicationAttach();
 }
 
 void loop() {
   if (WiFi.status() == WL_CONNECTED)
-  {
+ {
     String msg = receiveUDPPacket();
-    if(msg=="abcde")
+    if (msg == "10")
     {
-      msg="";
-      digitalWrite(2, HIGH); 
-      ReplyBuffer = "MsgONRcvd";   
-      SendAReply(); 
-    }
-    if(msg=="edcba")
-    {
-      msg="";
-      digitalWrite(2, LOW); 
-      ReplyBuffer = "MsgOFFRcvd";
+      msg = "";
+      digitalWrite(2, HIGH);
+      ReplyBuffer = "10";
       SendAReply();
     }
-    if(msg == "bbb")
+    if (msg == "11")
     {
-      Serial.println("Otrzymalem msg z broadcasu HEHE");
+      msg = "";
+      digitalWrite(2, LOW);
+      ReplyBuffer = "11";
+      SendAReply();
     }
-    
   }
   else
   {
-     Serial.println(WiFi.status());
+    Serial.println(WiFi.status());
   }
 }
 
@@ -83,43 +76,79 @@ String receiveUDPPacket()
 {
   int packetSize = Udp.parsePacket();
   char packetBuffer[255] = {};
-    if (packetSize) {
-      Serial.print("Received packet of size ");
-      Serial.println(packetSize);
-      Serial.print("From ");
-      IPAddress remoteIp = Udp.remoteIP();
-      Serial.print(remoteIp);
-      Serial.print(", port ");
-      Serial.println(Udp.remotePort());
+  if (packetSize) {
+    Serial.print("Received packet of size ");
+    Serial.println(packetSize);
+    Serial.print("From ");
+    IPAddress remoteIp = Udp.remoteIP();
+    Serial.print(remoteIp);
+    Serial.print(", port ");
+    Serial.println(Udp.remotePort());
 
-      // read the packet into packetBufffer
-      int len = Udp.read(packetBuffer, 255);
-      if (len > 0) {
-        packetBuffer[len] = 0;
-      }
-      Serial.println("Contents: ");
-      Serial.println(packetBuffer);
+    // read the packet into packetBufffer
+    int len = Udp.read(packetBuffer, 255);
+    if (len > 0) {
+      packetBuffer[len] = 0;
     }
+    Serial.println("Contents: ");
+    Serial.println(packetBuffer);
+  }
   return packetBuffer;
 }
 void SendAReply()
 {
-    Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-    Serial.println(ReplyBuffer);
-    int replyMsgLenght = ReplyBuffer.length();
-    char *replyMsg = new char[replyMsgLenght];
-    ReplyBuffer.toCharArray(replyMsg,replyMsgLenght);
-    Udp.write(replyMsg);
-    delete [] replyMsg;
-    ReplyBuffer= "empty";
-    Udp.endPacket();
-}
-void SendPresenceMessage()
-{
-  char presenceMsg[] = "ESP8266";    
-  Serial.println("Send presence message");
-  Udp.beginPacket(broadcastIp, 11000);
-  Udp.write(presenceMsg);
+  Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+  Serial.print("reply msg: ");
+  Serial.println(ReplyBuffer);
+  int replyMsgLenght = ReplyBuffer.length();
+  Serial.print("replyMsgLenght:");
+  Serial.println(replyMsgLenght);
+  char *replyMsg = new char[replyMsgLenght];
+  ReplyBuffer.toCharArray(replyMsg, replyMsgLenght+1);
+  Serial.println(replyMsg);
+   Serial.println(*replyMsg);
+  
+  Udp.write(replyMsg);
+  delete [] replyMsg;
+  ReplyBuffer = "empty";
   Udp.endPacket();
 }
-//void StringToCharTableConverter
+void SendAttachRequest()
+{
+  char attachRequestMsg[] = "AttachRequest";
+  Serial.println("Send AttachRequest");
+  Udp.beginPacket(broadcastIp, 11000);
+  Udp.write(attachRequestMsg);
+  Udp.endPacket();
+}
+void WaitForApplicationAttach()
+{
+  while(true)
+  {
+    unsigned long currentTimerStatus = millis();
+    if (currentTimerStatus - oldTimerStatus >= attachRequestResendTimer) 
+    {
+      oldTimerStatus = currentTimerStatus;
+      SendAttachRequest();
+    }
+    String msg = receiveUDPPacket();
+    if (msg == "YouAreConnected")
+    {
+      msg = "";
+      HardwareSignalizeConnection();
+      break;
+    }
+  }
+}
+void HardwareSignalizeConnection()
+{
+  Serial.println("Device attached to application correctly");
+  for (int i = 0; i < 3; i++)
+  {
+    digitalWrite(LED_BUILTIN, HIGH);
+    delay(100);
+    digitalWrite(LED_BUILTIN, LOW);
+    delay(100);
+  }
+}
+

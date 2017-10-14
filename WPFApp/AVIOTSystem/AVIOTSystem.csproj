@@ -56,6 +56,7 @@
     </ApplicationDefinition>
     <Compile Include="IoTConsistencyControler.cs" />
     <Compile Include="IoTConsistencyControlerEventArgs.cs" />
+    <Compile Include="MessageHandler.cs" />
     <Compile Include="ViewResouces\HwWiFiModuleInstance.xaml.cs">
       <DependentUpon>HwWiFiModuleInstance.xaml</DependentUpon>
     </Compile>
