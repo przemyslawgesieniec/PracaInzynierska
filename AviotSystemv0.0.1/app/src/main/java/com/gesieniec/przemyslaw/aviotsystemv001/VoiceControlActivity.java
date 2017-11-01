@@ -25,7 +25,6 @@ public class VoiceControlActivity extends AppCompatActivity{
     }
     public void onClickGetSpeechInput(View view) {
 
-        Toast.makeText(this,"button clicked", Toast.LENGTH_SHORT).show();
         voiceRecognition.getSpeechRecognizer().startListening(voiceRecognition.getSpeechRecognizerIntent());
     }
 

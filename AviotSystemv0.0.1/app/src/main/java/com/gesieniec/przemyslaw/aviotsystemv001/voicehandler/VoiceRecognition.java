@@ -1,14 +1,18 @@
 package com.gesieniec.przemyslaw.aviotsystemv001.voicehandler;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
+import android.support.annotation.RequiresApi;
 import android.util.Log;
 import android.widget.Toast;
 
 import com.gesieniec.przemyslaw.aviotsystemv001.VoiceControlActivity;
+import com.gesieniec.przemyslaw.aviotsystemv001.taskhandler.TaskHandler;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -35,7 +39,6 @@ public class VoiceRecognition implements RecognitionListener {
 
     public VoiceRecognition(VoiceControlActivity vca) {
         this.vca = vca;
-
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(vca);
         speechRecognizer.setRecognitionListener(this);
         speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -64,12 +67,17 @@ public class VoiceRecognition implements RecognitionListener {
         Log.d("VoiceRecognition","as: "+error);
     }
 
+    @SuppressLint("NewApi")
     @Override
     public void onResults(Bundle results) {
+        /**
+         * change for try->catch
+         */
         if (null != results) {
             ArrayList<String> voiceResults = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             if (voiceResults != null) {
                 Toast.makeText(vca, voiceResults.get(0), Toast.LENGTH_SHORT).show();
+                parseVoiceResultToCommand(voiceResults);
             }
         }
         else{
@@ -83,4 +91,14 @@ public class VoiceRecognition implements RecognitionListener {
     @Override
     public void onEvent(int eventType, Bundle params) {}
 
+
+    private void parseVoiceResultToCommand(ArrayList<String> capturedVoiceResult){
+        Log.d("VoiceRecognition",capturedVoiceResult.toString());
+        for (String result : capturedVoiceResult) {
+            executeCommand(result);
+        }
+    }
+    private void executeCommand(String command) {
+
+    }
 }
