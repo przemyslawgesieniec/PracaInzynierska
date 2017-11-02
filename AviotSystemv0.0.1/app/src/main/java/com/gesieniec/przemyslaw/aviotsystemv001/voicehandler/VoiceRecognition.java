@@ -24,6 +24,7 @@ import java.util.Locale;
 public class VoiceRecognition implements RecognitionListener {
 
     private VoiceControlActivity vca;
+    private CommandInterpreter commandInterpreter;
 
     public SpeechRecognizer getSpeechRecognizer() {
         return speechRecognizer;
@@ -39,6 +40,7 @@ public class VoiceRecognition implements RecognitionListener {
 
     public VoiceRecognition(VoiceControlActivity vca) {
         this.vca = vca;
+        commandInterpreter = new CommandInterpreter();
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(vca);
         speechRecognizer.setRecognitionListener(this);
         speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -67,7 +69,6 @@ public class VoiceRecognition implements RecognitionListener {
         Log.d("VoiceRecognition","as: "+error);
     }
 
-    @SuppressLint("NewApi")
     @Override
     public void onResults(Bundle results) {
         /**
@@ -77,7 +78,8 @@ public class VoiceRecognition implements RecognitionListener {
             ArrayList<String> voiceResults = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
             if (voiceResults != null) {
                 Toast.makeText(vca, voiceResults.get(0), Toast.LENGTH_SHORT).show();
-                parseVoiceResultToCommand(voiceResults);
+                if(!(commandInterpreter.parseVoiceResultToCommand(voiceResults)))
+                    Toast.makeText(vca, "didn't catch that", Toast.LENGTH_SHORT).show();
             }
         }
         else{
@@ -91,14 +93,14 @@ public class VoiceRecognition implements RecognitionListener {
     @Override
     public void onEvent(int eventType, Bundle params) {}
 
-
-    private void parseVoiceResultToCommand(ArrayList<String> capturedVoiceResult){
-        Log.d("VoiceRecognition",capturedVoiceResult.toString());
-        for (String result : capturedVoiceResult) {
-            executeCommand(result);
-        }
-    }
-    private void executeCommand(String command) {
-
-    }
+//
+//    private void parseVoiceResultToCommand(ArrayList<String> capturedVoiceResult){
+//        Log.d("VoiceRecognition",capturedVoiceResult.toString());
+//        for (String result : capturedVoiceResult) {
+//            executeCommand(result);
+//        }
+//    }
+//    private void executeCommand(String command) {
+//
+//    }
 }

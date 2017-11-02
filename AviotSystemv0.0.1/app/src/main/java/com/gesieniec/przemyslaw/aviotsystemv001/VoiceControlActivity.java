@@ -7,7 +7,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceRecognition;
-
+import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.CommandDataClass;
 public class VoiceControlActivity extends AppCompatActivity{
 
     private VoiceRecognition voiceRecognition;
@@ -18,6 +18,10 @@ public class VoiceControlActivity extends AppCompatActivity{
         setContentView(R.layout.activity_voice_control);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        /**
+         * Initialize commandData
+         */
+        CommandDataClass.initializeCommandsData();
         /**
          *Voice recognition setup in constructor
          */

@@ -6,7 +6,7 @@ import java.util.ArrayList;
  * Created by przem on 01.11.2017.
  */
 
-final class CommandDataClass {
+public final class CommandDataClass {
 
     /**
      * English embedded commands
@@ -15,6 +15,38 @@ final class CommandDataClass {
     private static ArrayList<String> actionsListENG;
     private static ArrayList<String> placesListENG;
     private static ArrayList<String> devicesListENG;
+
+    public static ArrayList<String> getDefaultFullCommandsListENG() {
+        return defaultFullCommandsListENG;
+    }
+
+    public static ArrayList<String> getActionsListENG() {
+        return actionsListENG;
+    }
+
+    public static ArrayList<String> getPlacesListENG() {
+        return placesListENG;
+    }
+
+    public static ArrayList<String> getDevicesListENG() {
+        return devicesListENG;
+    }
+
+    public static ArrayList<String> getDefaultFullCommandsListPL() {
+        return defaultFullCommandsListPL;
+    }
+
+    public static ArrayList<String> getActionsListPL() {
+        return actionsListPL;
+    }
+
+    public static ArrayList<String> getPlacesListPL() {
+        return placesListPL;
+    }
+
+    public static ArrayList<String> getDevicesListPL() {
+        return devicesListPL;
+    }
 
     /**
      * Polish embedded commands
@@ -26,7 +58,7 @@ final class CommandDataClass {
 
 
 
-    public CommandDataClass() {
+    public static void initializeCommandsData() {
         defaultFullCommandsListENG = new ArrayList<>();
         actionsListENG = new ArrayList<>();
         placesListENG = new ArrayList<>();
@@ -45,13 +77,13 @@ final class CommandDataClass {
     /**
      * English embedded commands
      */
-    private void fillDefaultFullCommandsListENG()
+    private static void fillDefaultFullCommandsListENG()
     {
         defaultFullCommandsListENG.add("Get status");
         defaultFullCommandsListENG.add("Check status");
         defaultFullCommandsListENG.add("Show status");
     }
-    private void fillActionsListENG()
+    private static void fillActionsListENG()
     {
         actionsListENG.add("turn on");
         actionsListENG.add("turn off");
@@ -60,12 +92,12 @@ final class CommandDataClass {
     /**
      * Polish embedded commands
      */
-    private void fillDefaultFullCommandsListPL() {
+    private static void fillDefaultFullCommandsListPL() {
         defaultFullCommandsListPL.add("Podaj status");
         defaultFullCommandsListPL.add("Sprawdź status");
 
     }
-    private void fillActionsListPL() {
+    private static void fillActionsListPL() {
         actionsListPL.add("włącz");
         actionsListPL.add("wyłącz");
     }
