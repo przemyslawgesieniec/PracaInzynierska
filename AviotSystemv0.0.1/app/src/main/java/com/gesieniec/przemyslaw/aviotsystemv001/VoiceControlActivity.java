@@ -28,7 +28,6 @@ public class VoiceControlActivity extends AppCompatActivity{
         voiceRecognition = new VoiceRecognition(this);
     }
     public void onClickGetSpeechInput(View view) {
-
         voiceRecognition.getSpeechRecognizer().startListening(voiceRecognition.getSpeechRecognizerIntent());
     }
 

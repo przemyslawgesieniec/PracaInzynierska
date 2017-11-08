@@ -16,6 +16,12 @@ public final class CommandDataClass {
     private static ArrayList<String> placesListENG;
     private static ArrayList<String> devicesListENG;
 
+    public static ArrayList<String> getNegationENG() {
+        return negationENG;
+    }
+
+    private static ArrayList<String> negationENG;
+
     public static ArrayList<String> getDefaultFullCommandsListENG() {
         return defaultFullCommandsListENG;
     }
@@ -56,22 +62,45 @@ public final class CommandDataClass {
     private static ArrayList<String> placesListPL;
     private static ArrayList<String> devicesListPL;
 
+    public static ArrayList<String> getNegationPL() {
+        return negationPL;
+    }
+
+    private static ArrayList<String> negationPL;
+
 
 
     public static void initializeCommandsData() {
+
+        /**
+         * English commands init
+         */
         defaultFullCommandsListENG = new ArrayList<>();
         actionsListENG = new ArrayList<>();
         placesListENG = new ArrayList<>();
         devicesListENG = new ArrayList<>();
+        negationENG = new ArrayList<>();
         fillDefaultFullCommandsListENG();
         fillActionsListENG();
+        fillNegationListENG();
 
+
+        /**
+         * Polish commands init
+         */
         defaultFullCommandsListPL = new ArrayList<>();
         actionsListPL = new ArrayList<>();
         placesListPL = new ArrayList<>();
         devicesListPL = new ArrayList<>();
+        negationPL = new ArrayList<>();
         fillDefaultFullCommandsListPL();
         fillActionsListPL();
+        fillNegationListPL();
+
+        /**
+         * stubs
+         */
+        fillstubsENG();
     }
 
     /**
@@ -88,6 +117,12 @@ public final class CommandDataClass {
         actionsListENG.add("turn on");
         actionsListENG.add("turn off");
     }
+    private static void fillNegationListENG(){
+        negationENG.add("do not");
+        negationENG.add("don't");
+        negationENG.add("dont");
+    }
+
 
     /**
      * Polish embedded commands
@@ -101,5 +136,25 @@ public final class CommandDataClass {
         actionsListPL.add("włącz");
         actionsListPL.add("wyłącz");
     }
+    private static void fillNegationListPL(){
+        negationPL.add("nie");
+    }
+
+
+
+    /**
+     * stubbed test commands
+     */
+    private static void fillstubsENG()
+    {
+        //actionsListENG.add("turn on");
+        placesListENG.add("livingroom");
+        placesListENG.add("garage");
+        placesListENG.add("stairs");
+        placesListENG.add("bedroom");
+        devicesListENG.add("light");
+        defaultFullCommandsListENG.add("turn off the light in the kitchen");
+    }
+
 
 }

@@ -12,7 +12,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.gesieniec.przemyslaw.aviotsystemv001.VoiceControlActivity;
-import com.gesieniec.przemyslaw.aviotsystemv001.taskhandler.TaskHandler;
+import com.gesieniec.przemyslaw.aviotsystemv001.taskhandler.TaskDispatcher;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -24,7 +24,6 @@ import java.util.Locale;
 public class VoiceRecognition implements RecognitionListener {
 
     private VoiceControlActivity vca;
-    private CommandInterpreter commandInterpreter;
 
     public SpeechRecognizer getSpeechRecognizer() {
         return speechRecognizer;
@@ -40,7 +39,6 @@ public class VoiceRecognition implements RecognitionListener {
 
     public VoiceRecognition(VoiceControlActivity vca) {
         this.vca = vca;
-        commandInterpreter = new CommandInterpreter();
         speechRecognizer = SpeechRecognizer.createSpeechRecognizer(vca);
         speechRecognizer.setRecognitionListener(this);
         speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -71,16 +69,26 @@ public class VoiceRecognition implements RecognitionListener {
 
     @Override
     public void onResults(Bundle results) {
-        /**
-         * change for try->catch
-         */
+
+        /* TODO change for try->catch */
         if (null != results) {
-            ArrayList<String> voiceResults = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-            if (voiceResults != null) {
-                Toast.makeText(vca, voiceResults.get(0), Toast.LENGTH_SHORT).show();
-                if(!(commandInterpreter.parseVoiceResultToCommand(voiceResults)))
-                    Toast.makeText(vca, "didn't catch that", Toast.LENGTH_SHORT).show();
+
+            if(!TaskDispatcher.newTask(TaskDispatcher.TaskContext.INTERPRET_VOICE_COMMAND,new VoiceCommand(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)))){
+                Toast.makeText(vca, "didn't catch that", Toast.LENGTH_SHORT).show();
             }
+
+
+
+//            ArrayList<String> voiceResults = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
+//            if (voiceResults != null) {
+//                Toast.makeText(vca, voiceResults.get(0), Toast.LENGTH_SHORT).show();
+//                CommandInterpreter commandInterpreter = new CommandInterpreter();
+//                /**
+//                 * This method know only if the command was intepreted or not.
+//                 */
+//                if(!(commandInterpreter.interpreteCommand(voiceResults)))
+//                    Toast.makeText(vca, "didn't catch that", Toast.LENGTH_SHORT).show();
+//            }
         }
         else{
             Toast.makeText(vca, "something went wrong", Toast.LENGTH_SHORT).show();
@@ -92,15 +100,4 @@ public class VoiceRecognition implements RecognitionListener {
 
     @Override
     public void onEvent(int eventType, Bundle params) {}
-
-//
-//    private void parseVoiceResultToCommand(ArrayList<String> capturedVoiceResult){
-//        Log.d("VoiceRecognition",capturedVoiceResult.toString());
-//        for (String result : capturedVoiceResult) {
-//            executeCommand(result);
-//        }
-//    }
-//    private void executeCommand(String command) {
-//
-//    }
 }
