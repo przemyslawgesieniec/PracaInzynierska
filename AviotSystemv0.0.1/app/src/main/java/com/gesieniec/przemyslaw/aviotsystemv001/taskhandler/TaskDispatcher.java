@@ -2,7 +2,7 @@ package com.gesieniec.przemyslaw.aviotsystemv001.taskhandler;
 
 import android.util.Log;
 
-import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.CommandInterpreter;
+import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommandHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommand;
 
 import java.util.ArrayList;
@@ -25,33 +25,43 @@ public final class TaskDispatcher {
         EXECUTE_VOICE_COMMAND,
         INTERPRET_VOICE_COMMAND,
         GUI_COMMAND,
-        UDP_MESSAGE,
+        SEND_UDP_MESSAGE,
         IOT_CONSISTENCY_REQUEST
     }
 
     public static boolean newTask(TaskContext cause, CommonCommand data){
         switch (cause){
             case INTERPRET_VOICE_COMMAND:
-                if(data instanceof VoiceCommand)
-                {
+                if(data instanceof VoiceCommand){
                     ArrayList<String> voiceResults = ((VoiceCommand)data).getRawCommand();
                     if (voiceResults != null) {
-                        CommandInterpreter commandInterpreter = new CommandInterpreter();
+                        VoiceCommandHandler voiceCommandHandler = new VoiceCommandHandler((VoiceCommand)data);
                         /**
                          * This method know only if the command was intepreted or not.
                          */
-                        //Update GUI
-                        //Voice Synthesis answer
-                        //Send UDP MSG
-                       return commandInterpreter.interpreteCommand(voiceResults);
+                       return voiceCommandHandler.interpreteCommand(voiceResults);
                     }
                 }
                 break;
             case EXECUTE_VOICE_COMMAND:
+                if(data instanceof VoiceCommand){
+                    try{
+                        VoiceCommandHandler voiceCommandHandler = new VoiceCommandHandler((VoiceCommand)data);
+                        return voiceCommandHandler.executeCommand();
+                        //Execute Command
+                            //->Update GUI
+                            //->Voice Synthesis answer
+                            //->Send UDP MSG
+                    }
+                    catch (Exception e){
+                        Log.d("TaskDispatcher:", e.toString());
+                    }
+
+                }
                 break;
             case GUI_COMMAND:
                 break;
-            case UDP_MESSAGE:
+            case SEND_UDP_MESSAGE:
                 break;
             case IOT_CONSISTENCY_REQUEST:
                 break;

@@ -2,13 +2,23 @@ package com.gesieniec.przemyslaw.aviotsystemv001.voicehandler;
 
 import android.util.Log;
 
+import com.gesieniec.przemyslaw.aviotsystemv001.ApplicationContext;
+import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.CommonDevice;
+import com.gesieniec.przemyslaw.aviotsystemv001.taskhandler.CommonCommand;
+
 import java.util.ArrayList;
 
 /**
  * Created by przem on 02.11.2017.
  */
 
-public class CommandInterpreter {
+public class VoiceCommandHandler {
+
+    private VoiceCommand voiceCommand;
+
+    public VoiceCommandHandler(VoiceCommand voiceCommand) {
+        this.voiceCommand = voiceCommand;
+    }
 
     public Enum<Language> getCurrentCommandLanguage() {
         return currentCommandLanguage;
@@ -30,47 +40,19 @@ public class CommandInterpreter {
             /**
              * Try to find keywords in possible command
              */
-            VoiceCommand keyWordsMatch = tryMatchWithKeyWords(possibleCommand);
-            Log.d("CommandInterpreter","keyWordsMatch"+keyWordsMatch);
-            if(keyWordsMatch != null){
-                if(keyWordsMatch.isContainFullCommand())
-                {
-                    execuiteCommand(keyWordsMatch);
+            if(tryMatchWithKeyWords(possibleCommand)){
+                if(voiceCommand.isContainFullCommand()) {
+                    return possibleCommand;
                 }
-                else{/*partial match ( not implemented yet )*/}
-                return possibleCommand;
-            }
-
-            /**
-             * Try to match possible command with predefined full commands
-             */
-//            if(tryMatchToFullCommand(possibleCommand) != null) {
-//                execuiteCommand(possibleCommand);
-//                return possibleCommand;
-//            }
+                else{
+                    /*partial match ( not implemented yet )*/}
+                }
         }
         return null;
     }
 
-//    private String tryMatchToFullCommand(String possibleCommand){
-//
-//        for (String englishCommand:CommandDataClass.getDefaultFullCommandsListENG()){
-//            if(possibleCommand.equals(englishCommand)){
-//                currentCommandLanguage = Language.ENG_ENGLISH;
-//                return possibleCommand;
-//            }
-//
-//        }
-//        for (String polishCommand:CommandDataClass.getDefaultFullCommandsListPL()){
-//            if(possibleCommand.equals(polishCommand)){
-//                currentCommandLanguage = Language.PL_POLISH;
-//                return possibleCommand;
-//            }
-//        }
-//        return null;
-//    }
 
-    private VoiceCommand tryMatchWithKeyWords(String possibleCommand){
+    private boolean tryMatchWithKeyWords(String possibleCommand){
         String mAction = null;
         String mDeviceName = null;
         String mPlace = null;
@@ -131,17 +113,37 @@ public class CommandInterpreter {
          */
         if(mAction != null && mDeviceName != null && mPlace != null)
         {
-            Log.d("alltog","full command: "+mAction+"_"+mDeviceName+"_"+mPlace+"_"+mNegation);
-            return new VoiceCommand(mAction,mDeviceName,mPlace,mNegation);
+            voiceCommand.setAction(mAction);
+            voiceCommand.setDeviceName(mDeviceName);
+            voiceCommand.setPlace(mPlace);
+            voiceCommand.setNegation(mNegation);
+            return true;
         }
-        return null;
+        return false;
     }
 
-    private void execuiteCommand(VoiceCommand possibleCommand){
-        Log.d("CI:execuiteCommand","possibleCommand: "+possibleCommand.toString());
-        /**
-         * stub for a moment
-         */
+    public boolean executeCommand(){
+        ArrayList<CommonDevice> commonDeviceArrayList = new ArrayList<>();
+        for (CommonDevice device : ApplicationContext.getCommonDevices()){
+            if(device.getName() == voiceCommand.getDeviceName()) {
+                commonDeviceArrayList.add(device);
+            }
+        }
+        if(commonDeviceArrayList.size() > 0) {
+            if (commonDeviceArrayList.size() > 1) {
+                for (CommonDevice repeatedDevice : commonDeviceArrayList) {
+                    if (repeatedDevice.getLocation() == voiceCommand.getPlace()) {
+                        //execute for this device
+                        return true;
+                    }
+                }
+            } else {
+                //execute for this device
+                return true;
+            }
+        }
+        return false;
+        //display error, device not found
     }
     private ArrayList<String> StringArrayToLowerCase(ArrayList<String> capturedVoiceResult)
     {

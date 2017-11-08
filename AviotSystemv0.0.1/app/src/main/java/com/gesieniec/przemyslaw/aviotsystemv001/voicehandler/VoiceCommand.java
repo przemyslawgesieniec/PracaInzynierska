@@ -32,6 +32,23 @@ public class VoiceCommand extends CommonCommand {
     }
 
     private ArrayList<String> rawCommand;
+
+    public void setAction(String action) {
+        this.action = action;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
+
+    public void setPlace(String place) {
+        this.place = place;
+    }
+
+    public void setNegation(boolean negation) {
+        this.negation = negation;
+    }
+
     private String action;
     private String deviceName;
     private String place;
