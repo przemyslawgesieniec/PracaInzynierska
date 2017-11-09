@@ -60,7 +60,9 @@ public class VoiceRecognition implements RecognitionListener {
     public void onBufferReceived(byte[] buffer) {}
 
     @Override
-    public void onEndOfSpeech() {}
+    public void onEndOfSpeech() {
+        vca.setAviotButtonState(false);
+    }
 
     @Override
     public void onError(int error) {
@@ -89,6 +91,7 @@ public class VoiceRecognition implements RecognitionListener {
         else{
             Toast.makeText(vca, "something went wrong", Toast.LENGTH_SHORT).show();
         }
+        vca.setAviotButtonState(false);
     }
 
     @Override

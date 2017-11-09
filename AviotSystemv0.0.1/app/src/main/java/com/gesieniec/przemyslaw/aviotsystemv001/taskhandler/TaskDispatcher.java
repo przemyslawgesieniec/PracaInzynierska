@@ -1,11 +1,14 @@
 package com.gesieniec.przemyslaw.aviotsystemv001.taskhandler;
 
+import android.speech.tts.Voice;
 import android.util.Log;
 
+import com.gesieniec.przemyslaw.aviotsystemv001.VoiceControlActivity;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommandHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommand;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by przem on 01.11.2017.
@@ -19,7 +22,7 @@ import java.util.ArrayList;
  *
  */
 
-public final class TaskDispatcher {
+public class TaskDispatcher {
 
     public enum TaskContext{
         EXECUTE_VOICE_COMMAND,
@@ -27,6 +30,14 @@ public final class TaskDispatcher {
         GUI_COMMAND,
         SEND_UDP_MESSAGE,
         IOT_CONSISTENCY_REQUEST
+    }
+
+    private static ArrayList<ITaskDispatcherListener> listeners = new ArrayList<>();
+
+    public static void addListener(ITaskDispatcherListener listener){
+        listeners.add(listener);
+        Log.d("TaskDispatcher","someone inserted listener" + listeners.size());
+
     }
 
     public static boolean newTask(TaskContext cause, CommonCommand data){
@@ -39,6 +50,7 @@ public final class TaskDispatcher {
                         /**
                          * This method know only if the command was intepreted or not.
                          */
+                        Log.d("TaskDispatcher","command interpreted");
                        return voiceCommandHandler.interpreteCommand(voiceResults);
                     }
                 }
@@ -47,11 +59,16 @@ public final class TaskDispatcher {
                 if(data instanceof VoiceCommand){
                     try{
                         VoiceCommandHandler voiceCommandHandler = new VoiceCommandHandler((VoiceCommand)data);
-                        return voiceCommandHandler.executeCommand();
-                        //Execute Command
-                            //->Update GUI
+                        if(voiceCommandHandler.executeCommand()){
+                            Log.d("TaskDispatcher","execute command");
+                          //  Log.d("TaskDispatcher","listeners size: "+  listeners.size()); //TUTAJ MAM NULL POINTER EXEPTION
+
+//                            for(ITaskDispatcherListener executeVoiceCommandListener : listeners)
+//                                executeVoiceCommandListener.handleDispatchedTask("dupa");
                             //->Voice Synthesis answer
                             //->Send UDP MSG
+                            return true;
+                        }
                     }
                     catch (Exception e){
                         Log.d("TaskDispatcher:", e.toString());
