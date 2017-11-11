@@ -1,9 +1,7 @@
 package com.gesieniec.przemyslaw.aviotsystemv001.taskhandler;
 
-import android.speech.tts.Voice;
 import android.util.Log;
 
-import com.gesieniec.przemyslaw.aviotsystemv001.VoiceControlActivity;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommandHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommand;
 
@@ -24,65 +22,43 @@ import java.util.List;
 
 public class TaskDispatcher {
 
-    public enum TaskContext{
+//    public enum TaskContext{
+//        GUI_COMMAND,
+//        SEND_UDP_MESSAGE,
+//        IOT_CONSISTENCY_REQUEST
+//    }
+
+    public enum VoiceTaskContext{
         EXECUTE_VOICE_COMMAND,
-        INTERPRET_VOICE_COMMAND,
-        GUI_COMMAND,
-        SEND_UDP_MESSAGE,
-        IOT_CONSISTENCY_REQUEST
+        VOICE_COMMAND_EXECUTED
     }
 
     private static ArrayList<ITaskDispatcherListener> listeners = new ArrayList<>();
 
     public static void addListener(ITaskDispatcherListener listener){
         listeners.add(listener);
-        Log.d("TaskDispatcher","someone inserted listener" + listeners.size());
-
     }
 
-    public static boolean newTask(TaskContext cause, CommonCommand data){
-        switch (cause){
-            case INTERPRET_VOICE_COMMAND:
-                if(data instanceof VoiceCommand){
-                    ArrayList<String> voiceResults = ((VoiceCommand)data).getRawCommand();
-                    if (voiceResults != null) {
-                        VoiceCommandHandler voiceCommandHandler = new VoiceCommandHandler((VoiceCommand)data);
-                        /**
-                         * This method know only if the command was intepreted or not.
-                         */
-                        Log.d("TaskDispatcher","command interpreted");
-                       return voiceCommandHandler.interpreteCommand(voiceResults);
-                    }
-                }
-                break;
+    public static void newTask(VoiceTaskContext cause, VoiceCommand data) {
+        switch (cause) {
             case EXECUTE_VOICE_COMMAND:
-                if(data instanceof VoiceCommand){
-                    try{
-                        VoiceCommandHandler voiceCommandHandler = new VoiceCommandHandler((VoiceCommand)data);
-                        if(voiceCommandHandler.executeCommand()){
-                            Log.d("TaskDispatcher","execute command");
-                          //  Log.d("TaskDispatcher","listeners size: "+  listeners.size()); //TUTAJ MAM NULL POINTER EXEPTION
-
-//                            for(ITaskDispatcherListener executeVoiceCommandListener : listeners)
-//                                executeVoiceCommandListener.handleDispatchedTask("dupa");
-                            //->Voice Synthesis answer
-                            //->Send UDP MSG
-                            return true;
+                List<String> voiceResults = data.getRawCommand();
+                if (voiceResults != null) {
+                    VoiceCommandHandler voiceCommandHandler = new VoiceCommandHandler(data);
+                    voiceCommandHandler.interpreteCommand(voiceResults);
+                    try {
+                        for (ITaskDispatcherListener executeVoiceCommandListener : listeners){
+                            Log.d("TaskDispatcher","setBestMatchCommand: "+data.getBestMatchCommand());
+                            executeVoiceCommandListener.handleDispatchedVoiceCommandExecution(data);//->GUI Update //->Send UDP MSG
                         }
-                    }
-                    catch (Exception e){
+                    } catch (Exception e) {
                         Log.d("TaskDispatcher:", e.toString());
                     }
-
                 }
                 break;
-            case GUI_COMMAND:
-                break;
-            case SEND_UDP_MESSAGE:
-                break;
-            case IOT_CONSISTENCY_REQUEST:
+            case VOICE_COMMAND_EXECUTED:
                 break;
         }
-        return false;
     }
+
 }

@@ -8,74 +8,70 @@ import java.util.ArrayList;
 
 public final class CommandDataClass {
 
+
+
     /**
      * English embedded commands
      */
-    private static ArrayList<String> defaultFullCommandsListENG;
+    private static ArrayList<String> systemCommandsENG;
     private static ArrayList<String> actionsListENG;
     private static ArrayList<String> placesListENG;
     private static ArrayList<String> devicesListENG;
-
-    public static ArrayList<String> getNegationENG() {
-        return negationENG;
-    }
-
     private static ArrayList<String> negationENG;
-
-    public static ArrayList<String> getDefaultFullCommandsListENG() {
-        return defaultFullCommandsListENG;
-    }
-
-    public static ArrayList<String> getActionsListENG() {
-        return actionsListENG;
-    }
-
-    public static ArrayList<String> getPlacesListENG() {
-        return placesListENG;
-    }
-
-    public static ArrayList<String> getDevicesListENG() {
-        return devicesListENG;
-    }
-
-    public static ArrayList<String> getDefaultFullCommandsListPL() {
-        return defaultFullCommandsListPL;
-    }
-
-    public static ArrayList<String> getActionsListPL() {
-        return actionsListPL;
-    }
-
-    public static ArrayList<String> getPlacesListPL() {
-        return placesListPL;
-    }
-
-    public static ArrayList<String> getDevicesListPL() {
-        return devicesListPL;
-    }
 
     /**
      * Polish embedded commands
      */
-    private static ArrayList<String> defaultFullCommandsListPL;
+    private static ArrayList<String> systemCommandsPL;
     private static ArrayList<String> actionsListPL;
     private static ArrayList<String> placesListPL;
     private static ArrayList<String> devicesListPL;
+    private static ArrayList<String> negationPL;
 
+    /**
+     * Getters for english commands
+     */
+    public static ArrayList<String> getActionsListENG() {
+        return actionsListENG;
+    }
+    public static ArrayList<String> getPlacesListENG() {
+        return placesListENG;
+    }
+    public static ArrayList<String> getDevicesListENG() {
+        return devicesListENG;
+    }
+    public static ArrayList<String> getNegationENG() {
+        return negationENG;
+    }
+    public static ArrayList<String> getSystemCommandsENG() {
+        return systemCommandsENG;
+    }
+
+    /**
+     * Getters for polish commands
+     */
+    public static ArrayList<String> getActionsListPL() {
+        return actionsListPL;
+    }
+    public static ArrayList<String> getPlacesListPL() {
+        return placesListPL;
+    }
+    public static ArrayList<String> getDevicesListPL() {
+        return devicesListPL;
+    }
     public static ArrayList<String> getNegationPL() {
         return negationPL;
     }
-
-    private static ArrayList<String> negationPL;
-
-
+    public static ArrayList<String> getSystemCommandsPL() {
+        return systemCommandsPL;
+    }
 
     public static void initializeCommandsData() {
 
         /**
          * English commands init
          */
-        defaultFullCommandsListENG = new ArrayList<>();
+        systemCommandsENG = new ArrayList<>();
         actionsListENG = new ArrayList<>();
         placesListENG = new ArrayList<>();
         devicesListENG = new ArrayList<>();
@@ -88,7 +84,7 @@ public final class CommandDataClass {
         /**
          * Polish commands init
          */
-        defaultFullCommandsListPL = new ArrayList<>();
+        systemCommandsPL = new ArrayList<>();
         actionsListPL = new ArrayList<>();
         placesListPL = new ArrayList<>();
         devicesListPL = new ArrayList<>();
@@ -108,9 +104,10 @@ public final class CommandDataClass {
      */
     private static void fillDefaultFullCommandsListENG()
     {
-        defaultFullCommandsListENG.add("Get status");
-        defaultFullCommandsListENG.add("Check status");
-        defaultFullCommandsListENG.add("Show status");
+        systemCommandsENG.add("Get status");
+        systemCommandsENG.add("Check status");
+        systemCommandsENG.add("Show status");
+        systemCommandsENG.add("Show connected devices");
     }
     private static void fillActionsListENG()
     {
@@ -128,8 +125,8 @@ public final class CommandDataClass {
      * Polish embedded commands
      */
     private static void fillDefaultFullCommandsListPL() {
-        defaultFullCommandsListPL.add("Podaj status");
-        defaultFullCommandsListPL.add("Sprawdź status");
+        systemCommandsPL.add("Podaj status");
+        systemCommandsPL.add("Sprawdź status");
 
     }
     private static void fillActionsListPL() {
@@ -147,13 +144,13 @@ public final class CommandDataClass {
      */
     private static void fillstubsENG()
     {
-        //actionsListENG.add("turn on");
-        placesListENG.add("livingroom");
+        actionsListENG.add("turn on");
+        placesListENG.add("living room");
         placesListENG.add("garage");
         placesListENG.add("stairs");
-        placesListENG.add("bedroom");
+        placesListENG.add("kitchen");
         devicesListENG.add("light");
-        defaultFullCommandsListENG.add("turn off the light in the kitchen");
+
     }
 
 

@@ -20,17 +20,25 @@
         android:onClick="onClickStartStopCapturing"
         app:srcCompat="@mipmap/aviot_button" />
 
+
     <LinearLayout
         android:id="@+id/view_console"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:paddingLeft="@dimen/fab_margin"
-        android:paddingTop="@dimen/fab_margin"
+
         android:paddingRight="@dimen/fab_margin"
         android:layout_margin="20dp"
         android:layout_weight="0.5"
         android:background="@color/colorConsole"
         android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:textColor="@color/colorAccent"
+            android:layout_height="wrap_content"
+            android:text="Console" />
 
 
         <ScrollView
@@ -38,21 +46,11 @@
             android:layout_height="match_parent">
 
             <LinearLayout
+                android:id="@+id/ll_console"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical" >
+                android:orientation="vertical">
 
-                <TextView
-                    android:id="@+id/textView2"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="TextView" />
-
-                <TextView
-                    android:id="@+id/textView3"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="TextView" />
             </LinearLayout>
 
         </ScrollView>

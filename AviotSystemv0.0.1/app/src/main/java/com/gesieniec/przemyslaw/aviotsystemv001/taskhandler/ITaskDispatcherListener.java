@@ -1,9 +1,11 @@
 package com.gesieniec.przemyslaw.aviotsystemv001.taskhandler;
 
+import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommand;
+
 /**
  * Created by przem on 09.11.2017.
  */
 
 public interface ITaskDispatcherListener {
-    void handleDispatchedTask(String arg);
+    void handleDispatchedVoiceCommandExecution(VoiceCommand arg);
 }

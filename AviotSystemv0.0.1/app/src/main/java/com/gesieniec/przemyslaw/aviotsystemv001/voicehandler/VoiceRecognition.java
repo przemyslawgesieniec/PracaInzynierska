@@ -74,22 +74,8 @@ public class VoiceRecognition implements RecognitionListener {
 
         /* TODO change for try->catch */
         if (null != results) {
-            VoiceCommand voiceCommand = new VoiceCommand(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION));
-            if(TaskDispatcher.newTask(TaskDispatcher.TaskContext.INTERPRET_VOICE_COMMAND,voiceCommand)){
-                Log.d("VoiceRecognition","command.toStrong(): "+voiceCommand.toString());
-                if(TaskDispatcher.newTask(TaskDispatcher.TaskContext.EXECUTE_VOICE_COMMAND,voiceCommand)){
-                    Log.d("VoiceRecognition","command executed");
-                }
-                else{
-                    Log.d("VoiceRecognition","unable to execute command on selected device");
-                }
-            }
-            else{
-                Toast.makeText(vca, "didn't catch that", Toast.LENGTH_SHORT).show();
-            }
-        }
-        else{
-            Toast.makeText(vca, "something went wrong", Toast.LENGTH_SHORT).show();
+            TaskDispatcher.newTask(TaskDispatcher.VoiceTaskContext.EXECUTE_VOICE_COMMAND,
+                    new VoiceCommand(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)));
         }
         vca.setAviotButtonState(false);
     }

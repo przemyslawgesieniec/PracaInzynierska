@@ -1,6 +1,10 @@
 package com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices;
 
-import java.util.ArrayList;
+import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceAction;
+import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceType;
+
+import java.net.InetAddress;
+import java.util.HashMap;
 
 /**
  * Created by przem on 08.11.2017.
@@ -8,41 +12,68 @@ import java.util.ArrayList;
 
 public class LightSwitch extends CommonDevice {
 
-    private ArrayList<Boolean> switchStatusList;
-    private ArrayList<String> triggeringONCommandsENG;
-    private ArrayList<String> triggeringOFFCommandsENG;
-    private ArrayList<String> triggeringONCommandsPL;
-    private ArrayList<String> triggeringOFFCommandsPL;
+    /**
+     * fields
+     */
+    private boolean state;
+    private DeviceType type;
 
-    public LightSwitch(ArrayList<Boolean> switchStatusList,String name, String location) {
-        super(name,location);
-        this.switchStatusList = switchStatusList;
-        fillTriggeringCommandsList();
-
+    /**
+     * getters
+     */
+    public HashMap<String, DeviceAction> getActionMapENG() {
+        return actionMapENG;
     }
 
-    private void fillTriggeringCommandsList(){
+    public HashMap<String, DeviceAction> getActionMapPL() {
+        return actionMapPL;
+    }
+    @Override
+    public DeviceType getDeviceType() {
+        return type;
+    }
+    /**
+     * ctor
+     */
+    public LightSwitch(String name, String location, InetAddress deviceAddress ) {
+        super(name,location,deviceAddress);
+        type = DeviceType.SWITCH;
+        state = false;
+        actionMapENG = new HashMap<>();
+        actionMapPL = new HashMap<>();
+        fillActionMap();
+    }
+    /**
+     * methods
+     */    private void fillActionMap(){
         /**
          * English Commands ON
          */
-        triggeringONCommandsENG.add("turn on");
-        triggeringONCommandsENG.add("switch on");
-        triggeringONCommandsENG.add("illuminate");
+        actionMapENG.put("turn on",DeviceAction.ON);
+        actionMapENG.put("switch on",DeviceAction.ON);
+        actionMapENG.put("illuminate",DeviceAction.ON);
         /**
          * English Commands OFF
          */
-        triggeringOFFCommandsENG.add("switch off");
-        triggeringOFFCommandsENG.add("turn off");
+        actionMapENG.put("turn of",DeviceAction.OFF);
+        actionMapENG.put("switch off",DeviceAction.OFF);
         /**
          * Polish Commands ON
          */
-        triggeringONCommandsPL.add("włącz");
-        triggeringONCommandsPL.add("oświetl");
-        triggeringONCommandsPL.add("zapal");
+        actionMapPL.put("włącz",DeviceAction.ON);
+        actionMapPL.put("oświetl",DeviceAction.ON);
+        actionMapPL.put("zapal",DeviceAction.ON);
         /**
          * Polish Commands OFF
          */
-        triggeringOFFCommandsPL.add("wyłacz");
-        triggeringOFFCommandsPL.add("zgaś");
+        actionMapPL.put("wyłącz",DeviceAction.OFF);
+        actionMapPL.put("zgaś",DeviceAction.OFF);
     }
+
+    @Override
+    public String toString() {
+        return "LightSwitch{}";
+    }
+
+
 }

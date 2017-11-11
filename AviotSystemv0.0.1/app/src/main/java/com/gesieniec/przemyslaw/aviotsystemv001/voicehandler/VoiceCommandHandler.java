@@ -2,11 +2,8 @@ package com.gesieniec.przemyslaw.aviotsystemv001.voicehandler;
 
 import android.util.Log;
 
-import com.gesieniec.przemyslaw.aviotsystemv001.ApplicationContext;
-import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.CommonDevice;
-import com.gesieniec.przemyslaw.aviotsystemv001.taskhandler.CommonCommand;
-
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by przem on 02.11.2017.
@@ -28,31 +25,65 @@ public class VoiceCommandHandler {
         PL_POLISH,
         ENG_ENGLISH
     }
+    private enum CommandMathResult{
+        FULL_MATCH,
+        PARTIAL_MATCH,
+        NO_MATCH
+    }
     private Enum<Language> currentCommandLanguage = Language.ENG_ENGLISH;
 
-    public boolean interpreteCommand(ArrayList<String> capturedVoiceResult){
-        return (parseVoiceResultToCommand(capturedVoiceResult) != null) ? true : false;
+    public void interpreteCommand(List<String> capturedVoiceResult){
+        parseVoiceResultToCommand(capturedVoiceResult);
     }
-    private String parseVoiceResultToCommand(ArrayList<String> capturedVoiceResult){
-        ArrayList<String> capturedVoiceResultLowerCase = new ArrayList<>(StringArrayToLowerCase(capturedVoiceResult));
+    private void parseVoiceResultToCommand(List<String> capturedVoiceResult){
+        Log.d("VoiceCommandHandler","parseVoiceResult");
+        List<String> capturedVoiceResultLowerCase = new ArrayList<>(StringArrayToLowerCase(capturedVoiceResult));
         for (String possibleCommand : capturedVoiceResultLowerCase) {
-
+            Log.d("VoiceCommandHandler","possibleCommand 1: "+possibleCommand);
             /**
              * Try to find keywords in possible command
              */
-            if(tryMatchWithKeyWords(possibleCommand)){
-                if(voiceCommand.isContainFullCommand()) {
-                    return possibleCommand;
-                }
-                else{
-                    /*partial match ( not implemented yet )*/}
-                }
+            CommandMathResult match = tryMatchWithKeyWords(possibleCommand);
+            if(match == CommandMathResult.FULL_MATCH){
+                Log.d("VoiceCommandHandler","full match");
+                voiceCommand.setVoiceCommandType(VoiceCommand.VoiceCommandType.DEVICE_RELATED);
+                voiceCommand.setBestMatchCommand(possibleCommand);
+                Log.d("VoiceCommandHandler","full match possible command: "+possibleCommand);
+                return;
+            }
+            else if(match == CommandMathResult.PARTIAL_MATCH){
+                Log.d("VoiceCommandHandler","partial match");
+                Log.d("VoiceCommandHandler","possible command: "+possibleCommand);
+                voiceCommand.setVoiceCommandType(VoiceCommand.VoiceCommandType.DEVICE_RELATED);
+                voiceCommand.setBestMatchCommand(possibleCommand);
+                //TODO: check if is it possible to run partial command
+                return;
+            }
+            else if(tryToMachWitchSystemCommands(possibleCommand)){
+                Log.d("VoiceCommandHandler","system command try");
+                voiceCommand.setVoiceCommandType(VoiceCommand.VoiceCommandType.SYSTEM_RELATED);
+                voiceCommand.setBestMatchCommand(possibleCommand);
+                return;
+            }
         }
-        return null;
+        if(voiceCommand.getVoiceCommandType() != VoiceCommand.VoiceCommandType.INVALID){
+            voiceCommand.setBestMatchCommand(capturedVoiceResultLowerCase.get(0));
+            //TODO: NEED FIX , NULL IN  USER CONSOLE
+        }
+    }
+
+    private boolean tryToMachWitchSystemCommands(String possibleCommand) {
+        for(String systemCommand : CommandDataClass.getSystemCommandsENG()){
+            if(systemCommand == possibleCommand){
+                return true;
+            }
+        }
+        return false;
     }
 
 
-    private boolean tryMatchWithKeyWords(String possibleCommand){
+    private CommandMathResult tryMatchWithKeyWords(String possibleCommand){
+        Log.d("VoiceCommandHandler","tryMatchWithKeyWords");
         String mAction = null;
         String mDeviceName = null;
         String mPlace = null;
@@ -60,22 +91,22 @@ public class VoiceCommandHandler {
         /**
          * ENG
          */
-        for (String action:CommandDataClass.getActionsListENG()){
+        for (String action : CommandDataClass.getActionsListENG()){
             if(possibleCommand.contains(action)){
                 mAction = action;
             }
         }
-        for (String device:CommandDataClass.getDevicesListENG()){
+        for (String device : CommandDataClass.getDevicesListENG()){
             if(possibleCommand.contains(device)){
                 mDeviceName = device;
             }
         }
-        for (String place:CommandDataClass.getPlacesListENG()){
+        for (String place : CommandDataClass.getPlacesListENG()){
             if(possibleCommand.contains(place)){
                 mPlace = place;
             }
         }
-        for (String negation:CommandDataClass.getNegationENG()){
+        for (String negation : CommandDataClass.getNegationENG()){
             if(possibleCommand.contains(negation)){
                 mNegation = true;
             }
@@ -107,7 +138,7 @@ public class VoiceCommandHandler {
             }
         }
 
-
+        Log.d("VoiceCommandHandler","mAction="+mAction+"mDeviceName="+mDeviceName+"mPlace="+mPlace);
         /**
          * COMMON
          */
@@ -117,37 +148,21 @@ public class VoiceCommandHandler {
             voiceCommand.setDeviceName(mDeviceName);
             voiceCommand.setPlace(mPlace);
             voiceCommand.setNegation(mNegation);
-            return true;
+            return CommandMathResult.FULL_MATCH;
         }
-        return false;
+        if(mAction != null && mDeviceName != null)
+        {
+            voiceCommand.setAction(mAction);
+            voiceCommand.setDeviceName(mDeviceName);
+            voiceCommand.setNegation(mNegation);
+            return CommandMathResult.PARTIAL_MATCH;
+        }
+        return CommandMathResult.NO_MATCH;
     }
 
-    public boolean executeCommand(){
-        ArrayList<CommonDevice> commonDeviceArrayList = new ArrayList<>();
-        for (CommonDevice device : ApplicationContext.getCommonDevices()){
-            if(device.getName() == voiceCommand.getDeviceName()) {
-                commonDeviceArrayList.add(device);
-            }
-        }
-        if(commonDeviceArrayList.size() > 0) {
-            if (commonDeviceArrayList.size() > 1) {
-                for (CommonDevice repeatedDevice : commonDeviceArrayList) {
-                    if (repeatedDevice.getLocation() == voiceCommand.getPlace()) {
-                        //execute for this device
-                        return true;
-                    }
-                }
-            } else {
-                //execute for this device
-                return true;
-            }
-        }
-        return false;
-        //display error, device not found
-    }
-    private ArrayList<String> StringArrayToLowerCase(ArrayList<String> capturedVoiceResult)
+    private List<String> StringArrayToLowerCase(List<String> capturedVoiceResult)
     {
-        ArrayList<String> capturedVoiceResultLowerCase = new ArrayList<>();
+        List<String> capturedVoiceResultLowerCase = new ArrayList<>();
         for (String possibleCommand:capturedVoiceResult) {
             capturedVoiceResultLowerCase.add(possibleCommand.toLowerCase());
         }
