@@ -69,19 +69,24 @@ namespace AVIOTSystem
         }
         public static void ReceiveMsg(MessaeIn msgType, int port)
         {
-            switch (msgType)
-            {
-                case MessaeIn.ON_ACK:
-                    break;
-                case MessaeIn.OFF_ACK:
-                    break;
-                case MessaeIn.PIN_STATUS_ON:
-                    break;
-                case MessaeIn.PIN_STATUS_OFF:
-                    break;
-                case MessaeIn.ATTACH_REQUEST:
-                    break;
-            }
+            //switch (msgType)
+            //{
+            //    case MessaeIn.ON_ACK:
+            //        break;
+            //    case MessaeIn.OFF_ACK:
+            //        break;
+            //    case MessaeIn.PIN_STATUS_ON:
+            //        break;
+            //    case MessaeIn.PIN_STATUS_OFF:
+            //        break;
+            //    case MessaeIn.ATTACH_REQUEST:
+            //        break;
+            //}
+            //MessageBox.Show()
+        }
+        public static void ReceiveMsg(String msg)
+        {
+            MessageBox.Show(msg);
         }
     }
 }

@@ -1,5 +1,7 @@
 package com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices;
 
+import android.util.Log;
+
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceAction;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceType;
 
@@ -37,10 +39,10 @@ public abstract class CommonDevice {
         this.name = name;
         this.location = location;
         this.deviceAddress = deviceAddress;
+        Log.d("CommonDevice: ","New device:" );
     }
     public abstract DeviceType getDeviceType();
     public abstract HashMap<String, DeviceAction> getActionMapENG();
     public abstract HashMap<String, DeviceAction> getActionMapPL();
-
-  //  protected abstract void fillTriggeringCommandsList();
+    public abstract void updateCommonDataClass();
 }

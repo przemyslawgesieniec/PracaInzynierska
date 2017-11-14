@@ -2,6 +2,7 @@ package com.gesieniec.przemyslaw.aviotsystemv001.taskhandler;
 
 import android.util.Log;
 
+import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.SystemCommandHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommandHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommand;
 
@@ -28,14 +29,18 @@ public class TaskDispatcher {
 //        IOT_CONSISTENCY_REQUEST
 //    }
 
-    public enum VoiceTaskContext{
+    public enum VoiceTaskContext {
         EXECUTE_VOICE_COMMAND,
         VOICE_COMMAND_EXECUTED
     }
 
+    public enum SystemTaskContext {
+        EXECUTE_SYSTEM_COMMAND
+    }
+
     private static ArrayList<ITaskDispatcherListener> listeners = new ArrayList<>();
 
-    public static void addListener(ITaskDispatcherListener listener){
+    public static void addListener(ITaskDispatcherListener listener) {
         listeners.add(listener);
     }
 
@@ -47,8 +52,8 @@ public class TaskDispatcher {
                     VoiceCommandHandler voiceCommandHandler = new VoiceCommandHandler(data);
                     voiceCommandHandler.interpreteCommand(voiceResults);
                     try {
-                        for (ITaskDispatcherListener executeVoiceCommandListener : listeners){
-                            Log.d("TaskDispatcher","setBestMatchCommand: "+data.getBestMatchCommand());
+                        for (ITaskDispatcherListener executeVoiceCommandListener : listeners) {
+                            Log.d("TaskDispatcher", "setBestMatchCommand: " + data.getBestMatchCommand());
                             executeVoiceCommandListener.handleDispatchedVoiceCommandExecution(data);//->GUI Update //->Send UDP MSG
                         }
                     } catch (Exception e) {
@@ -61,4 +66,16 @@ public class TaskDispatcher {
         }
     }
 
+    public static void newTask(SystemTaskContext cause, SystemCommandHandler data) {
+        Log.d("TaskDispatcher:", "new task SystemTaskContext");
+        switch (cause) {
+            case EXECUTE_SYSTEM_COMMAND:
+                if (data.getSystemCommandType() != SystemCommandHandler.SystemCommandType.NONE) {
+                    for (ITaskDispatcherListener executeSystemCommandListener : listeners) {
+                        executeSystemCommandListener.handleDispatchedSystemCommandExecution(data);
+                    }
+                }
+                break;
+        }
+    }
 }

@@ -1,5 +1,6 @@
 package com.gesieniec.przemyslaw.aviotsystemv001.taskhandler;
 
+import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.SystemCommandHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommand;
 
 /**
@@ -7,5 +8,6 @@ import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommand;
  */
 
 public interface ITaskDispatcherListener {
-    void handleDispatchedVoiceCommandExecution(VoiceCommand arg);
+    void handleDispatchedVoiceCommandExecution(VoiceCommand voiceCommand);
+    void handleDispatchedSystemCommandExecution(SystemCommandHandler systemCommandHandler);
 }

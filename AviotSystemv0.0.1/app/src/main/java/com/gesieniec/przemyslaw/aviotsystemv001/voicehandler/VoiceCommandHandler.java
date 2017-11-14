@@ -2,6 +2,8 @@ package com.gesieniec.przemyslaw.aviotsystemv001.voicehandler;
 
 import android.util.Log;
 
+import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.CommandDataClass;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,13 +39,15 @@ public class VoiceCommandHandler {
     }
     private void parseVoiceResultToCommand(List<String> capturedVoiceResult){
         Log.d("VoiceCommandHandler","parseVoiceResult");
+        CommandMathResult match = CommandMathResult.NO_MATCH;
         List<String> capturedVoiceResultLowerCase = new ArrayList<>(StringArrayToLowerCase(capturedVoiceResult));
         for (String possibleCommand : capturedVoiceResultLowerCase) {
             Log.d("VoiceCommandHandler","possibleCommand 1: "+possibleCommand);
             /**
              * Try to find keywords in possible command
              */
-            CommandMathResult match = tryMatchWithKeyWords(possibleCommand);
+            match = tryMatchWithKeyWords(possibleCommand);
+
             if(match == CommandMathResult.FULL_MATCH){
                 Log.d("VoiceCommandHandler","full match");
                 voiceCommand.setVoiceCommandType(VoiceCommand.VoiceCommandType.DEVICE_RELATED);
@@ -51,14 +55,14 @@ public class VoiceCommandHandler {
                 Log.d("VoiceCommandHandler","full match possible command: "+possibleCommand);
                 return;
             }
-            else if(match == CommandMathResult.PARTIAL_MATCH){
-                Log.d("VoiceCommandHandler","partial match");
-                Log.d("VoiceCommandHandler","possible command: "+possibleCommand);
-                voiceCommand.setVoiceCommandType(VoiceCommand.VoiceCommandType.DEVICE_RELATED);
-                voiceCommand.setBestMatchCommand(possibleCommand);
-                //TODO: check if is it possible to run partial command
-                return;
-            }
+//            else if(match == CommandMathResult.PARTIAL_MATCH){ //TODO implement
+//                Log.d("VoiceCommandHandler","partial match");
+//                Log.d("VoiceCommandHandler","possible command: "+possibleCommand);
+//                voiceCommand.setVoiceCommandType(VoiceCommand.VoiceCommandType.DEVICE_RELATED);
+//                voiceCommand.setBestMatchCommand(possibleCommand);
+//                //TODO: check if is it possible to run partial command
+//                return;
+//            }
             else if(tryToMachWitchSystemCommands(possibleCommand)){
                 Log.d("VoiceCommandHandler","system command try");
                 voiceCommand.setVoiceCommandType(VoiceCommand.VoiceCommandType.SYSTEM_RELATED);
@@ -66,15 +70,22 @@ public class VoiceCommandHandler {
                 return;
             }
         }
-        if(voiceCommand.getVoiceCommandType() != VoiceCommand.VoiceCommandType.INVALID){
+//        if(voiceCommand.getVoiceCommandType() != VoiceCommand.VoiceCommandType.INVALID){
+//            voiceCommand.setBestMatchCommand(capturedVoiceResultLowerCase.get(0));
+//            //TODO: NEED FIX , NULL IN  USER CONSOLE
+//        }
+        if(match == CommandMathResult.NO_MATCH || match == CommandMathResult.PARTIAL_MATCH){
             voiceCommand.setBestMatchCommand(capturedVoiceResultLowerCase.get(0));
-            //TODO: NEED FIX , NULL IN  USER CONSOLE
         }
     }
 
     private boolean tryToMachWitchSystemCommands(String possibleCommand) {
+        //TODO: these same for polish
+        Log.d("VoiceCommandHandler","tryToMachWitchSystemCommands");
         for(String systemCommand : CommandDataClass.getSystemCommandsENG()){
-            if(systemCommand == possibleCommand){
+            Log.d("SYSTEM COMMAND",systemCommand);
+            Log.d("possibleCommand",possibleCommand);
+            if(systemCommand.equals(possibleCommand)){
                 return true;
             }
         }

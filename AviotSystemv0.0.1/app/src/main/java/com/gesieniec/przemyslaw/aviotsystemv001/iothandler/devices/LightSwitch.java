@@ -1,7 +1,10 @@
 package com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices;
 
+import android.util.Log;
+
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceAction;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceType;
+import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.CommandDataClass;
 
 import java.net.InetAddress;
 import java.util.HashMap;
@@ -28,6 +31,7 @@ public class LightSwitch extends CommonDevice {
     public HashMap<String, DeviceAction> getActionMapPL() {
         return actionMapPL;
     }
+
     @Override
     public DeviceType getDeviceType() {
         return type;
@@ -37,11 +41,13 @@ public class LightSwitch extends CommonDevice {
      */
     public LightSwitch(String name, String location, InetAddress deviceAddress ) {
         super(name,location,deviceAddress);
+        Log.d("LightSwitch: ","NEW LIGHT SWITCH" );
         type = DeviceType.SWITCH;
         state = false;
         actionMapENG = new HashMap<>();
         actionMapPL = new HashMap<>();
         fillActionMap();
+        updateCommonDataClass();
     }
     /**
      * methods
@@ -72,8 +78,15 @@ public class LightSwitch extends CommonDevice {
 
     @Override
     public String toString() {
-        return "LightSwitch{}";
+        return "LightSwitch";
     }
+    @Override
+    public void updateCommonDataClass() {
+        CommandDataClass.getActionsListENG().addAll(actionMapENG.keySet());
+        CommandDataClass.getDevicesListENG().add(name);
+        CommandDataClass.getPlacesListENG().add(location);
 
+        //TODO: Polish commands
+    }
 
 }

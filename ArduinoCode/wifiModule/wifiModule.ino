@@ -44,7 +44,7 @@ void setup() {
   Serial.println(local_ip);
   Udp.begin(localPort);
   Serial.print("UDP begun");
-  WaitForApplicationAttach();
+ // WaitForApplicationAttach();
 }
 
 void loop() {

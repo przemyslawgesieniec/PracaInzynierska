@@ -1,4 +1,4 @@
-package com.gesieniec.przemyslaw.aviotsystemv001.voicehandler;
+package com.gesieniec.przemyslaw.aviotsystemv001.systemhandler;
 
 import java.util.ArrayList;
 
@@ -66,6 +66,7 @@ public final class CommandDataClass {
         return systemCommandsPL;
     }
 
+
     public static void initializeCommandsData() {
 
         /**
@@ -77,7 +78,7 @@ public final class CommandDataClass {
         devicesListENG = new ArrayList<>();
         negationENG = new ArrayList<>();
         fillDefaultFullCommandsListENG();
-        fillActionsListENG();
+        //fillActionsListENG();
         fillNegationListENG();
 
 
@@ -90,13 +91,13 @@ public final class CommandDataClass {
         devicesListPL = new ArrayList<>();
         negationPL = new ArrayList<>();
         fillDefaultFullCommandsListPL();
-        fillActionsListPL();
+        //fillActionsListPL();
         fillNegationListPL();
 
         /**
          * stubs
          */
-        fillstubsENG();
+        //fillstubsENG();
     }
 
     /**
@@ -104,16 +105,20 @@ public final class CommandDataClass {
      */
     private static void fillDefaultFullCommandsListENG()
     {
-        systemCommandsENG.add("Get status");
-        systemCommandsENG.add("Check status");
-        systemCommandsENG.add("Show status");
-        systemCommandsENG.add("Show connected devices");
+        systemCommandsENG.add("get status");
+        systemCommandsENG.add("check status");
+        systemCommandsENG.add("show status");
+        systemCommandsENG.add("show connected devices");
+        systemCommandsENG.add("handle both languages");
+        systemCommandsENG.add("switch to polish");
+        systemCommandsENG.add("switch to english");
+
     }
-    private static void fillActionsListENG()
-    {
-        actionsListENG.add("turn on");
-        actionsListENG.add("turn off");
-    }
+//    private static void fillActionsListENG()
+//    {
+//        actionsListENG.add("turn on");
+//        actionsListENG.add("turn off");
+//    }
     private static void fillNegationListENG(){
         negationENG.add("do not");
         negationENG.add("don't");
@@ -125,8 +130,17 @@ public final class CommandDataClass {
      * Polish embedded commands
      */
     private static void fillDefaultFullCommandsListPL() {
-        systemCommandsPL.add("Podaj status");
-        systemCommandsPL.add("Sprawdź status");
+        systemCommandsPL.add("podaj status");
+        systemCommandsPL.add("sprawdź status");
+
+        //TODO: split this
+        systemCommandsPL.add("przejdź na polski");
+        systemCommandsPL.add("przejdź na angielski");
+        systemCommandsPL.add("zmień na polski");
+        systemCommandsPL.add("zmień na angielski");
+        systemCommandsPL.add("przełącz na polski");
+        systemCommandsPL.add("przełącz na angielski");
+
 
     }
     private static void fillActionsListPL() {

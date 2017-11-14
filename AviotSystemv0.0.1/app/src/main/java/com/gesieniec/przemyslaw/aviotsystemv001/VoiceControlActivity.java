@@ -1,6 +1,5 @@
 package com.gesieniec.przemyslaw.aviotsystemv001;
 
-import android.content.res.ColorStateList;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -9,16 +8,13 @@ import android.util.Log;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceAction;
-import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceHandler;
-import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.MessageHandler;
+import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.ApplicationContext;
+import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.SystemCommandHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.taskhandler.ITaskDispatcherListener;
 import com.gesieniec.przemyslaw.aviotsystemv001.taskhandler.TaskDispatcher;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommand;
-import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceRecognition;
-import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.CommandDataClass;
+
 public class VoiceControlActivity extends AppCompatActivity implements ITaskDispatcherListener{
 
     private boolean aviotButtonState = false;
@@ -29,9 +25,9 @@ public class VoiceControlActivity extends AppCompatActivity implements ITaskDisp
         setContentView(R.layout.activity_voice_control);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        applicationContext = new ApplicationContext(this);
         TaskDispatcher.addListener(this);
+        applicationContext = new ApplicationContext(this);
+
     }
 
     public void onClickStartStopCapturing(View view) {
@@ -49,11 +45,12 @@ public class VoiceControlActivity extends AppCompatActivity implements ITaskDisp
         }
     }
 
+    //TODO: REFACTOR THIS !!!!
     @Override
     public void handleDispatchedVoiceCommandExecution(VoiceCommand arg) {
         TextView t = new TextView(this);
         LinearLayout ll = (LinearLayout)findViewById(R.id.ll_console);
-        t.setText("You>>  "+arg.getBestMatchCommand());
+        t.setText("You:  "+arg.getBestMatchCommand());
         Log.d("VoiceCommandActivity","setBestMatchCommand: "+arg.getBestMatchCommand());
         if((arg.getVoiceCommandType() != VoiceCommand.VoiceCommandType.INVALID)){
             t.setTextColor(Color.rgb(255,255,255));
@@ -61,13 +58,24 @@ public class VoiceControlActivity extends AppCompatActivity implements ITaskDisp
         }
         else{
             TextView systemResponse = new TextView(this);
-            systemResponse.setText("AVIOT>>  I can not do that");
+            systemResponse.setText("AVIOT:  I can not do that");
             t.setTextColor(Color.rgb(255,255,40));
             systemResponse.setTextColor(Color.rgb(114,156,239));
             ll.addView(t);
             ll.addView(systemResponse);
         }
     }
+
+    @Override
+    public void handleDispatchedSystemCommandExecution(SystemCommandHandler systemCommandHandler) {
+        Log.d("VoiceCommandActivity","handleDispatchedSystemCommandExecution");
+        TextView systemResponse = new TextView(this);
+        LinearLayout ll = (LinearLayout)findViewById(R.id.ll_console);
+        systemResponse.setTextColor(Color.rgb(114,156,239));
+        systemResponse.setText(systemCommandHandler.getSystemAnswer());
+        ll.addView(systemResponse);
+    }
+
     public void setAviotButtonState(boolean aviotButtonState) {
         this.aviotButtonState = aviotButtonState;
     }

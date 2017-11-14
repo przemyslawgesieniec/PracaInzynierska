@@ -2,8 +2,9 @@ package com.gesieniec.przemyslaw.aviotsystemv001.iothandler;
 
 import android.util.Log;
 
-import com.gesieniec.przemyslaw.aviotsystemv001.ApplicationContext;
+import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.ApplicationContext;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.CommonDevice;
+import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.SystemCommandHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.taskhandler.ITaskDispatcherListener;
 import com.gesieniec.przemyslaw.aviotsystemv001.taskhandler.TaskDispatcher;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommand;
@@ -17,23 +18,23 @@ import java.util.List;
 
 public class DeviceHandler implements ITaskDispatcherListener {
 
+    @Override
+    public void handleDispatchedVoiceCommandExecution(VoiceCommand voiceCommand) {
+        if(voiceCommand.getVoiceCommandType() == VoiceCommand.VoiceCommandType.DEVICE_RELATED){
+            sendMessageToRelatedDevice(voiceCommand);
+            Log.d("DeviceHandler","message sent (STUB)");
+        }
+    }
+
     public DeviceHandler() {
         TaskDispatcher.addListener(this);
     }
 
     @Override
-    public void handleDispatchedVoiceCommandExecution(VoiceCommand voiceCommand) {
-        if(voiceCommand.getVoiceCommandType() == VoiceCommand.VoiceCommandType.DEVICE_RELATED){
-            //sendMessageToRelatedDevice(voiceCommand);
-            Log.d("DeviceHandler","message sent (STUB)");
-        }
-        else if(voiceCommand.getVoiceCommandType() == VoiceCommand.VoiceCommandType.SYSTEM_RELATED){
-            if(checkIfNeedDeviceAction()){
-                //TODO: device action for system related commands
-            }
-        }
-
+    public void handleDispatchedSystemCommandExecution(SystemCommandHandler systemCommandHandler) {
+        //TODO implement sth when system command need device action
     }
+
     private List<CommonDevice> getDevicesByNameFromTheCommand(String deviceNameFromCommand){
 
         List<CommonDevice> commonDeviceArrayList = new ArrayList<>();
@@ -78,7 +79,5 @@ public class DeviceHandler implements ITaskDispatcherListener {
             Log.d("DeviceHandler","no device with this name");
         }
     }
-    private boolean checkIfNeedDeviceAction(){
-        return false;
-    }
+
 }

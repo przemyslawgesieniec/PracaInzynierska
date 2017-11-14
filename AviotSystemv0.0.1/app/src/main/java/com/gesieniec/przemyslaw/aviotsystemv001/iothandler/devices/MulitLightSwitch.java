@@ -53,7 +53,7 @@ public class MulitLightSwitch extends CommonDevice {
 
     @Override
     public String toString() {
-        return "MultiLightSwitch{}";
+        return "MultiLightSwitch";
     }
 
     @Override
@@ -69,5 +69,10 @@ public class MulitLightSwitch extends CommonDevice {
     @Override
     public HashMap<String, DeviceAction> getActionMapPL() {
         return null;
+    }
+
+    @Override
+    public void updateCommonDataClass() {
+        //TODO: implement
     }
 }

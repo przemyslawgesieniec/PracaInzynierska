@@ -1,12 +1,11 @@
-package com.gesieniec.przemyslaw.aviotsystemv001;
+package com.gesieniec.przemyslaw.aviotsystemv001.systemhandler;
 
 import android.util.Log;
 
+import com.gesieniec.przemyslaw.aviotsystemv001.VoiceControlActivity;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.CommonDevice;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.LightSwitch;
-import com.gesieniec.przemyslaw.aviotsystemv001.taskhandler.TaskDispatcher;
-import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.CommandDataClass;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceRecognition;
 
 import java.net.InetAddress;
@@ -19,8 +18,15 @@ import java.util.ArrayList;
 
 public final class ApplicationContext {
 
+    /**
+     * fields
+     */
     private DeviceHandler deviceHandler;
     private VoiceRecognition voiceRecognition;
+    private static ArrayList<CommonDevice> commonDevices;
+    private SystemCommandHandler systemCommandHandler;
+
+
     public ApplicationContext(VoiceControlActivity voiceControlActivity) {
         /**
          * Initialize all commands available in application
@@ -28,26 +34,33 @@ public final class ApplicationContext {
         CommandDataClass.initializeCommandsData();
         deviceHandler = new DeviceHandler();
         voiceRecognition = new VoiceRecognition(voiceControlActivity);
-
+        commonDevices = new ArrayList<>();
+        systemCommandHandler = new SystemCommandHandler();
         //TODO : remove STUB
-       // STUBDEVICEMETHOD();
+        STUBDEVICEMETHOD();
     }
 
+    /**
+     * getters
+     */
     public static ArrayList<CommonDevice> getCommonDevices() {
         return commonDevices;
     }
-
-    public static void addCommonDevices(CommonDevice commonDevice) {
-        ApplicationContext.commonDevices.add(commonDevice);
-    }
-
-    private static ArrayList<CommonDevice> commonDevices;
-
     public VoiceRecognition getVoiceRecognition() {
         return voiceRecognition;
     }
 
+    /**
+     * methods
+     */
+    public static void addCommonDevices(CommonDevice commonDevice) {
+        ApplicationContext.commonDevices.add(commonDevice);
+    }
 
+
+    /**
+     * STUBS
+     */
     //TODO: remove this after tests
     private void STUBDEVICEMETHOD(){
         InetAddress address = null;
