@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.messagehandler.BroadcastListener;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.ApplicationContext;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.SystemCommandHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.taskhandler.ITaskDispatcherListener;
@@ -27,7 +28,7 @@ public class VoiceControlActivity extends AppCompatActivity implements ITaskDisp
         setSupportActionBar(toolbar);
         TaskDispatcher.addListener(this);
         applicationContext = new ApplicationContext(this);
-
+        new BroadcastListener().execute("");
     }
 
     public void onClickStartStopCapturing(View view) {

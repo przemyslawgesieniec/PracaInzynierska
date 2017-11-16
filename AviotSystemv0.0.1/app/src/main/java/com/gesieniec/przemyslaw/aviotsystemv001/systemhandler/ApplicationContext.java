@@ -37,7 +37,7 @@ public final class ApplicationContext {
         commonDevices = new ArrayList<>();
         systemCommandHandler = new SystemCommandHandler();
         //TODO : remove STUB
-        STUBDEVICEMETHOD();
+       // STUBDEVICEMETHOD();
     }
 
     /**
@@ -46,6 +46,7 @@ public final class ApplicationContext {
     public static ArrayList<CommonDevice> getCommonDevices() {
         return commonDevices;
     }
+
     public VoiceRecognition getVoiceRecognition() {
         return voiceRecognition;
     }
@@ -62,19 +63,18 @@ public final class ApplicationContext {
      * STUBS
      */
     //TODO: remove this after tests
-    private void STUBDEVICEMETHOD(){
+    private void STUBDEVICEMETHOD() {
         InetAddress address = null;
         try {
-            address = InetAddress.getByAddress(new byte[] {
-                    (byte)192, (byte)168, (byte)1, (byte)101});
+            address = InetAddress.getByAddress(new byte[]{
+                    (byte) 192, (byte) 168, (byte) 1, (byte) 101});
 //            address = InetAddress.getByAddress(new byte[] {
 //                    (byte)172, (byte)217, (byte)23, (byte)164});
-            CommonDevice ls = new LightSwitch("light","kitchen",address); //TODO OGARNAC CZEMU MAM TU NULL W ADRESIE !
+            CommonDevice ls = new LightSwitch("light", "kitchen", address); //TODO OGARNAC CZEMU MAM TU NULL W ADRESIE !
             addCommonDevices(ls);
-        }
-        catch (UnknownHostException e) {
+        } catch (UnknownHostException e) {
             e.printStackTrace();
         }
-        if(address!=null) Log.d("ApplicationContext","STUB device added");
+        if (address != null) Log.d("ApplicationContext", "STUB device added");
     }
 }

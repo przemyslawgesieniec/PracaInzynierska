@@ -13,7 +13,7 @@ unsigned int localPort = 2390;
 
 //const char* ssid = "DESKTOP_WIFI";
 //const char* pass = "przemek123";
-
+//
 const char* ssid = "PENTAGRAM_P6362";
 const char* pass = "#mopsik123";
 
@@ -46,7 +46,7 @@ void setup() {
   Serial.println(local_ip);
   Udp.begin(localPort);
   Serial.print("UDP begun");
-  //WaitForApplicationAttach();
+  WaitForApplicationAttach();
 }
 
 void loop() {
@@ -120,10 +120,9 @@ void SendAReply()
 
 void SendAttachRequest()
 {
-  IPAddress buba(192, 168, 137, 1);
   char attachRequestMsg[] = "AttachRequest";
   Serial.println("Send AttachRequest");
-  Udp.beginPacket(buba, 11000);
+  Udp.beginPacket(broadcastIp, 11000);
   Udp.write(attachRequestMsg);
   Udp.endPacket();
 }

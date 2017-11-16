@@ -2,6 +2,7 @@ package com.gesieniec.przemyslaw.aviotsystemv001.iothandler;
 
 import android.util.Log;
 
+import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.messagehandler.MessageHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.ApplicationContext;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.CommonDevice;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.SystemCommandHandler;
