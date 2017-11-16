@@ -19,18 +19,16 @@ import java.net.UnknownHostException;
 
 public class MessageHandler  {
 
-    private static DatagramSocket socket;
+    private DatagramSocket socket;
 
-    public static void sendUDPMessage(String message, InetAddress address) {
+    public void sendUDPMessage(String message, InetAddress address) {
         try {
-            //byte[] addressBytes = new byte[] {(byte)192, (byte) 168, (byte) 1,(byte) 128};
             socket = new DatagramSocket();
-            DatagramPacket packet = stringToDatagramPacket(message);
-            packet.setAddress(address);
-            //packet.setAddress(Inet4Address.getByAddress(addressBytes));
-            packet.setPort(11000);
-            packet.setData(message.getBytes());
+            byte[] buf = message.getBytes();
+            DatagramPacket packet
+                    = new DatagramPacket(buf, buf.length, address, 2390);
             socket.send(packet);
+            socket.close();
         }
         catch (SocketException e) {
             e.printStackTrace();
@@ -42,7 +40,7 @@ public class MessageHandler  {
             e.printStackTrace();
         }
     }
-    private static DatagramPacket stringToDatagramPacket(String s) {
+    private DatagramPacket stringToDatagramPacket(String s) {
         byte[] bytes = s.getBytes();
         DatagramPacket packet = new DatagramPacket(bytes,bytes.length);
         return packet;

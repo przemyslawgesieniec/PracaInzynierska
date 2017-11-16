@@ -11,15 +11,17 @@ const int attachRequestResendTimer = 4000;
 byte readCommand(int timeout, const char* text1 = NULL, const char* text2 = NULL);
 unsigned int localPort = 2390;
 
-const char* ssid = "DESKTOP_WIFI";
-const char* pass = "przemek123";
+//const char* ssid = "DESKTOP_WIFI";
+//const char* pass = "przemek123";
+
+const char* ssid = "PENTAGRAM_P6362";
+const char* pass = "#mopsik123";
 
 String ReplyBuffer = "empty";
 
 IPAddress broadcastIp(255, 255, 255, 255);
 
 WiFiUDP Udp;
-
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
@@ -44,23 +46,25 @@ void setup() {
   Serial.println(local_ip);
   Udp.begin(localPort);
   Serial.print("UDP begun");
- // WaitForApplicationAttach();
+  //WaitForApplicationAttach();
 }
 
 void loop() {
   if (WiFi.status() == WL_CONNECTED)
- {
+  {
     String msg = receiveUDPPacket();
-    if (msg == "10")
+    if (msg == "LightSwitchON")
     {
       msg = "";
       digitalWrite(2, HIGH);
+      Serial.print("Light on: ");
       ReplyBuffer = "10";
       SendAReply();
     }
-    if (msg == "11")
+    if (msg == "LightSwitchOFF")
     {
       msg = "";
+      Serial.print("Light off: ");
       digitalWrite(2, LOW);
       ReplyBuffer = "11";
       SendAReply();
@@ -104,29 +108,31 @@ void SendAReply()
   Serial.print("replyMsgLenght:");
   Serial.println(replyMsgLenght);
   char *replyMsg = new char[replyMsgLenght];
-  ReplyBuffer.toCharArray(replyMsg, replyMsgLenght+1);
+  ReplyBuffer.toCharArray(replyMsg, replyMsgLenght + 1);
   Serial.println(replyMsg);
-   Serial.println(*replyMsg);
-  
+  Serial.println(*replyMsg);
+
   Udp.write(replyMsg);
   delete [] replyMsg;
   ReplyBuffer = "empty";
   Udp.endPacket();
 }
+
 void SendAttachRequest()
 {
+  IPAddress buba(192, 168, 137, 1);
   char attachRequestMsg[] = "AttachRequest";
   Serial.println("Send AttachRequest");
-  Udp.beginPacket(broadcastIp, 11000);
+  Udp.beginPacket(buba, 11000);
   Udp.write(attachRequestMsg);
   Udp.endPacket();
 }
 void WaitForApplicationAttach()
 {
-  while(true)
+  while (true)
   {
     unsigned long currentTimerStatus = millis();
-    if (currentTimerStatus - oldTimerStatus >= attachRequestResendTimer) 
+    if (currentTimerStatus - oldTimerStatus >= attachRequestResendTimer)
     {
       oldTimerStatus = currentTimerStatus;
       SendAttachRequest();

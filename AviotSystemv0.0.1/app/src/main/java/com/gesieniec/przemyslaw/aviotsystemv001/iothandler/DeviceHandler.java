@@ -70,7 +70,8 @@ public class DeviceHandler implements ITaskDispatcherListener {
                 String message = device.toString().concat(deviceAction);
                 if(message != null){
                     Log.d("DeviceHandler","msg: "+message);
-                    MessageHandler.sendUDPMessage(message,device.getDeviceAddress());
+                    MessageHandler msgHandler = new MessageHandler();
+                    msgHandler.sendUDPMessage(message,device.getDeviceAddress());
                     Log.d("MessageHandler","message sent");
                 }
             }
