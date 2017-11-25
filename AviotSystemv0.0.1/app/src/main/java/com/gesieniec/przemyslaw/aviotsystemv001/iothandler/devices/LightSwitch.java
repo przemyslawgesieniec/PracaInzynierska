@@ -39,8 +39,8 @@ public class LightSwitch extends CommonDevice {
     /**
      * ctor
      */
-    public LightSwitch(String name, String location, InetAddress deviceAddress ) {
-        super(name,location,deviceAddress);
+    public LightSwitch(String name, String location, InetAddress deviceAddress, String macAddress ) {
+        super(name,location,deviceAddress,macAddress);
         Log.d("LightSwitch: ","NEW LIGHT SWITCH" );
         type = DeviceType.SWITCH;
         state = false;

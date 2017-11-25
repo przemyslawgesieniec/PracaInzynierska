@@ -19,6 +19,7 @@ public abstract class CommonDevice {
     protected String name;
     protected String location;
     protected InetAddress deviceAddress;
+    protected String macAddress;
     protected HashMap<String,DeviceAction> actionMapENG;
     protected HashMap<String,DeviceAction> actionMapPL;
 
@@ -34,11 +35,15 @@ public abstract class CommonDevice {
     public InetAddress getDeviceAddress() {
         return deviceAddress;
     }
+    public String getMacAddress() {
+        return macAddress;
+    }
 
-    public CommonDevice(String name, String location,InetAddress deviceAddress) {
+    public CommonDevice(String name, String location,InetAddress deviceAddress,String macAddress) {
         this.name = name;
         this.location = location;
         this.deviceAddress = deviceAddress;
+        this.macAddress = macAddress;
         Log.d("CommonDevice: ","New device:" );
     }
     public abstract DeviceType getDeviceType();

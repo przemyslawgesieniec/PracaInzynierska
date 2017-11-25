@@ -1,4 +1,4 @@
-package com.gesieniec.przemyslaw.aviotsystemv001.taskhandler;
+package com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher;
 
 import android.util.Log;
 
@@ -6,6 +6,7 @@ import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.SystemCommandHandl
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommandHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommand;
 
+import java.net.DatagramPacket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,6 +37,12 @@ public class TaskDispatcher {
 
     public enum SystemTaskContext {
         EXECUTE_SYSTEM_COMMAND
+    }
+
+    public enum IoTTaskContext {
+        LISTEN_TO_BROADCAST,
+        ATTACH_REQUEST,
+        ATTACH_COMPLETE
     }
 
     private static ArrayList<ITaskDispatcherListener> listeners = new ArrayList<>();
@@ -76,6 +83,26 @@ public class TaskDispatcher {
                     }
                 }
                 break;
+        }
+    }
+
+    public static void newTask(IoTTaskContext cause, DatagramPacket data) {
+        switch(cause){
+            case ATTACH_REQUEST:
+                Log.d("TaskDispatcher:", "new task IoTCommand");
+                for (ITaskDispatcherListener executeSystemCommandListener : listeners) {
+                    executeSystemCommandListener.handleDispatchedIoTCommandExecution(data);
+                }
+
+
+        }
+    }
+    public static void newTask(IoTTaskContext cause, String data) {
+        switch (cause) {
+            case ATTACH_COMPLETE:
+                for (ITaskDispatcherListener executeSystemCommandListener : listeners) {
+                    executeSystemCommandListener.handleDispatchedIoTCommandExecution(data);
+                }
         }
     }
 }

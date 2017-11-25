@@ -1,20 +1,15 @@
 package com.gesieniec.przemyslaw.aviotsystemv001.voicehandler;
 
-import android.annotation.SuppressLint;
 import android.content.Intent;
-import android.os.Build;
 import android.os.Bundle;
 import android.speech.RecognitionListener;
 import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
-import android.support.annotation.RequiresApi;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.gesieniec.przemyslaw.aviotsystemv001.VoiceControlActivity;
-import com.gesieniec.przemyslaw.aviotsystemv001.taskhandler.TaskDispatcher;
+import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.TaskDispatcher;
 
-import java.util.ArrayList;
 import java.util.Locale;
 
 /**

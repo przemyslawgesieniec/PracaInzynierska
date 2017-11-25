@@ -1,11 +1,14 @@
 package com.gesieniec.przemyslaw.aviotsystemv001.systemhandler;
 
+import android.os.AsyncTask;
+import android.os.Build;
 import android.util.Log;
 
 import com.gesieniec.przemyslaw.aviotsystemv001.VoiceControlActivity;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.CommonDevice;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.LightSwitch;
+import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.messagehandler.BroadcastListener;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceRecognition;
 
 import java.net.InetAddress;
@@ -36,6 +39,16 @@ public final class ApplicationContext {
         voiceRecognition = new VoiceRecognition(voiceControlActivity);
         commonDevices = new ArrayList<>();
         systemCommandHandler = new SystemCommandHandler();
+
+        //TODO: move to taskDispatcher (on application start)
+        BroadcastListener asyncTask = new BroadcastListener();
+        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB){ // Above Api Level 13
+            asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        }
+        else{ // Below Api Level 13
+            asyncTask.execute();
+        }
+
         //TODO : remove STUB
        // STUBDEVICEMETHOD();
     }
@@ -54,7 +67,7 @@ public final class ApplicationContext {
     /**
      * methods
      */
-    public static void addCommonDevices(CommonDevice commonDevice) {
+    public static void addCommonDevice(CommonDevice commonDevice) {
         ApplicationContext.commonDevices.add(commonDevice);
     }
 
@@ -70,8 +83,8 @@ public final class ApplicationContext {
                     (byte) 192, (byte) 168, (byte) 1, (byte) 101});
 //            address = InetAddress.getByAddress(new byte[] {
 //                    (byte)172, (byte)217, (byte)23, (byte)164});
-            CommonDevice ls = new LightSwitch("light", "kitchen", address); //TODO OGARNAC CZEMU MAM TU NULL W ADRESIE !
-            addCommonDevices(ls);
+            CommonDevice ls = new LightSwitch("light", "kitchen", address,"iljbdflijasbdfjasbdf"); //TODO OGARNAC CZEMU MAM TU NULL W ADRESIE !
+            addCommonDevice(ls);
         } catch (UnknownHostException e) {
             e.printStackTrace();
         }

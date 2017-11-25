@@ -5,5 +5,5 @@ package com.gesieniec.przemyslaw.aviotsystemv001.iothandler;
  */
 
 public enum DeviceType {
-    SWITCH,MULTI_SWITCH;
+    SWITCH,MULTI_SWITCH,NONE;
 }

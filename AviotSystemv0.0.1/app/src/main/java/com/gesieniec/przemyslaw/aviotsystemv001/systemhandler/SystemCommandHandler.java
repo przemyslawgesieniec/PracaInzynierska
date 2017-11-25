@@ -3,10 +3,11 @@ package com.gesieniec.przemyslaw.aviotsystemv001.systemhandler;
 import android.util.Log;
 
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.CommonDevice;
-import com.gesieniec.przemyslaw.aviotsystemv001.taskhandler.ITaskDispatcherListener;
-import com.gesieniec.przemyslaw.aviotsystemv001.taskhandler.TaskDispatcher;
+import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.ITaskDispatcherListener;
+import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.TaskDispatcher;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommand;
 
+import java.net.DatagramPacket;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -77,6 +78,14 @@ public class SystemCommandHandler implements ITaskDispatcherListener {
         /**
          * DO NOT IMPLEMENT HERE
          */
+    }
+
+    @Override
+    public void handleDispatchedIoTCommandExecution(DatagramPacket datagramPacket) {}
+
+    @Override
+    public void handleDispatchedIoTCommandExecution(String capabilities) {
+
     }
 
 }

@@ -9,17 +9,21 @@ unsigned long oldTimerStatus = 0;
 const int attachRequestResendTimer = 4000;
 
 byte readCommand(int timeout, const char* text1 = NULL, const char* text2 = NULL);
+
+unsigned int broadcastPort = 11000;
 unsigned int localPort = 2390;
+String mac = "";
+String deviceType = "Switch";
 
 //const char* ssid = "DESKTOP_WIFI";
 //const char* pass = "przemek123";
-//
+
 const char* ssid = "PENTAGRAM_P6362";
 const char* pass = "#mopsik123";
 
 String ReplyBuffer = "empty";
 
-IPAddress broadcastIp(255, 255, 255, 255);
+IPAddress broadcastIp(192, 168, 1, 255);
 
 WiFiUDP Udp;
 
@@ -31,6 +35,7 @@ void setup() {
   Serial.println("");
   Serial.println("Starting module ESP01-0");
 
+
   WiFi.begin(ssid, pass);
   while (WiFi.waitForConnectResult() != WL_CONNECTED)
   {
@@ -40,7 +45,13 @@ void setup() {
   Serial.println("");
   Serial.println("Device is connected to the network");
 
+  unsigned char mac_char[6];
+  WiFi.macAddress(mac_char);
+  mac += macToStr(mac_char);
 
+  Serial.print("MAC:");
+  Serial.println(mac);
+  
   IPAddress local_ip = WiFi.localIP();
   Serial.print("IP address: ");
   Serial.println(local_ip);
@@ -122,7 +133,7 @@ void SendAttachRequest()
 {
   char attachRequestMsg[] = "AttachRequest";
   Serial.println("Send AttachRequest");
-  Udp.beginPacket(broadcastIp, 11000);
+  Udp.beginPacket(broadcastIp, broadcastPort);
   Udp.write(attachRequestMsg);
   Udp.endPacket();
 }
@@ -137,14 +148,16 @@ void WaitForApplicationAttach()
       SendAttachRequest();
     }
     String msg = receiveUDPPacket();
-    if (msg == "YouAreConnected")
+    if (msg == "CapabilityRequest")
     {
       msg = "";
+      SendDeviceCapabilities();
       HardwareSignalizeConnection();
       break;
     }
   }
 }
+
 void HardwareSignalizeConnection()
 {
   Serial.println("Device attached to application correctly");
@@ -155,5 +168,33 @@ void HardwareSignalizeConnection()
     digitalWrite(LED_BUILTIN, LOW);
     delay(100);
   }
+}
+
+void SendDeviceCapabilities()
+{
+  String caps = getCapabilities();
+  const char *capabilityMsg = caps.c_str();
+  Serial.println("Send Capabilities");
+  Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+  Udp.write(capabilityMsg);
+  Udp.endPacket();
+}
+
+String macToStr(const uint8_t* mac)
+{
+  String result;
+  for (int i = 0; i < 6; ++i) {
+    result += String(mac[i], 16);
+    if (i < 5)
+      result += ':';
+  }
+  return result;
+}
+
+String getCapabilities()
+{
+  String capabilities = deviceType; 
+  capabilities += ";"+mac;
+  return capabilities;
 }
 

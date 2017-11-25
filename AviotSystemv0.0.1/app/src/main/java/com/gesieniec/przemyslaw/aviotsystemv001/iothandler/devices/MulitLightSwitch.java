@@ -19,8 +19,8 @@ public class MulitLightSwitch extends CommonDevice {
     private ArrayList<String> triggeringONCommandsPL;
     private ArrayList<String> triggeringOFFCommandsPL;
 
-    public MulitLightSwitch(ArrayList<Boolean> switchStatusList, String name, String location, InetAddress deviceAddress) {
-        super(name,location,deviceAddress);
+    public MulitLightSwitch(ArrayList<Boolean> switchStatusList, String name, String location, InetAddress deviceAddress,String macAddress) {
+        super(name,location,deviceAddress,macAddress);
         this.switchStatusList = switchStatusList;
         fillTriggeringCommandsList();
 

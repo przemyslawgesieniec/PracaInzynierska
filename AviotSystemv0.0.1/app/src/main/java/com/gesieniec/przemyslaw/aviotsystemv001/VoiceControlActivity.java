@@ -9,12 +9,13 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.messagehandler.BroadcastListener;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.ApplicationContext;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.SystemCommandHandler;
-import com.gesieniec.przemyslaw.aviotsystemv001.taskhandler.ITaskDispatcherListener;
-import com.gesieniec.przemyslaw.aviotsystemv001.taskhandler.TaskDispatcher;
+import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.ITaskDispatcherListener;
+import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.TaskDispatcher;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommand;
+
+import java.net.DatagramPacket;
 
 public class VoiceControlActivity extends AppCompatActivity implements ITaskDispatcherListener{
 
@@ -28,7 +29,8 @@ public class VoiceControlActivity extends AppCompatActivity implements ITaskDisp
         setSupportActionBar(toolbar);
         TaskDispatcher.addListener(this);
         applicationContext = new ApplicationContext(this);
-        new BroadcastListener().execute("");
+
+
     }
 
     public void onClickStartStopCapturing(View view) {
@@ -69,15 +71,30 @@ public class VoiceControlActivity extends AppCompatActivity implements ITaskDisp
 
     @Override
     public void handleDispatchedSystemCommandExecution(SystemCommandHandler systemCommandHandler) {
+        writeAviotMessage(systemCommandHandler.getSystemAnswer());
         Log.d("VoiceCommandActivity","handleDispatchedSystemCommandExecution");
-        TextView systemResponse = new TextView(this);
-        LinearLayout ll = (LinearLayout)findViewById(R.id.ll_console);
-        systemResponse.setTextColor(Color.rgb(114,156,239));
-        systemResponse.setText(systemCommandHandler.getSystemAnswer());
-        ll.addView(systemResponse);
     }
 
     public void setAviotButtonState(boolean aviotButtonState) {
         this.aviotButtonState = aviotButtonState;
+    }
+
+    @Override
+    public void handleDispatchedIoTCommandExecution(DatagramPacket datagramPacket) {
+        Log.d("VoiceCommandActivity","New device trying to connect");
+        writeAviotMessage("New device trying to connect");
+    }
+
+    @Override
+    public void handleDispatchedIoTCommandExecution(String capabilities) {
+        writeAviotMessage("New device connected");
+    }
+
+    private void writeAviotMessage(String msg){
+        TextView systemResponse = new TextView(this);
+        LinearLayout ll = (LinearLayout)findViewById(R.id.ll_console);
+        systemResponse.setTextColor(Color.rgb(114,156,239));
+        systemResponse.setText(msg);
+        ll.addView(systemResponse);
     }
 }
