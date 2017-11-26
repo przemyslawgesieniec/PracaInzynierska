@@ -4,6 +4,7 @@ import android.os.AsyncTask;
 import android.os.Build;
 import android.util.Log;
 
+import com.gesieniec.przemyslaw.aviotsystemv001.MainActivity;
 import com.gesieniec.przemyslaw.aviotsystemv001.VoiceControlActivity;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.CommonDevice;
@@ -30,13 +31,13 @@ public final class ApplicationContext {
     private SystemCommandHandler systemCommandHandler;
 
 
-    public ApplicationContext(VoiceControlActivity voiceControlActivity) {
+    public ApplicationContext(MainActivity mainActivity) {
         /**
          * Initialize all commands available in application
          */
         CommandDataClass.initializeCommandsData();
         deviceHandler = new DeviceHandler();
-        voiceRecognition = new VoiceRecognition(voiceControlActivity);
+        voiceRecognition = new VoiceRecognition(mainActivity);
         commonDevices = new ArrayList<>();
         systemCommandHandler = new SystemCommandHandler();
 

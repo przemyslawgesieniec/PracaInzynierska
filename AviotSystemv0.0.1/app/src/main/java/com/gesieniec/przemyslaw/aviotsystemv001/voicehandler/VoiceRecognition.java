@@ -7,6 +7,7 @@ import android.speech.RecognizerIntent;
 import android.speech.SpeechRecognizer;
 import android.util.Log;
 
+import com.gesieniec.przemyslaw.aviotsystemv001.MainActivity;
 import com.gesieniec.przemyslaw.aviotsystemv001.VoiceControlActivity;
 import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.TaskDispatcher;
 
@@ -18,7 +19,7 @@ import java.util.Locale;
 
 public class VoiceRecognition implements RecognitionListener {
 
-    private VoiceControlActivity vca;
+    private MainActivity mainActivity;
 
     public SpeechRecognizer getSpeechRecognizer() {
         return speechRecognizer;
@@ -32,14 +33,14 @@ public class VoiceRecognition implements RecognitionListener {
 
     private Intent speechRecognizerIntent;
 
-    public VoiceRecognition(VoiceControlActivity vca) {
-        this.vca = vca;
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(vca);
+    public VoiceRecognition(MainActivity mainActivity) {
+        this.mainActivity = mainActivity;
+        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(mainActivity);
         speechRecognizer.setRecognitionListener(this);
         speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
         speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,vca.getPackageName());
+        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,mainActivity.getPackageName());
     }
 
     @Override
@@ -56,7 +57,7 @@ public class VoiceRecognition implements RecognitionListener {
 
     @Override
     public void onEndOfSpeech() {
-        vca.setAviotButtonState(false);
+        mainActivity.setAviotButtonState(false);
     }
 
     @Override
@@ -72,7 +73,7 @@ public class VoiceRecognition implements RecognitionListener {
             TaskDispatcher.newTask(TaskDispatcher.VoiceTaskContext.EXECUTE_VOICE_COMMAND,
                     new VoiceCommand(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)));
         }
-        vca.setAviotButtonState(false);
+        mainActivity.setAviotButtonState(false);
     }
 
     @Override
