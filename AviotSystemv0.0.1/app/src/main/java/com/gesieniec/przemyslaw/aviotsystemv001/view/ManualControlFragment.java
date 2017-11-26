@@ -1,10 +1,12 @@
-package com.gesieniec.przemyslaw.aviotsystemv001;
+package com.gesieniec.przemyslaw.aviotsystemv001.view;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.gesieniec.przemyslaw.aviotsystemv001.R;
 
 /**
  * Created by przem on 26.11.2017.

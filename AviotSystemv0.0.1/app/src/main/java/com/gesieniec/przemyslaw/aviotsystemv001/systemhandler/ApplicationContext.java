@@ -5,7 +5,6 @@ import android.os.Build;
 import android.util.Log;
 
 import com.gesieniec.przemyslaw.aviotsystemv001.MainActivity;
-import com.gesieniec.przemyslaw.aviotsystemv001.VoiceControlActivity;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.CommonDevice;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.LightSwitch;

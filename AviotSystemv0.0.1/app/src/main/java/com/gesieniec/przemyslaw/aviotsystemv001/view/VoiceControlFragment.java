@@ -1,4 +1,4 @@
-package com.gesieniec.przemyslaw.aviotsystemv001;
+package com.gesieniec.przemyslaw.aviotsystemv001.view;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -8,6 +8,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.gesieniec.przemyslaw.aviotsystemv001.R;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.ApplicationContext;
 
 /**

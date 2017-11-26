@@ -8,7 +8,6 @@ import android.speech.SpeechRecognizer;
 import android.util.Log;
 
 import com.gesieniec.przemyslaw.aviotsystemv001.MainActivity;
-import com.gesieniec.przemyslaw.aviotsystemv001.VoiceControlActivity;
 import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.TaskDispatcher;
 
 import java.util.Locale;
