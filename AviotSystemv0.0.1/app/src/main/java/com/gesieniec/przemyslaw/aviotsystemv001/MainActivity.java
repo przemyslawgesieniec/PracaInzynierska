@@ -184,7 +184,7 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
             systemResponse.setTextColor(Color.rgb(114,156,239));
             ll.addView(t);
             ll.addView(systemResponse);
-            STUB();
+            //STUB();
         }
     }
 
@@ -202,7 +202,8 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
 
     @Override
     public void handleDispatchedIoTCommandExecution(String capabilities) {
-        writeAviotMessage("New device connected");
+        writeAviotMessage("New device connected capabilities: "+capabilities);
+        addManualControlFragment(capabilities);
     }
 
     private void writeAviotMessage(String msg){
@@ -214,11 +215,14 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
     }
 
     private int deviceID = 0;
-    private void STUB(){
+    private void addManualControlFragment(String capabilities){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        Bundle bundle = new Bundle();
+        bundle.putString("capabilities",capabilities);
         DeviceInstanceFragment device = new DeviceInstanceFragment();
-        Log.d("MainActivity","STUB()");
+        device.setArguments(bundle);
+      //  device.fillDeviceFragmentWithCapabilities();
         fragmentTransaction.add(R.id.ll_devices, device, "device" + deviceID);
         deviceID++;
         fragmentTransaction.commit();

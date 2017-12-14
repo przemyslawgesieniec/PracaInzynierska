@@ -14,6 +14,7 @@
 
 
         <ImageButton
+            android:id="@+id/dropDownArrow"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
@@ -24,21 +25,22 @@
             app:srcCompat="@drawable/ic_arrow_drop_down_black_24dp" />
 
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/deviceName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="14"
             android:text="Switch"
+            android:textAlignment="textStart"
             android:textColor="@color/standardText"
             android:textSize="36sp" />
 
 
         <Switch
-            android:id="@+id/switch2"
+            android:id="@+id/switchState"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center_vertical"
-            android:layout_weight="2"
+            android:layout_weight="1"
             android:orientation="vertical">
 
         </Switch>
@@ -51,24 +53,24 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/textView3"
+            android:id="@+id/ipAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Location"
+            android:text="IP address: "
             android:textColor="@color/standardText" />
 
         <TextView
-            android:id="@+id/textView4"
+            android:id="@+id/macAddress"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text="MAC:"
             android:textColor="@color/standardText" />
 
         <TextView
-            android:id="@+id/textView5"
+            android:id="@+id/actionsList"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="TextView"
+            android:text="Actions:"
             android:textColor="@color/standardText" />
 
     </LinearLayout>

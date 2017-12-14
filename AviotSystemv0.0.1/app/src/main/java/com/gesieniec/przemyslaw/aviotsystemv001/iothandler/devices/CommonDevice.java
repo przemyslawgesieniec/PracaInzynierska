@@ -23,7 +23,7 @@ public abstract class CommonDevice {
     protected HashMap<String,DeviceAction> actionMapENG;
     protected HashMap<String,DeviceAction> actionMapPL;
 
-    /**
+    /**+
      * getters
      */
     public String getName() {
