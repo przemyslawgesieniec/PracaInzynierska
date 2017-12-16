@@ -8,6 +8,7 @@
 #include <WiFiUdp.h>
 class ConnectionHandler
 {
+  
 public:
 	ConnectionHandler(const char * ssid, const char * pass, unsigned int localPort, unsigned int broadcastPort);
   ConnectionHandler();
@@ -27,7 +28,6 @@ private:
 	const char * ssid;
 	const char * pass;
 	unsigned int localPort;
-//	IPAddress broadcastIp;	
 	WiFiUDP udp;
 	String mac;
 	WiFiUDP Udp;

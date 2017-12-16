@@ -30,7 +30,10 @@ String CommonDevice::getLocation()
 {
 	return location;
 }
-
+String CommonDevice::getMsg()
+{
+  return msg;
+}
 String CommonDevice::getMacAddress()
 {
 	return macAddress;
@@ -43,7 +46,10 @@ void CommonDevice::setName(String name)
 {
 	this->name = name;
 }
-
+void CommonDevice::setMsg(String msg)
+{
+  this->msg = msg;
+}
 void CommonDevice::setLocation(String location)
 {
 	this->location = location;

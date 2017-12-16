@@ -40,25 +40,10 @@ ConnectionHandler::~ConnectionHandler()
 {
 }
 
-
 void ConnectionHandler::connectToWiFi()
 {
 	
 }
-
-
-
-// IPAddress ConnectionHandler::getBroadcastIp()
-// {
-// 	return broadcastIp;
-// }
-
-// //setters
-// void ConnectionHandler::setBroadcastIp(IPAddress broadcastIp)
-// {
-// 	this->broadcastIp = broadcastIp;
-// }
-
 
 String ConnectionHandler::getMac()
 {
@@ -158,33 +143,14 @@ void ConnectionHandler::SendDeviceCapabilities(CommonDevice *device)
 
 void ConnectionHandler::handleIncomingMessages(CommonDevice *device)
 {
-//  if (WiFi.status() == WL_CONNECTED)
-//  {
-//    String msg = receiveUDPPacket();
-//    if (msg == "LightSwitchON")
-//    {
-//      msg = "";
-//      digitalWrite(13, HIGH);
-//      Serial.print("Light on: ");
-//      switchState = true;
-//      messageType = "stateupdate";
-//      ReplyBuffer = getCapabilities();
-//      SendAReply();
-//    }
-//    if (msg == "LightSwitchOFF")
-//    {
-//      msg = "";
-//      Serial.print("Light off: ");
-//      digitalWrite(13, LOW);
-//      switchState = false;
-//      messageType = "stateupdate";
-//      ReplyBuffer = getCapabilities();
-//      SendAReply();
-//    }
-//  }
-//  else
-//  {
-//    Serial.println(WiFi.status());
-//  }
+  if (WiFi.status() == WL_CONNECTED)
+  { 
+    device->setMsg(receiveUDPPacket());
+//    device->handleMessage(this);
+  }
+  else
+  {
+    Serial.println(WiFi.status());
+  }
 }
 
