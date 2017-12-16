@@ -49,6 +49,8 @@ public class DeviceInstanceFragment extends android.support.v4.app.Fragment{
         s.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                deviceCapabilities.setState(!deviceCapabilities.getState());
+                Log.d("button state ",String.valueOf(deviceCapabilities.getState()));
                 TaskDispatcher.newTask(TaskDispatcher.GuiTaskContext.SWITCH_STATE_CHANGED,deviceCapabilities);
             }
         });

@@ -52,4 +52,5 @@ public abstract class CommonDevice {
     public abstract HashMap<String, DeviceAction> getActionMapPL();
     public abstract void updateCommonDataClass();
     public abstract String getMessageToSend(DeviceCapabilities capabilities);
+    public abstract void updateDeviceWithCapabilities(DeviceCapabilities deviceCapabilities);
 }

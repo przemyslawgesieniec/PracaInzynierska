@@ -22,6 +22,7 @@ public class LightSwitch extends CommonDevice {
      */
     private boolean state;
     private DeviceType type;
+    private boolean isUpdated = false;
 
     /**
      * getters
@@ -105,19 +106,34 @@ public class LightSwitch extends CommonDevice {
 
     @Override
     public String getMessageToSend(DeviceCapabilities capabilities) { //TODO: rozbic na state update i na getmessage to send
-         if(capabilities.getMessageType().equals("stateupdate")){
-             if(state != capabilities.getState()){
-                 state = capabilities.getState();
-             }
-         }
-         return getMessageBasedOnCurrentState();
+             return getMessageBasedOnCurrentState();
     }
+
+    @Override
+    public void updateDeviceWithCapabilities(DeviceCapabilities deviceCapabilities) {
+         Log.d("state",String.valueOf(state));
+        Log.d("deviceCap.state",String.valueOf(deviceCapabilities.getState()));
+        if(state != deviceCapabilities.getState()){
+            Log.d("updated?",String.valueOf(isUpdated));
+            state = deviceCapabilities.getState();
+            isUpdated = true;
+        }
+        Log.d("updated?",String.valueOf(isUpdated));
+    }
+
     private String getMessageBasedOnCurrentState(){
-         String action = "OFF";
-         if(state){
-             action = "ON";
+        Log.d("lightSwitch","getMessageBasedOnCurrentState");
+        if(isUpdated){
+            String action = "OFF";
+             if(state) {
+                 action = "ON";
+             }
+            isUpdated = false;
+            Log.d("curr state action",action);
+            return toString()+action;
          }
-        return toString()+action;
+        isUpdated = false;
+        return null;
     }
 
 

@@ -67,9 +67,11 @@ public class MessageHandler {
         protected void onPostExecute(String messageBack) {
             Log.d("MessageHandler","onPostExecute  "+ messageBack);
             if(messageBack.contains("stateupdate")){
+                Log.d("MessageHandler","UPDATE_DEVICE_DATA  "+ messageBack);
                 TaskDispatcher.newTask(TaskDispatcher.IoTTaskContext.UPDATE_DEVICE_DATA,new DeviceCapabilities(messageBack));
             }
             else if(messageBack.contains("capabilities")){
+                Log.d("MessageHandler","ATTACH_COMPLETE  "+ messageBack);
                 TaskDispatcher.newTask(TaskDispatcher.IoTTaskContext.ATTACH_COMPLETE,messageBack);
             }
         }

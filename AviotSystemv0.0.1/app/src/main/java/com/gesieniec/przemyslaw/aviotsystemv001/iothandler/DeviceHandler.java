@@ -125,7 +125,14 @@ public class DeviceHandler implements ITaskDispatcherListener {
 
     private void sendMessageToRelatedDevice(DeviceCapabilities deviceCapabilities) {
         CommonDevice device = getDeviceByCapabilities(deviceCapabilities);
-        new MessageHandler().sendAndReceiveUDPMessage(device.getMessageToSend(deviceCapabilities), device.getDeviceAddress());
+        try {
+            device.updateDeviceWithCapabilities(deviceCapabilities);
+            new MessageHandler().sendAndReceiveUDPMessage(device.getMessageToSend(deviceCapabilities), device.getDeviceAddress());
+        }
+        catch (NullPointerException e) {
+            Log.d("MessageToRelatedDevice", "something gone wrong");
+            e.printStackTrace();
+        }
     }
 
     private void sendCapabilityRequest(DatagramPacket datagramPacket) {

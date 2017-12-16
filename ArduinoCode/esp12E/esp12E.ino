@@ -17,15 +17,18 @@ String mac = "";
 String deviceType = "switch";
 String messageType;
 
-//const char* ssid = "DESKTOP_WIFI";
-//const char* pass = "przemek123";
+const char* ssid = "DESKTOP_WIFI";
+const char* pass = "przemek123";
 
-const char* ssid = "PENTAGRAM_P6362";
-const char* pass = "#mopsik123";
+//const char* ssid = "PENTAGRAM_P6362";
+//const char* pass = "#mopsik123";
+//
+//const char* ssid = "PLAY-ONLINE-8763";
+//const char* pass = "G2TTT9D5";
 
 String ReplyBuffer = "empty";
 
-IPAddress broadcastIp(192, 168, 1, 255);
+IPAddress broadcastIp(192, 168, 137, 255); //TODO: zmienic zevby sam ustawial w zaleznosci od maski sieci
 
 WiFiUDP Udp;
 

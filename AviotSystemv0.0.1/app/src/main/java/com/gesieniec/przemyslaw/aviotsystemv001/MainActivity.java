@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.LinearLayout;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceCapabilities;
@@ -187,6 +188,7 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
         }
     }
 
+
     @Override
     public void handleDispatchedSystemCommandExecution(SystemCommandHandler systemCommandHandler) {
         writeAviotMessage(systemCommandHandler.getSystemAnswer());
@@ -209,6 +211,8 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
     @Override
     public void handleDispatchedIoTUpdateCommandExecution(DeviceCapabilities capabilities) {
         //TODO: enable related button
+        Switch s = (Switch)findViewById(capabilities.getID());
+        s.setChecked(capabilities.getState());
         String state = "OFF";
         if(capabilities.getState()){
             state = "ON";
