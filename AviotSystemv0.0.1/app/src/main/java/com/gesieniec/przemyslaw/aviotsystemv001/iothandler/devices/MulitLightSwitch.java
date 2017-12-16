@@ -1,6 +1,7 @@
 package com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices;
 
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceAction;
+import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceCapabilities;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceType;
 
 import java.net.InetAddress;
@@ -74,5 +75,13 @@ public class MulitLightSwitch extends CommonDevice {
     @Override
     public void updateCommonDataClass() {
         //TODO: implement
+    }
+
+    @Override
+    public String getMessageToSend(DeviceCapabilities capabilities) {
+
+
+        return null;
+
     }
 }

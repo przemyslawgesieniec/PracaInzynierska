@@ -3,6 +3,8 @@ package com.gesieniec.przemyslaw.aviotsystemv001.iothandler.messagehandler;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceCapabilities;
+import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.CommonDevice;
 import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.TaskDispatcher;
 
 import java.io.IOException;
@@ -46,9 +48,9 @@ public class MessageHandler {
                 byte[] buf = new byte[512];
                 DatagramPacket receivedPacket = new DatagramPacket(buf,buf.length);
                 socket.receive(receivedPacket);
-                String reveivedMessage = new String(buf,0,receivedPacket.getLength());
-                Log.d("MessgageHandler","MESSAGE BACK: "+ reveivedMessage);
-                enchantedCaps = reveivedMessage +";"+ receivedPacket.getAddress().getHostAddress();
+                String receivedMessage = new String(buf,0,receivedPacket.getLength());
+                Log.d("MessageHandler","MESSAGE BACK: "+ receivedMessage);
+                enchantedCaps =  receivedPacket.getAddress().getHostAddress() +";"+receivedMessage ;
                 socket.close();
             } catch (SocketException e) {
                 e.printStackTrace();
@@ -62,10 +64,14 @@ public class MessageHandler {
         protected void onProgressUpdate(Integer... progress) {
             //TODO DISABLE BUTTON IN GUI
         }
-        protected void onPostExecute(String esp8266Capabilities) {
-            Log.d("MessgageHandler","onPostExecute  "+ esp8266Capabilities);
-            TaskDispatcher.newTask(TaskDispatcher.IoTTaskContext.ATTACH_COMPLETE,esp8266Capabilities);
-            //task with rcved capabilities as string
+        protected void onPostExecute(String messageBack) {
+            Log.d("MessageHandler","onPostExecute  "+ messageBack);
+            if(messageBack.contains("stateupdate")){
+                TaskDispatcher.newTask(TaskDispatcher.IoTTaskContext.UPDATE_DEVICE_DATA,new DeviceCapabilities(messageBack));
+            }
+            else if(messageBack.contains("capabilities")){
+                TaskDispatcher.newTask(TaskDispatcher.IoTTaskContext.ATTACH_COMPLETE,messageBack);
+            }
         }
     }
 }

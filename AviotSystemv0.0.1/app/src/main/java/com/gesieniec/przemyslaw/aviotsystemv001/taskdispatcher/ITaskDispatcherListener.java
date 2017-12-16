@@ -1,5 +1,6 @@
 package com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher;
 
+import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceCapabilities;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.SystemCommandHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommand;
 
@@ -14,4 +15,7 @@ public interface ITaskDispatcherListener {
     void handleDispatchedSystemCommandExecution(SystemCommandHandler systemCommandHandler);
     void handleDispatchedIoTCommandExecution(DatagramPacket datagramPacket);
     void handleDispatchedIoTCommandExecution(String capabilities);
+    void handleDispatchedIoTUpdateCommandExecution(DeviceCapabilities capabilities);
+    void handleDispatchedGUICommandExecution(DeviceCapabilities capabilities);
+
 }

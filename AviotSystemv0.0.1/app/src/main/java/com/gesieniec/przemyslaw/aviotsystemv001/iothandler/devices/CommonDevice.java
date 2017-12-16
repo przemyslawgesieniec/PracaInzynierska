@@ -3,6 +3,7 @@ package com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices;
 import android.util.Log;
 
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceAction;
+import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceCapabilities;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceType;
 
 import java.net.InetAddress;
@@ -50,4 +51,5 @@ public abstract class CommonDevice {
     public abstract HashMap<String, DeviceAction> getActionMapENG();
     public abstract HashMap<String, DeviceAction> getActionMapPL();
     public abstract void updateCommonDataClass();
+    public abstract String getMessageToSend(DeviceCapabilities capabilities);
 }

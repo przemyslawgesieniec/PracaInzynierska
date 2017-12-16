@@ -1,7 +1,9 @@
 package com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher;
 
 import android.util.Log;
+import android.widget.Switch;
 
+import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceCapabilities;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.SystemCommandHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommandHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommand;
@@ -12,17 +14,17 @@ import java.util.List;
 
 /**
  * Created by przem on 01.11.2017.
- *
+ * <p>
  * Purpose of this class is to outsource tasks to proper components
  * triggered by any other component.
- *
+ * <p>
  * eg. VoiceHandler after receiving a voiceCommand has several action to realize:
  * change status in GUI, send message to IoT device.
  * These two actions are delegating to GUI component, and Message Handler.
- *
  */
 
 public class TaskDispatcher {
+
 
 //    public enum TaskContext{
 //        GUI_COMMAND,
@@ -35,6 +37,11 @@ public class TaskDispatcher {
         VOICE_COMMAND_EXECUTED
     }
 
+    public enum GuiTaskContext {
+        SWITCH_STATE_CHANGED,
+
+    }
+
     public enum SystemTaskContext {
         EXECUTE_SYSTEM_COMMAND
     }
@@ -42,7 +49,8 @@ public class TaskDispatcher {
     public enum IoTTaskContext {
         LISTEN_TO_BROADCAST,
         ATTACH_REQUEST,
-        ATTACH_COMPLETE
+        ATTACH_COMPLETE,
+        UPDATE_DEVICE_DATA
     }
 
     private static ArrayList<ITaskDispatcherListener> listeners = new ArrayList<>();
@@ -87,7 +95,7 @@ public class TaskDispatcher {
     }
 
     public static void newTask(IoTTaskContext cause, DatagramPacket data) {
-        switch(cause){
+        switch (cause) {
             case ATTACH_REQUEST:
                 Log.d("TaskDispatcher:", "new task IoTCommand");
                 for (ITaskDispatcherListener executeSystemCommandListener : listeners) {
@@ -97,11 +105,29 @@ public class TaskDispatcher {
 
         }
     }
+
     public static void newTask(IoTTaskContext cause, String data) {
         switch (cause) {
             case ATTACH_COMPLETE:
                 for (ITaskDispatcherListener executeSystemCommandListener : listeners) {
                     executeSystemCommandListener.handleDispatchedIoTCommandExecution(data);
+                }
+        }
+    }
+    public static void newTask(IoTTaskContext cause, DeviceCapabilities data) {
+        switch (cause) {
+            case UPDATE_DEVICE_DATA:
+                for (ITaskDispatcherListener executeSystemCommandListener : listeners) {
+                    executeSystemCommandListener.handleDispatchedIoTUpdateCommandExecution(data);
+                }
+        }
+    }
+    //    }
+    public static void newTask(GuiTaskContext cause, DeviceCapabilities capabilities) {
+        switch (cause) {
+            case SWITCH_STATE_CHANGED:
+                for (ITaskDispatcherListener executeSystemCommandListener : listeners) {
+                    executeSystemCommandListener.handleDispatchedGUICommandExecution(capabilities);
                 }
         }
     }

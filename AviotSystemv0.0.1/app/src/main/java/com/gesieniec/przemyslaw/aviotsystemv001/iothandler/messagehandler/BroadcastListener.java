@@ -43,7 +43,6 @@ public class BroadcastListener extends AsyncTask<String, DatagramPacket, Void> {
     }
 
     protected void onProgressUpdate(DatagramPacket... progress) {
-        Log.d("DUPA","DUPA");
         TaskDispatcher.newTask(TaskDispatcher.IoTTaskContext.ATTACH_REQUEST,progress[0]);
     }
 

@@ -2,6 +2,7 @@ package com.gesieniec.przemyslaw.aviotsystemv001.systemhandler;
 
 import android.util.Log;
 
+import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceCapabilities;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.CommonDevice;
 import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.ITaskDispatcherListener;
 import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.TaskDispatcher;
@@ -85,6 +86,16 @@ public class SystemCommandHandler implements ITaskDispatcherListener {
 
     @Override
     public void handleDispatchedIoTCommandExecution(String capabilities) {
+
+    }
+
+    @Override
+    public void handleDispatchedIoTUpdateCommandExecution(DeviceCapabilities capabilities) {
+
+    }
+
+    @Override
+    public void handleDispatchedGUICommandExecution(DeviceCapabilities capabilities) {
 
     }
 

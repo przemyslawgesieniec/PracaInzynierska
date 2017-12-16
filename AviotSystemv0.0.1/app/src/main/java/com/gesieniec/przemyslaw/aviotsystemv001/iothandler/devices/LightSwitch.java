@@ -3,6 +3,7 @@ package com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices;
 import android.util.Log;
 
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceAction;
+import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceCapabilities;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceType;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.CommandDataClass;
 
@@ -15,6 +16,7 @@ import java.util.HashMap;
 
 public class LightSwitch extends CommonDevice {
 
+
     /**
      * fields
      */
@@ -24,26 +26,34 @@ public class LightSwitch extends CommonDevice {
     /**
      * getters
      */
-    public HashMap<String, DeviceAction> getActionMapENG() {
-        return actionMapENG;
-    }
-
+    public HashMap<String, DeviceAction> getActionMapENG() { return actionMapENG;}
     public HashMap<String, DeviceAction> getActionMapPL() {
         return actionMapPL;
     }
-
     @Override
     public DeviceType getDeviceType() {
         return type;
     }
+    public boolean getState() {
+        return state;
+    }
+
+    /**
+     * setters
+     */
+    public void setState(boolean state) {
+        this.state = state;
+    }
+
+
     /**
      * ctor
      */
-    public LightSwitch(String name, String location, InetAddress deviceAddress, String macAddress ) {
+    public LightSwitch(String name, String location, InetAddress deviceAddress, String macAddress,boolean state ) {
         super(name,location,deviceAddress,macAddress);
         Log.d("LightSwitch: ","NEW LIGHT SWITCH" );
         type = DeviceType.SWITCH;
-        state = false;
+        this.state = state;
         actionMapENG = new HashMap<>();
         actionMapPL = new HashMap<>();
         fillActionMap();
@@ -82,11 +92,33 @@ public class LightSwitch extends CommonDevice {
     }
     @Override
     public void updateCommonDataClass() {
+
         CommandDataClass.getActionsListENG().addAll(actionMapENG.keySet());
         CommandDataClass.getDevicesListENG().add(name);
         CommandDataClass.getPlacesListENG().add(location);
 
+        Log.d("UCD name: ",CommandDataClass.getDevicesListENG().get(0));
+        Log.d("UCD location: ",CommandDataClass.getPlacesListENG().get(0));
+
         //TODO: Polish commands
     }
+
+    @Override
+    public String getMessageToSend(DeviceCapabilities capabilities) { //TODO: rozbic na state update i na getmessage to send
+         if(capabilities.getMessageType().equals("stateupdate")){
+             if(state != capabilities.getState()){
+                 state = capabilities.getState();
+             }
+         }
+         return getMessageBasedOnCurrentState();
+    }
+    private String getMessageBasedOnCurrentState(){
+         String action = "OFF";
+         if(state){
+             action = "ON";
+         }
+        return toString()+action;
+    }
+
 
 }

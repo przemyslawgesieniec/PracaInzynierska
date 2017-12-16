@@ -83,7 +83,7 @@ public final class ApplicationContext {
                     (byte) 192, (byte) 168, (byte) 1, (byte) 101});
 //            address = InetAddress.getByAddress(new byte[] {
 //                    (byte)172, (byte)217, (byte)23, (byte)164});
-            CommonDevice ls = new LightSwitch("light", "kitchen", address,"iljbdflijasbdfjasbdf"); //TODO OGARNAC CZEMU MAM TU NULL W ADRESIE !
+            CommonDevice ls = new LightSwitch("light", "kitchen", address,"iljbdflijasbdfjasbdf",false); //TODO OGARNAC CZEMU MAM TU NULL W ADRESIE !
             addCommonDevice(ls);
         } catch (UnknownHostException e) {
             e.printStackTrace();

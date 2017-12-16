@@ -7,13 +7,15 @@ const char READY[] PROGMEM = "ready";
 
 unsigned long oldTimerStatus = 0;
 const int attachRequestResendTimer = 4000;
+bool switchState = false;
 
 byte readCommand(int timeout, const char* text1 = NULL, const char* text2 = NULL);
 
 unsigned int broadcastPort = 11000;
 unsigned int localPort = 2390;
 String mac = "";
-String deviceType = "Switch";
+String deviceType = "switch";
+String messageType;
 
 //const char* ssid = "DESKTOP_WIFI";
 //const char* pass = "przemek123";
@@ -29,8 +31,10 @@ WiFiUDP Udp;
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(2, OUTPUT);
-  digitalWrite(2, LOW);
+ // pinMode(2, OUTPUT);
+  pinMode(13, OUTPUT);
+  digitalWrite(13,LOW);
+  //digitalWrite(2, LOW);
   Serial.begin(115200);
   Serial.println("");
   Serial.println("Starting module ESP01-0");
@@ -67,17 +71,21 @@ void loop() {
     if (msg == "LightSwitchON")
     {
       msg = "";
-      digitalWrite(2, HIGH);
+      digitalWrite(13, HIGH);
       Serial.print("Light on: ");
-      ReplyBuffer = "10";
+      switchState = true;
+      messageType = "stateupdate";
+      ReplyBuffer = getCapabilities();
       SendAReply();
     }
     if (msg == "LightSwitchOFF")
     {
       msg = "";
       Serial.print("Light off: ");
-      digitalWrite(2, LOW);
-      ReplyBuffer = "11";
+      digitalWrite(13, LOW);
+      switchState = false;
+      messageType = "stateupdate";
+      ReplyBuffer = getCapabilities();
       SendAReply();
     }
   }
@@ -150,6 +158,7 @@ void WaitForApplicationAttach()
     String msg = receiveUDPPacket();
     if (msg == "CapabilityRequest")
     {
+      messageType = "capabilities";
       msg = "";
       SendDeviceCapabilities();
       HardwareSignalizeConnection();
@@ -190,11 +199,17 @@ String macToStr(const uint8_t* mac)
   }
   return result;
 }
-
+String boolToString(bool value)
+{
+  return value ? "true" : "false";
+}
 String getCapabilities()
 {
   String capabilities = deviceType; 
+  capabilities += ";"+messageType;
   capabilities += ";"+mac;
+  capabilities += ";1";
+  capabilities += ";"+boolToString(switchState);
   return capabilities;
 }
 

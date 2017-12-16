@@ -18,11 +18,12 @@ import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceCapabilities;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.ApplicationContext;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.SystemCommandHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.ITaskDispatcherListener;
 import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.TaskDispatcher;
-import com.gesieniec.przemyslaw.aviotsystemv001.view.DeviceInstanceFragment;
+import com.gesieniec.przemyslaw.aviotsystemv001.view.devices.DeviceInstanceFragment;
 import com.gesieniec.przemyslaw.aviotsystemv001.view.ManualControlFragment;
 import com.gesieniec.przemyslaw.aviotsystemv001.view.VoiceControlFragment;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommand;
@@ -103,8 +104,6 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
 
         return super.onOptionsItemSelected(item);
     }
-
-
 
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -203,8 +202,20 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
     @Override
     public void handleDispatchedIoTCommandExecution(String capabilities) {
         writeAviotMessage("New device connected capabilities: "+capabilities);
+        //TODO : zrobic osobne fragmenty dla roznego rodzaju urzadzen i metode pozwalajaca je odroznic
         addManualControlFragment(capabilities);
     }
+
+    @Override
+    public void handleDispatchedIoTUpdateCommandExecution(DeviceCapabilities capabilities) {
+        //TODO: enable related button
+        String state = "OFF";
+        if(capabilities.getState()){
+            state = "ON";
+        }
+        writeAviotMessage(capabilities.getDeviceName()+" = "+state);
+    }
+
 
     private void writeAviotMessage(String msg){
         TextView systemResponse = new TextView(this);
@@ -214,18 +225,26 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
         ll.addView(systemResponse);
     }
 
+    /**
+     * device fragment related
+     */
     private int deviceID = 0;
     private void addManualControlFragment(String capabilities){
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         Bundle bundle = new Bundle();
         bundle.putString("capabilities",capabilities);
+        bundle.putInt("fragmentID",deviceID);
         DeviceInstanceFragment device = new DeviceInstanceFragment();
         device.setArguments(bundle);
-      //  device.fillDeviceFragmentWithCapabilities();
         fragmentTransaction.add(R.id.ll_devices, device, "device" + deviceID);
         deviceID++;
         fragmentTransaction.commit();
 
     }
+    @Override
+    public void handleDispatchedGUICommandExecution(DeviceCapabilities capabilities) {
+        //TODO: disable related button
+    }
+
 }
