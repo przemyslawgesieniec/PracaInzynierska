@@ -6,6 +6,8 @@ CommonDevice::CommonDevice(String name, String location, String macAddress)
 	this->name = name;
 	this->location = location;
 	this->macAddress = macAddress;
+
+  
 }
 
 

@@ -111,25 +111,20 @@ public class LightSwitch extends CommonDevice {
 
     @Override
     public void updateDeviceWithCapabilities(DeviceCapabilities deviceCapabilities) {
-         Log.d("state",String.valueOf(state));
-        Log.d("deviceCap.state",String.valueOf(deviceCapabilities.getState()));
         if(state != deviceCapabilities.getState()){
             Log.d("updated?",String.valueOf(isUpdated));
             state = deviceCapabilities.getState();
             isUpdated = true;
         }
-        Log.d("updated?",String.valueOf(isUpdated));
     }
 
     private String getMessageBasedOnCurrentState(){
-        Log.d("lightSwitch","getMessageBasedOnCurrentState");
         if(isUpdated){
             String action = "OFF";
              if(state) {
                  action = "ON";
              }
             isUpdated = false;
-            Log.d("curr state action",action);
             return toString()+action;
          }
         isUpdated = false;

@@ -6,7 +6,6 @@ LightSwitch::LightSwitch(String name, String location, String macAddress, bool s
   digitalWrite(operablePin,LOW);
 }
 
-
 LightSwitch::~LightSwitch()
 {
 }
@@ -30,27 +29,23 @@ String LightSwitch::getCapabilities()
   capabilities += ";"+boolToString(switchState);
   return capabilities;
 }
-//void LightSwitch::handleMessage(ConnectionHandler handler)
-//{
-//   if (msg == "LightSwitchON")
-//    {
-//      msg = "";
-//      digitalWrite(13, HIGH);
-//      Serial.print("Light on: ");
-//      switchState = true;
-//      messageType = "stateupdate";
-//      ReplyBuffer = getCapabilities();
-//      SendAReply();
-//    }
-//    if (msg == "LightSwitchOFF")
-//    {
-//      msg = "";
-//      Serial.print("Light off: ");
-//      digitalWrite(13, LOW);
-//      switchState = false;
-//      messageType = "stateupdate";
-//      ReplyBuffer = getCapabilities();
-//      SendAReply();
-//    }
-//}
+String LightSwitch::handleMessage(String msg)
+{
+   if (msg == "LightSwitchON")
+    {
+      digitalWrite(operablePin, HIGH);
+      switchState = true;
+      messageType = "stateupdate";
+      return getCapabilities();
+      
+    }
+    if (msg == "LightSwitchOFF")
+    {
+      msg = "";
+      digitalWrite(operablePin, LOW);
+      switchState = false;
+      messageType = "stateupdate";
+      return getCapabilities();
+    }
+}
 

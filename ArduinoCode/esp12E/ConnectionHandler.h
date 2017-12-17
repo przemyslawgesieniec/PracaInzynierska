@@ -6,6 +6,10 @@
 #include "Arduino.h"
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
+
+
+class CommonDevice;
+
 class ConnectionHandler
 {
   
@@ -14,16 +18,31 @@ public:
   ConnectionHandler();
 	~ConnectionHandler();
  
+ //
+ //METHODS
+ //
 	void connectToWiFi();
   void waitForApplicationAttach(CommonDevice* device);
   String receiveUDPPacket();
-  void SendAttachRequest();
-  void SendAReply();
-  void SendDeviceCapabilities(CommonDevice* device);
+  void sendAttachRequest();
+  void sendAReply();
+  void sendDeviceCapabilities(CommonDevice* device);
   void handleIncomingMessages(CommonDevice* device);
-  
-  String getMac();
 
+ //
+ //GETTERS
+ //
+  String getMac();
+  String getReplyBuffer();
+
+ //
+ //SETTERS
+ //
+  void setReplyBuffer(String msg);
+
+ //
+ //PRIVATE FIELDS
+ //
 private:
 	const char * ssid;
 	const char * pass;
@@ -34,7 +53,9 @@ private:
   String replyBuffer = "empty";
   unsigned int broadcastPort;
 
-
+ //
+ //PRIVATE METHODS
+ //
 	void setMac();
 	String macToStr(const uint8_t* mac);
 };

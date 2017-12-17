@@ -2,17 +2,18 @@
 #define CommonDevice_h
 
 #include <ESP8266WiFi.h>
-//#include "ConnectionHandler.h"
 #include "Arduino.h"
+
+
 class CommonDevice
 {
- 
+
 public:
 	CommonDevice();
 	CommonDevice(String name, String location, String macAddress);
 	virtual ~CommonDevice();
   virtual String getCapabilities() = 0;
-  //virtual void handleMessage() = 0;
+  virtual String handleMessage(String msg) = 0;
 
   String macToStr(const uint8_t* mac);
   String boolToString(bool value);

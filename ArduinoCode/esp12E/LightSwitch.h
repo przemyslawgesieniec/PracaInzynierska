@@ -13,7 +13,7 @@ public:
 	String getDeviceType();
 	bool getSwitchState();
   String getCapabilities();
- // void handleMessage();
+  String handleMessage(String msg);
 private:
 	bool switchState;
 	int operablePin;
