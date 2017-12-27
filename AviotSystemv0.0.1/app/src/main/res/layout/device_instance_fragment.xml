@@ -15,16 +15,16 @@
         android:orientation="horizontal">
 
 
-        <ImageButton
-            android:id="@+id/dropDownArrow"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="1"
-            android:background="@android:color/transparent"
-            android:elevation="0dp"
-            android:visibility="visible"
-            app:srcCompat="@drawable/ic_arrow_drop_down_black_24dp" />
+        <!--<ImageButton-->
+            <!--android:id="@+id/dropDownArrow"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->+
+            <!--android:layout_gravity="center_vertical"-->
+            <!--android:layout_weight="1"-->
+            <!--android:background="@android:color/transparent"-->
+            <!--android:elevation="0dp"-->
+            <!--android:visibility="visible"-->
+            <!--app:srcCompat="@drawable/ic_arrow_drop_down_black_24dp" />-->
 
         <TextView
             android:id="@+id/deviceName"
@@ -36,21 +36,10 @@
             android:textColor="@color/standardText"
             android:textSize="36sp" />
 
-
-        <!--<Switch-->
-            <!--android:id="@+id/switchState"-->
-            <!--android:layout_width="wrap_content"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_gravity="center_vertical"-->
-            <!--android:layout_weight="1"-->
-            <!--android:onClick="onSwitchClicked"-->
-            <!--android:orientation="vertical"-->
-            <!--tools:checked="false">-->
-
-        <!--</Switch>-->
     </LinearLayout>
 
     <LinearLayout
+        android:id="@+id/detailsContainer"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="1"

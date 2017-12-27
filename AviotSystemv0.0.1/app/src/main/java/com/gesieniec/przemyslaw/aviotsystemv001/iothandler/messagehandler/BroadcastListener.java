@@ -32,7 +32,6 @@ public class BroadcastListener extends AsyncTask<String, DatagramPacket, Void> {
                 }
                 Log.d("BroadcastListener",packet.getAddress().getHostName() + ": "+ msg);
                 packet.setLength(buffer.length);
-                //if(isCancelled()) break;
             }
         }
         catch (Exception e){
