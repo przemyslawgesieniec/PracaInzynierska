@@ -33,19 +33,8 @@ import java.net.DatagramPacket;
 
 public class MainActivity extends AppCompatActivity implements ITaskDispatcherListener{
 
-    /**
-     * The {@link android.support.v4.view.PagerAdapter} that will provide
-     * fragments for each of the sections. We use a
-     * {@link FragmentPagerAdapter} derivative, which will keep every
-     * loaded fragment in memory. If this becomes too memory intensive, it
-     * may be best to switch to a
-     * {@link android.support.v4.app.FragmentStatePagerAdapter}.
-     */
     private SectionsPagerAdapter mSectionsPagerAdapter;
 
-    /**
-     * The {@link ViewPager} that will host the section contents.
-     */
     private ViewPager mViewPager;
     private VoiceControlFragment voiceControlFragment;
     private ManualControlFragment manualControlFragment;
@@ -59,8 +48,6 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
         /**
          * layout
          */
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        setSupportActionBar(toolbar);
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
         mViewPager = (ViewPager) findViewById(R.id.container);

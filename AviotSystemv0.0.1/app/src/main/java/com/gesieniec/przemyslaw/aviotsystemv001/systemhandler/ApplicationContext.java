@@ -49,8 +49,6 @@ public final class ApplicationContext {
             asyncTask.execute();
         }
 
-        //TODO : remove STUB
-       // STUBDEVICEMETHOD();
     }
 
     /**
@@ -72,22 +70,4 @@ public final class ApplicationContext {
     }
 
 
-    /**
-     * STUBS
-     */
-    //TODO: remove this after tests
-    private void STUBDEVICEMETHOD() {
-        InetAddress address = null;
-        try {
-            address = InetAddress.getByAddress(new byte[]{
-                    (byte) 192, (byte) 168, (byte) 1, (byte) 101});
-//            address = InetAddress.getByAddress(new byte[] {
-//                    (byte)172, (byte)217, (byte)23, (byte)164});
-            CommonDevice ls = new LightSwitch("light", "kitchen", address,"iljbdflijasbdfjasbdf",false); //TODO OGARNAC CZEMU MAM TU NULL W ADRESIE !
-            addCommonDevice(ls);
-        } catch (UnknownHostException e) {
-            e.printStackTrace();
-        }
-        if (address != null) Log.d("ApplicationContext", "STUB device added");
-    }
 }
