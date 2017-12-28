@@ -72,7 +72,6 @@ public class DeviceInstanceFragment extends android.support.v4.app.Fragment{
 
         //TODO : optymalizacja kodu onCLICK !
         ImageButton imgBtn = new ImageButton(getActivity());
-        //imgBtn.setId(deviceCapabilities.getID());
         imgBtn.setBackgroundColor(Color.TRANSPARENT);
         imgBtn.setImageResource(R.drawable.ic_arrow_drop_down_black_24dp);
         imgBtn.setOnClickListener(new View.OnClickListener(){
@@ -94,7 +93,8 @@ public class DeviceInstanceFragment extends android.support.v4.app.Fragment{
 
             }
         });
-        ll.addView(imgBtn,0);
+        LinearLayout l2 =(LinearLayout) view.findViewById(R.id.horizontalSpace);
+        l2.addView(imgBtn,0);
 
 
     }
