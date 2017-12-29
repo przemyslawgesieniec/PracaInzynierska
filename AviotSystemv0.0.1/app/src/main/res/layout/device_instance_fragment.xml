@@ -2,13 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainFragmentContainer"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:background="@color/colorBackground"
     android:orientation="vertical"
     android:paddingTop="@dimen/fab_margin">
 
+
+    <include layout="@layout/device_settings_fragment"/>
+
+
     <LinearLayout
+        android:id="@+id/contentContainer"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="9"
@@ -93,11 +99,12 @@
                     android:text="Device type: "
                     android:textColor="@color/standardText" />
 
-                <Button
-                    android:id="@+id/btn_edit"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Edit" />
+                <!--<Button-->
+                <!--android:id="@+id/btn_edit"-->
+                <!--android:layout_width="match_parent"-->
+                <!--android:onClick="onClickEdit"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="Edit" />-->
 
             </LinearLayout>
 

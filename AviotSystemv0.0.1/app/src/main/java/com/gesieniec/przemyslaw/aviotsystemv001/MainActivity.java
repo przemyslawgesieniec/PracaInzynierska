@@ -27,6 +27,7 @@ import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.TaskDispatcher;
 import com.gesieniec.przemyslaw.aviotsystemv001.view.devices.DeviceInstanceFragment;
 import com.gesieniec.przemyslaw.aviotsystemv001.view.ManualControlFragment;
 import com.gesieniec.przemyslaw.aviotsystemv001.view.VoiceControlFragment;
+import com.gesieniec.przemyslaw.aviotsystemv001.view.devices.DeviceSettingsFragment;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommand;
 
 import java.net.DatagramPacket;
@@ -147,9 +148,6 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
         voiceControlFragment.setAviotButtonState(aviotButtonState);
     }
 
-    /**
-     * Manual Control related
-     */
 
     /**
      * Task dispatcher related
@@ -195,6 +193,12 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
         addManualControlFragment(capabilities);
     }
 
+
+    @Override
+    public void handleDispatchedGUICommandExecution(DeviceCapabilities capabilities) {
+        //TODO: disable related button
+    }
+
     @Override
     public void handleDispatchedIoTUpdateCommandExecution(DeviceCapabilities capabilities) {
         //TODO: enable related button
@@ -233,9 +237,23 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
         fragmentTransaction.commit();
 
     }
-    @Override
-    public void handleDispatchedGUICommandExecution(DeviceCapabilities capabilities) {
-        //TODO: disable related button
-    }
+
+    /**
+     * Manual Control related
+     */
+
+//    public void onClickEdit(View view) {
+//
+//
+//        Log.d("onClickEdit.getId();", ""+view.getId());
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+//        Bundle bundle = new Bundle();
+//        DeviceSettingsFragment ds = new DeviceSettingsFragment();
+//        ds.setArguments(bundle);
+//        fragmentTransaction.add(R.id.ll_devices, ds, "deviceSettings" + deviceID);
+//        fragmentTransaction.commit();
+//    }
+
 
 }
