@@ -2,6 +2,7 @@ package com.gesieniec.przemyslaw.aviotsystemv001.view.devices;
 
 import android.graphics.Color;
 import android.os.Bundle;
+import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -30,10 +31,10 @@ import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.TaskDispatcher;
 
 public class DeviceInstanceFragment extends android.support.v4.app.Fragment {
 
+    //TODO: CLEAN UP: przeniesc buttony do xml'a
     private String capabilities;
     private int deviceID;
     private boolean detailsState = false;
-    private boolean editingState = false;
 
     LinearLayout ll;
     LinearLayout l2;
@@ -50,8 +51,8 @@ public class DeviceInstanceFragment extends android.support.v4.app.Fragment {
     TextView deviceName;
     TextView deviceLocation;
 
-    TextInputLayout deviceNameInput;
-    TextInputLayout deviceLocationInput;
+    TextInputEditText deviceNameInput;
+    TextInputEditText deviceLocationInput;
 
     DeviceCapabilities deviceCapabilities;
 
@@ -83,15 +84,7 @@ public class DeviceInstanceFragment extends android.support.v4.app.Fragment {
         l4 = (LinearLayout) view.findViewById(R.id.mainFragmentContainer);
         l5 = (LinearLayout) view.findViewById(R.id.settingsContainer);
 
-
         view.findViewById(R.id.detailsContainer).setVisibility(LinearLayout.GONE);
-
-        /**
-         * Edit Fields
-         */
-
-        insertEditFields();
-
 
         /**
          * State switch
@@ -144,16 +137,13 @@ public class DeviceInstanceFragment extends android.support.v4.app.Fragment {
          * Edit button
          */
 
-        editBtn = new Button(getActivity());
-        editBtn.setText("Edit");
+        editBtn = (Button) view.findViewById(R.id.btn_edit);
         editBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 editDeviceFragmentData();
             }
         });
-        l3.addView(editBtn);
-
 
         /**
          * Save button
@@ -179,14 +169,22 @@ public class DeviceInstanceFragment extends android.support.v4.app.Fragment {
         });
     }
 
+    /**
+     *  Edit fields
+     */
     private void insertEditFields() {
+        deviceNameInput = (TextInputEditText) view.findViewById(R.id.deviceNameInputField);
+        deviceLocationInput = (TextInputEditText) view.findViewById(R.id.deviceLocationInputField);
 
+        deviceNameInput.setText(deviceCapabilities.getDeviceName());
+        deviceLocationInput.setText(deviceCapabilities.getDeviceLocation());
 
     }
 
     private void editDeviceFragmentData() {
         view.findViewById(R.id.deviceSettings).setVisibility(RelativeLayout.VISIBLE);
         view.findViewById(R.id.contentContainer).setVisibility(LinearLayout.GONE);
+        insertEditFields();
     }
 
 
@@ -199,6 +197,7 @@ public class DeviceInstanceFragment extends android.support.v4.app.Fragment {
 
         ((TextView) (v.findViewById(R.id.ipAddress))).append(deviceCapabilities.getIpAddress());
         ((TextView) (v.findViewById(R.id.macAddress))).append(deviceCapabilities.getMacAddress());
+        ((TextView) (v.findViewById(R.id.deviceType))).append(deviceCapabilities.getDeviceType());
 
     }
 

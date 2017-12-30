@@ -33,8 +33,7 @@ public class TaskDispatcher {
 //    }
 
     public enum VoiceTaskContext {
-        EXECUTE_VOICE_COMMAND,
-        VOICE_COMMAND_EXECUTED
+        EXECUTE_VOICE_COMMAND
     }
 
     public enum GuiTaskContext {
@@ -47,7 +46,6 @@ public class TaskDispatcher {
     }
 
     public enum IoTTaskContext {
-        LISTEN_TO_BROADCAST,
         ATTACH_REQUEST,
         ATTACH_COMPLETE,
         UPDATE_DEVICE_DATA
@@ -75,8 +73,6 @@ public class TaskDispatcher {
                         Log.d("TaskDispatcher:", e.toString());
                     }
                 }
-                break;
-            case VOICE_COMMAND_EXECUTED:
                 break;
         }
     }

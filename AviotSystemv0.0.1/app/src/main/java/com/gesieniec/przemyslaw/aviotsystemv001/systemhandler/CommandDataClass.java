@@ -78,7 +78,6 @@ public final class CommandDataClass {
         devicesListENG = new ArrayList<>();
         negationENG = new ArrayList<>();
         fillDefaultFullCommandsListENG();
-        //fillActionsListENG();
         fillNegationListENG();
 
 
@@ -91,13 +90,8 @@ public final class CommandDataClass {
         devicesListPL = new ArrayList<>();
         negationPL = new ArrayList<>();
         fillDefaultFullCommandsListPL();
-        //fillActionsListPL();
         fillNegationListPL();
 
-        /**
-         * stubs
-         */
-        //fillstubsENG();
     }
 
     /**
@@ -109,16 +103,8 @@ public final class CommandDataClass {
         systemCommandsENG.add("check status");
         systemCommandsENG.add("show status");
         systemCommandsENG.add("show connected devices");
-        systemCommandsENG.add("handle both languages");
-        systemCommandsENG.add("switch to polish");
-        systemCommandsENG.add("switch to english");
-
     }
-//    private static void fillActionsListENG()
-//    {
-//        actionsListENG.add("turn on");
-//        actionsListENG.add("turn off");
-//    }
+
     private static void fillNegationListENG(){
         negationENG.add("do not");
         negationENG.add("don't");
@@ -132,40 +118,16 @@ public final class CommandDataClass {
     private static void fillDefaultFullCommandsListPL() {
         systemCommandsPL.add("podaj status");
         systemCommandsPL.add("sprawdź status");
-
-        //TODO: split this
-        systemCommandsPL.add("przejdź na polski");
-        systemCommandsPL.add("przejdź na angielski");
-        systemCommandsPL.add("zmień na polski");
-        systemCommandsPL.add("zmień na angielski");
-        systemCommandsPL.add("przełącz na polski");
-        systemCommandsPL.add("przełącz na angielski");
-
-
-    }
-    private static void fillActionsListPL() {
-        actionsListPL.add("włącz");
-        actionsListPL.add("wyłącz");
+        systemCommandsPL.add("pokaż status");
+        systemCommandsPL.add("pokaż połączone urządzenia");
+        systemCommandsPL.add("pokaż podłączone urządzenia");
+        systemCommandsPL.add("pokaż wszystkie urządzenia");
     }
     private static void fillNegationListPL(){
         negationPL.add("nie");
     }
 
 
-
-    /**
-     * stubbed test commands
-     */
-    private static void fillstubsENG()
-    {
-        actionsListENG.add("turn on");
-        placesListENG.add("living room");
-        placesListENG.add("garage");
-        placesListENG.add("stairs");
-        placesListENG.add("kitchen");
-        devicesListENG.add("light");
-
-    }
 
 
 }

@@ -20,8 +20,10 @@ public class DeviceCapabilities {
         deviceName = caps[1];
         macAddress = caps[3];
         messageType = caps[2];
+        deviceType = caps[1];
         state = Boolean.parseBoolean(caps[5]);
         ipAddress = caps[0];
+        //TODO: przesylac lokacje urzadzenia
         deviceLocation = "kitchen";
         numberOfSwitches = Integer.valueOf(caps[4]);
     }
@@ -31,14 +33,8 @@ public class DeviceCapabilities {
     private String ipAddress;
     private String macAddress;
     private String acctions;
+    private String deviceType;
 
-    public String getMessageType() {
-        return messageType;
-    }
-
-    public void setMessageType(String messageType) {
-        this.messageType = messageType;
-    }
 
     private String messageType;
     private boolean state;
@@ -54,6 +50,13 @@ public class DeviceCapabilities {
 
     private int numberOfSwitches;
 
+    public String getMessageType() {
+        return messageType;
+    }
+
+    public void setMessageType(String messageType) {
+        this.messageType = messageType;
+    }
 
     public String getDeviceName() {
         return deviceName;
@@ -112,4 +115,11 @@ public class DeviceCapabilities {
     }
 
 
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    public void setDeviceType(String deviceType) {
+        this.deviceType = deviceType;
+    }
 }

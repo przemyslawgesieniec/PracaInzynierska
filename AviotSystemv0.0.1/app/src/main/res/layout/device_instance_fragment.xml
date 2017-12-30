@@ -93,22 +93,25 @@
                     android:textColor="@color/standardText" />
 
                 <TextView
-                    android:id="@+id/actionsList"
+                    android:id="@+id/deviceType"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:text="Device type: "
                     android:textColor="@color/standardText" />
 
-                <!--<Button-->
-                <!--android:id="@+id/btn_edit"-->
-                <!--android:layout_width="match_parent"-->
-                <!--android:onClick="onClickEdit"-->
-                <!--android:layout_height="wrap_content"-->
-                <!--android:text="Edit" />-->
+                <Button
+                    android:id="@+id/btn_edit"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@color/colorSecondary"
+                    android:text="Edit"
+                    android:textColor="@color/colorAccent" />
 
             </LinearLayout>
 
         </LinearLayout>
+
+
     </LinearLayout>
 
     <LinearLayout

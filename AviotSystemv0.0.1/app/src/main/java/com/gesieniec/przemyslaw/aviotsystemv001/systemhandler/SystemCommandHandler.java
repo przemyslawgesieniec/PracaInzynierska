@@ -50,16 +50,24 @@ public class SystemCommandHandler implements ITaskDispatcherListener {
     }
 
     private void executeSystemVoiceCommand(String command){
-        switch (command){
-            case "get status":
-            case "check status":
-            case "show connected devices":
-                Log.d("SystemCommandHandler","show connected devices");
+
+        for(String cmnd : CommandDataClass.getSystemCommandsENG()) {
+            if (cmnd.equals(command)) {
                 List<String> connectedDevices = checkConnectedDevices();
                 systemCommandType = SystemCommandType.ACCEPT;
-                systemAnswer = "AVIOT:  You have "+connectedDevices.size()+" connected devices: "+connectedDevices.toString();
+                systemAnswer = "You have " + connectedDevices.size() + " connected devices: " + connectedDevices.toString();
                 TaskDispatcher.newTask(TaskDispatcher.SystemTaskContext.EXECUTE_SYSTEM_COMMAND, this);
-                break;
+                return;
+            }
+        }
+        for(String cmnd : CommandDataClass.getSystemCommandsPL()){
+            if(cmnd.equals(command)){
+                List<String> connectedDevices = checkConnectedDevices();
+                systemCommandType = SystemCommandType.ACCEPT;
+                systemAnswer = "Masz "+connectedDevices.size()+" połączonych urzadzeń: "+connectedDevices.toString();
+                TaskDispatcher.newTask(TaskDispatcher.SystemTaskContext.EXECUTE_SYSTEM_COMMAND, this);
+                return;
+            }
         }
     }
 

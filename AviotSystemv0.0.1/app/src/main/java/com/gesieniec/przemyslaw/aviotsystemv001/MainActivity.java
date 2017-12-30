@@ -16,6 +16,7 @@ import android.view.MenuItem;
 import android.view.View;
 
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -142,6 +143,7 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
             //  Toast.makeText(this, "was on and clicked", Toast.LENGTH_SHORT).show();
             voiceControlFragment.setAviotButtonState(false);
         }
+        scrollDownScrollView();
     }
 
     public void setAviotButtonState(boolean aviotButtonState) {
@@ -161,16 +163,16 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
         if((arg.getVoiceCommandType() != VoiceCommand.VoiceCommandType.INVALID)){
             t.setTextColor(Color.rgb(255,255,255));
             ll.addView(t);
+            scrollDownScrollView();
         }
         else{
-            TextView systemResponse = new TextView(this);
-            systemResponse.setText("AVIOT:  I can not do that");
+            //TODO : get langiage
             t.setTextColor(Color.rgb(255,255,40));
-            systemResponse.setTextColor(Color.rgb(114,156,239));
             ll.addView(t);
-            ll.addView(systemResponse);
+            writeAviotMessage("I can not do that");
             //STUB();
         }
+
     }
 
 
@@ -208,7 +210,7 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
         if(capabilities.getState()){
             state = "ON";
         }
-        writeAviotMessage(capabilities.getDeviceName()+" = "+state);
+        writeAviotMessage(capabilities.getDeviceName()+" is now "+state);
     }
 
 
@@ -216,8 +218,9 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
         TextView systemResponse = new TextView(this);
         LinearLayout ll = (LinearLayout)findViewById(R.id.ll_console);
         systemResponse.setTextColor(Color.rgb(114,156,239));
-        systemResponse.setText(msg);
+        systemResponse.setText("AVIOT: "+msg);
         ll.addView(systemResponse);
+        scrollDownScrollView();
     }
 
     /**
@@ -235,25 +238,16 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
         fragmentTransaction.add(R.id.ll_devices, device, "device" + deviceID);
         deviceID++;
         fragmentTransaction.commit();
-
     }
 
     /**
      * Manual Control related
      */
 
-//    public void onClickEdit(View view) {
-//
-//
-//        Log.d("onClickEdit.getId();", ""+view.getId());
-//        FragmentManager fragmentManager = getSupportFragmentManager();
-//        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
-//        Bundle bundle = new Bundle();
-//        DeviceSettingsFragment ds = new DeviceSettingsFragment();
-//        ds.setArguments(bundle);
-//        fragmentTransaction.add(R.id.ll_devices, ds, "deviceSettings" + deviceID);
-//        fragmentTransaction.commit();
-//    }
+    private void scrollDownScrollView(){
+        final ScrollView sv = (ScrollView) findViewById(R.id.scrollViewConsole);
+        sv.post(() -> sv.fullScroll(View.FOCUS_DOWN));
+    }
 
 
 }

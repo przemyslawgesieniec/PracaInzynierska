@@ -55,14 +55,14 @@ public class VoiceCommandHandler {
                 Log.d("VoiceCommandHandler","full match possible command: "+possibleCommand);
                 return;
             }
-//            else if(match == CommandMathResult.PARTIAL_MATCH){ //TODO implement
-//                Log.d("VoiceCommandHandler","partial match");
-//                Log.d("VoiceCommandHandler","possible command: "+possibleCommand);
-//                voiceCommand.setVoiceCommandType(VoiceCommand.VoiceCommandType.DEVICE_RELATED);
-//                voiceCommand.setBestMatchCommand(possibleCommand);
-//                //TODO: check if is it possible to run partial command
-//                return;
-//            }
+            else if(match == CommandMathResult.PARTIAL_MATCH){
+
+                Log.d("VoiceCommandHandler","partial match");
+                Log.d("VoiceCommandHandler","possible command: "+possibleCommand);
+                voiceCommand.setVoiceCommandType(VoiceCommand.VoiceCommandType.DEVICE_RELATED);
+                voiceCommand.setBestMatchCommand(possibleCommand);
+                return;
+            }
             else if(tryToMachWitchSystemCommands(possibleCommand)){
                 Log.d("VoiceCommandHandler","system command try");
                 voiceCommand.setVoiceCommandType(VoiceCommand.VoiceCommandType.SYSTEM_RELATED);
@@ -79,12 +79,33 @@ public class VoiceCommandHandler {
         }
     }
 
+    private boolean checkPartialMatchPossibility(String mDeviceName) {
+
+        int deviceNameOccurrences = 0;
+        for (String device : CommandDataClass.getDevicesListENG()) {
+            if(mDeviceName.compareTo(device) == 0)
+            {
+                deviceNameOccurrences++;
+            }
+        }
+        if(deviceNameOccurrences == 1){
+            return true;
+        }
+        return false;
+    }
+
     private boolean tryToMachWitchSystemCommands(String possibleCommand) {
-        //TODO: these same for polish
         Log.d("VoiceCommandHandler","tryToMachWitchSystemCommands");
         for(String systemCommand : CommandDataClass.getSystemCommandsENG()){
             Log.d("SYSTEM COMMAND",systemCommand);
             Log.d("possibleCommand",possibleCommand);
+            if(systemCommand.equals(possibleCommand)){
+                return true;
+            }
+        }
+        for(String systemCommand : CommandDataClass.getSystemCommandsPL()){
+            Log.d("SYSTEM COMMAND",systemCommand);
+            Log.d("mozliwa komenda",possibleCommand);
             if(systemCommand.equals(possibleCommand)){
                 return true;
             }
@@ -122,8 +143,6 @@ public class VoiceCommandHandler {
                 mNegation = true;
             }
         }
-
-
 
         /**
          * PL
@@ -166,7 +185,10 @@ public class VoiceCommandHandler {
             voiceCommand.setAction(mAction);
             voiceCommand.setDeviceName(mDeviceName);
             voiceCommand.setNegation(mNegation);
-            return CommandMathResult.PARTIAL_MATCH;
+            if(checkPartialMatchPossibility(mDeviceName)) {
+                return CommandMathResult.PARTIAL_MATCH;
+            }
+
         }
         return CommandMathResult.NO_MATCH;
     }
