@@ -1,7 +1,5 @@
 package com.gesieniec.przemyslaw.aviotsystemv001.systemhandler;
 
-import android.util.Log;
-
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceCapabilities;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.CommonDevice;
 import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.ITaskDispatcherListener;
@@ -51,7 +49,7 @@ public class SystemCommandHandler implements ITaskDispatcherListener {
 
     private void executeSystemVoiceCommand(String command){
 
-        for(String cmnd : CommandDataClass.getSystemCommandsENG()) {
+        for(String cmnd : CommandDataClass.getSystemStatusCommandsENG()) {
             if (cmnd.equals(command)) {
                 List<String> connectedDevices = checkConnectedDevices();
                 systemCommandType = SystemCommandType.ACCEPT;
@@ -60,7 +58,7 @@ public class SystemCommandHandler implements ITaskDispatcherListener {
                 return;
             }
         }
-        for(String cmnd : CommandDataClass.getSystemCommandsPL()){
+        for(String cmnd : CommandDataClass.getSystemStatusCommandsPL()){
             if(cmnd.equals(command)){
                 List<String> connectedDevices = checkConnectedDevices();
                 systemCommandType = SystemCommandType.ACCEPT;

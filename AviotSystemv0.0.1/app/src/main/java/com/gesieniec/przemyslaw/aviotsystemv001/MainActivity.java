@@ -191,6 +191,7 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
     @Override
     public void handleDispatchedIoTCommandExecution(String capabilities) {
         writeAviotMessage("New device connected capabilities: "+capabilities);
+
         //TODO : zrobic osobne fragmenty dla roznego rodzaju urzadzen i metode pozwalajaca je odroznic
         addManualControlFragment(capabilities);
     }

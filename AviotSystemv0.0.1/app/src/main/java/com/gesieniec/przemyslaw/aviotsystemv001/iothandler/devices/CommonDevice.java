@@ -14,11 +14,15 @@ import java.util.HashMap;
  */
 
 public abstract class CommonDevice {
+
+
     /**
      * fields
      */
     protected String name;
     protected String location;
+    protected String namePL;
+    protected String locationPL;
     protected InetAddress deviceAddress;
     protected String macAddress;
     protected HashMap<String,DeviceAction> actionMapENG;
@@ -39,6 +43,29 @@ public abstract class CommonDevice {
     public String getMacAddress() {
         return macAddress;
     }
+    public String getNamePL() {
+        return namePL;
+    }
+    public String getLocationPL() {
+        return locationPL;
+    }
+
+    /**
+     * setters
+     */
+    public void setNamePL(String namePL) {
+        this.namePL = namePL;
+    }
+    public void setLocationPL(String locationPL) {
+        this.locationPL = locationPL;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public void setLocation(String location) {
+        this.location = location;
+    }
+
 
     public CommonDevice(String name, String location,InetAddress deviceAddress,String macAddress) {
         this.name = name;

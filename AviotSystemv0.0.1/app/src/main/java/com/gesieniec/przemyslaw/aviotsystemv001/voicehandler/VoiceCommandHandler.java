@@ -19,20 +19,13 @@ public class VoiceCommandHandler {
         this.voiceCommand = voiceCommand;
     }
 
-    public Enum<Language> getCurrentCommandLanguage() {
-        return currentCommandLanguage;
-    }
 
-    private enum Language{
-        PL_POLISH,
-        ENG_ENGLISH
-    }
+
     private enum CommandMathResult{
         FULL_MATCH,
         PARTIAL_MATCH,
         NO_MATCH
     }
-    private Enum<Language> currentCommandLanguage = Language.ENG_ENGLISH;
 
     public void interpreteCommand(List<String> capturedVoiceResult){
         parseVoiceResultToCommand(capturedVoiceResult);
@@ -91,22 +84,25 @@ public class VoiceCommandHandler {
         if(deviceNameOccurrences == 1){
             return true;
         }
+        //TODO: poinformować w gui że partial match sie nie udał, bo jest wiecej niż jedno urzadenie o tej nazwie
         return false;
     }
 
     private boolean tryToMachWitchSystemCommands(String possibleCommand) {
         Log.d("VoiceCommandHandler","tryToMachWitchSystemCommands");
-        for(String systemCommand : CommandDataClass.getSystemCommandsENG()){
+        for(String systemCommand : CommandDataClass.getSystemStatusCommandsENG()){
             Log.d("SYSTEM COMMAND",systemCommand);
             Log.d("possibleCommand",possibleCommand);
             if(systemCommand.equals(possibleCommand)){
+                voiceCommand.setCommandLanguage(VoiceCommand.Language.ENG_ENGLISH);
                 return true;
             }
         }
-        for(String systemCommand : CommandDataClass.getSystemCommandsPL()){
+        for(String systemCommand : CommandDataClass.getSystemStatusCommandsPL()){
             Log.d("SYSTEM COMMAND",systemCommand);
             Log.d("mozliwa komenda",possibleCommand);
             if(systemCommand.equals(possibleCommand)){
+                voiceCommand.setCommandLanguage(VoiceCommand.Language.PL_POLISH);
                 return true;
             }
         }
@@ -116,6 +112,8 @@ public class VoiceCommandHandler {
 
     private CommandMathResult tryMatchWithKeyWords(String possibleCommand){
         Log.d("VoiceCommandHandler","tryMatchWithKeyWords");
+        int PL_score = 0;
+        int ENG_score = 0;
         String mAction = null;
         String mDeviceName = null;
         String mPlace = null;
@@ -126,21 +124,25 @@ public class VoiceCommandHandler {
         for (String action : CommandDataClass.getActionsListENG()){
             if(possibleCommand.contains(action)){
                 mAction = action;
+                ENG_score++;
             }
         }
         for (String device : CommandDataClass.getDevicesListENG()){
             if(possibleCommand.contains(device)){
                 mDeviceName = device;
+                ENG_score++;
             }
         }
         for (String place : CommandDataClass.getPlacesListENG()){
             if(possibleCommand.contains(place)){
                 mPlace = place;
+                ENG_score++;
             }
         }
         for (String negation : CommandDataClass.getNegationENG()){
             if(possibleCommand.contains(negation)){
                 mNegation = true;
+                ENG_score++;
             }
         }
 
@@ -150,22 +152,35 @@ public class VoiceCommandHandler {
         for (String action:CommandDataClass.getActionsListPL()){
             if(possibleCommand.contains(action)){
                 mAction = action;
+                PL_score++;
             }
         }
         for (String device:CommandDataClass.getDevicesListPL()){
             if(possibleCommand.contains(device)){
                 mDeviceName = device;
+                PL_score++;
             }
         }
         for (String place:CommandDataClass.getPlacesListPL()){
             if(possibleCommand.contains(place)){
                 mPlace = place;
+                PL_score++;
             }
         }
         for (String negation:CommandDataClass.getNegationPL()){
             if(possibleCommand.contains(negation)){
                 mNegation = true;
+                PL_score++;
             }
+        }
+        /**
+         * Determine language based on achieved scores
+         */
+        if(ENG_score >= PL_score){
+            voiceCommand.setCommandLanguage(VoiceCommand.Language.ENG_ENGLISH);
+        }
+        else {
+            voiceCommand.setCommandLanguage(VoiceCommand.Language.PL_POLISH);
         }
 
         Log.d("VoiceCommandHandler","mAction="+mAction+"mDeviceName="+mDeviceName+"mPlace="+mPlace);

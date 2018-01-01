@@ -98,9 +98,9 @@ public class LightSwitch extends CommonDevice {
         CommandDataClass.getDevicesListENG().add(name);
         CommandDataClass.getPlacesListENG().add(location);
 
-        Log.d("UCD name: ",CommandDataClass.getDevicesListENG().get(0));
-        Log.d("UCD location: ",CommandDataClass.getPlacesListENG().get(0));
-
+        CommandDataClass.getActionsListPL().addAll(actionMapPL.keySet());
+        CommandDataClass.getDevicesListPL().add(namePL);
+        CommandDataClass.getPlacesListPL().add(locationPL);
         //TODO: Polish commands
     }
 

@@ -21,9 +21,18 @@ import java.util.ArrayList;
 
 public final class ApplicationContext {
 
+
+
     /**
      * fields
      */
+    public enum Language{
+        PL_POLISH,
+        ENG_ENGLISH
+    }
+
+    private Language systemLanguage = Language.ENG_ENGLISH;
+
     private DeviceHandler deviceHandler;
     private VoiceRecognition voiceRecognition;
     private static ArrayList<CommonDevice> commonDevices;
@@ -57,7 +66,10 @@ public final class ApplicationContext {
     public static ArrayList<CommonDevice> getCommonDevices() {
         return commonDevices;
     }
-
+    public Language getSystemLanguage() {
+        return systemLanguage;
+    }
+    
     public VoiceRecognition getVoiceRecognition() {
         return voiceRecognition;
     }
@@ -68,6 +80,8 @@ public final class ApplicationContext {
     public static void addCommonDevice(CommonDevice commonDevice) {
         ApplicationContext.commonDevices.add(commonDevice);
     }
-
+    public void setSystemLanguage(Language systemLanguage) {
+        this.systemLanguage = systemLanguage;
+    }
 
 }

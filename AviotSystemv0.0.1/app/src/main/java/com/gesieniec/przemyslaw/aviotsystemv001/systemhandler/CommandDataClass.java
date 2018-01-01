@@ -13,16 +13,23 @@ public final class CommandDataClass {
     /**
      * English embedded commands
      */
-    private static ArrayList<String> systemCommandsENG;
+
+    private static ArrayList<String> systemStatusCommandsENG;
+
+
+
+    private static ArrayList<String> singlePurposeCommandsENG;
+
     private static ArrayList<String> actionsListENG;
     private static ArrayList<String> placesListENG;
     private static ArrayList<String> devicesListENG;
     private static ArrayList<String> negationENG;
 
+
     /**
      * Polish embedded commands
      */
-    private static ArrayList<String> systemCommandsPL;
+    private static ArrayList<String> systemStatusCommandsPL;
     private static ArrayList<String> actionsListPL;
     private static ArrayList<String> placesListPL;
     private static ArrayList<String> devicesListPL;
@@ -43,9 +50,13 @@ public final class CommandDataClass {
     public static ArrayList<String> getNegationENG() {
         return negationENG;
     }
-    public static ArrayList<String> getSystemCommandsENG() {
-        return systemCommandsENG;
+    public static ArrayList<String> getSystemStatusCommandsENG() {
+        return systemStatusCommandsENG;
     }
+    public static ArrayList<String> getSinglePurposeCommandsENG() {
+        return singlePurposeCommandsENG;
+    }
+
 
     /**
      * Getters for polish commands
@@ -62,8 +73,8 @@ public final class CommandDataClass {
     public static ArrayList<String> getNegationPL() {
         return negationPL;
     }
-    public static ArrayList<String> getSystemCommandsPL() {
-        return systemCommandsPL;
+    public static ArrayList<String> getSystemStatusCommandsPL() {
+        return systemStatusCommandsPL;
     }
 
 
@@ -72,19 +83,21 @@ public final class CommandDataClass {
         /**
          * English commands init
          */
-        systemCommandsENG = new ArrayList<>();
+        systemStatusCommandsENG = new ArrayList<>();
+        singlePurposeCommandsENG = new ArrayList<>();
         actionsListENG = new ArrayList<>();
         placesListENG = new ArrayList<>();
         devicesListENG = new ArrayList<>();
         negationENG = new ArrayList<>();
         fillDefaultFullCommandsListENG();
         fillNegationListENG();
+        fillSinglePuropseCommandsENG();
 
 
         /**
          * Polish commands init
          */
-        systemCommandsPL = new ArrayList<>();
+        systemStatusCommandsPL = new ArrayList<>();
         actionsListPL = new ArrayList<>();
         placesListPL = new ArrayList<>();
         devicesListPL = new ArrayList<>();
@@ -99,10 +112,10 @@ public final class CommandDataClass {
      */
     private static void fillDefaultFullCommandsListENG()
     {
-        systemCommandsENG.add("get status");
-        systemCommandsENG.add("check status");
-        systemCommandsENG.add("show status");
-        systemCommandsENG.add("show connected devices");
+        systemStatusCommandsENG.add("get status");
+        systemStatusCommandsENG.add("check status");
+        systemStatusCommandsENG.add("show status");
+        systemStatusCommandsENG.add("show connected devices");
     }
 
     private static void fillNegationListENG(){
@@ -116,15 +129,19 @@ public final class CommandDataClass {
      * Polish embedded commands
      */
     private static void fillDefaultFullCommandsListPL() {
-        systemCommandsPL.add("podaj status");
-        systemCommandsPL.add("sprawdź status");
-        systemCommandsPL.add("pokaż status");
-        systemCommandsPL.add("pokaż połączone urządzenia");
-        systemCommandsPL.add("pokaż podłączone urządzenia");
-        systemCommandsPL.add("pokaż wszystkie urządzenia");
+        systemStatusCommandsPL.add("podaj status");
+        systemStatusCommandsPL.add("sprawdź status");
+        systemStatusCommandsPL.add("pokaż status");
+        systemStatusCommandsPL.add("pokaż połączone urządzenia");
+        systemStatusCommandsPL.add("pokaż podłączone urządzenia");
+        systemStatusCommandsPL.add("pokaż wszystkie urządzenia");
     }
     private static void fillNegationListPL(){
         negationPL.add("nie");
+    }
+
+    private static void fillSinglePuropseCommandsENG(){
+        singlePurposeCommandsENG.add("");
     }
 
 

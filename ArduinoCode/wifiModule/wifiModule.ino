@@ -1,6 +1,8 @@
 
 #include <ESP8266WiFi.h>
 #include <WiFiUdp.h>
+#include <ArduinoJson.h>
+#include "FS.h"
 
 const char IPD[] PROGMEM = "IPD,";
 const char READY[] PROGMEM = "ready";
@@ -17,16 +19,14 @@ String mac = "";
 String deviceType = "switch";
 String messageType;
 
-const char* ssid = "DESKTOP_WIFI";
-const char* pass = "przemek123";
+//JSON config
+const char* deviceName;
+const char* deviceLocation;
+const char* ssid_conf;
+const char* pass_conf;
+//~JSON config
 
-//const char* ssid = "PENTAGRAM_P6362";
-//const char* pass = "#mopsik123";
-//
-//const char* ssid = "PLAY-ONLINE-8763";
-//const char* pass = "G2TTT9D5";
-
-String ReplyBuffer = "empty";
+String replyBuffer = "empty";
 
 IPAddress broadcastIp(192, 168, 137, 255); //TODO: zmienic zevby sam ustawial w zaleznosci od maski sieci
 
@@ -34,16 +34,24 @@ WiFiUDP Udp;
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
- // pinMode(2, OUTPUT);
   pinMode(13, OUTPUT);
-  digitalWrite(13,LOW);
-  //digitalWrite(2, LOW);
+  digitalWrite(13, LOW);
   Serial.begin(115200);
   Serial.println("");
-  Serial.println("Starting module ESP01-0");
+  Serial.println("Starting module ESP012e");
 
+  if (!SPIFFS.begin()) {
+    Serial.println("Failed to mount file system");
+    return;
+  }
 
-  WiFi.begin(ssid, pass);
+  loadConfig();
+  if (!loadConfig()) {
+    Serial.println("Module will not start, can not read WiFi credentials");
+    //     ESP.restart();
+  }
+
+  WiFi.begin(ssid_conf, pass_conf);
   while (WiFi.waitForConnectResult() != WL_CONNECTED)
   {
     Serial.print(".");
@@ -58,13 +66,13 @@ void setup() {
 
   Serial.print("MAC:");
   Serial.println(mac);
-  
+
   IPAddress local_ip = WiFi.localIP();
   Serial.print("IP address: ");
   Serial.println(local_ip);
   Udp.begin(localPort);
   Serial.print("UDP begun");
-  WaitForApplicationAttach();
+  waitForApplicationAttach();
 }
 
 void loop() {
@@ -78,8 +86,8 @@ void loop() {
       Serial.print("Light on: ");
       switchState = true;
       messageType = "stateupdate";
-      ReplyBuffer = getCapabilities();
-      SendAReply();
+      replyBuffer = getCapabilities();
+      sendReply();
     }
     if (msg == "LightSwitchOFF")
     {
@@ -88,8 +96,8 @@ void loop() {
       digitalWrite(13, LOW);
       switchState = false;
       messageType = "stateupdate";
-      ReplyBuffer = getCapabilities();
-      SendAReply();
+      replyBuffer = getCapabilities();
+      sendReply();
     }
   }
   else
@@ -121,26 +129,25 @@ String receiveUDPPacket()
   }
   return packetBuffer;
 }
-void SendAReply()
+void sendReply()
 {
   Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
   Serial.print("reply msg: ");
-  Serial.println(ReplyBuffer);
-  int replyMsgLenght = ReplyBuffer.length();
+  Serial.println(replyBuffer);
+  int replyMsgLenght = replyBuffer.length();
   Serial.print("replyMsgLenght:");
   Serial.println(replyMsgLenght);
   char *replyMsg = new char[replyMsgLenght];
-  ReplyBuffer.toCharArray(replyMsg, replyMsgLenght + 1);
+  replyBuffer.toCharArray(replyMsg, replyMsgLenght + 1);
   Serial.println(replyMsg);
-  Serial.println(*replyMsg);
 
   Udp.write(replyMsg);
   delete [] replyMsg;
-  ReplyBuffer = "empty";
+  replyBuffer = "empty";
   Udp.endPacket();
 }
 
-void SendAttachRequest()
+void sendAttachRequest()
 {
   char attachRequestMsg[] = "AttachRequest";
   Serial.println("Send AttachRequest");
@@ -148,7 +155,7 @@ void SendAttachRequest()
   Udp.write(attachRequestMsg);
   Udp.endPacket();
 }
-void WaitForApplicationAttach()
+void waitForApplicationAttach()
 {
   while (true)
   {
@@ -156,21 +163,21 @@ void WaitForApplicationAttach()
     if (currentTimerStatus - oldTimerStatus >= attachRequestResendTimer)
     {
       oldTimerStatus = currentTimerStatus;
-      SendAttachRequest();
+      sendAttachRequest();
     }
     String msg = receiveUDPPacket();
     if (msg == "CapabilityRequest")
     {
       messageType = "capabilities";
       msg = "";
-      SendDeviceCapabilities();
-      HardwareSignalizeConnection();
+      sendDeviceCapabilities();
+      hardwareSignalizeConnection();
       break;
     }
   }
 }
 
-void HardwareSignalizeConnection()
+void hardwareSignalizeConnection()
 {
   Serial.println("Device attached to application correctly");
   for (int i = 0; i < 3; i++)
@@ -182,7 +189,7 @@ void HardwareSignalizeConnection()
   }
 }
 
-void SendDeviceCapabilities()
+void sendDeviceCapabilities()
 {
   String caps = getCapabilities();
   const char *capabilityMsg = caps.c_str();
@@ -208,11 +215,63 @@ String boolToString(bool value)
 }
 String getCapabilities()
 {
-  String capabilities = deviceType; 
-  capabilities += ";"+messageType;
-  capabilities += ";"+mac;
+  String capabilities = deviceType;
+  capabilities += ";" + messageType;
+  capabilities += ";" + mac;
   capabilities += ";1";
-  capabilities += ";"+boolToString(switchState);
+  capabilities += ";" + boolToString(switchState);
   return capabilities;
+}
+
+//SPIFFS memory functions
+bool saveConfig() {
+  StaticJsonBuffer<200> jsonBuffer;
+  JsonObject& json = jsonBuffer.createObject();
+  json["ssid"] = "DESKTOP_WIFI";
+  json["pass"] = "przemek123";
+  json["deviceName"] = "switch";
+  json["deviceLocation"] = "room";
+
+  File configFile = SPIFFS.open("/config.json", "w");
+  if (!configFile) {
+    Serial.println("Failed to open config file for writing");
+    return false;
+  }
+
+  json.printTo(configFile);
+  return true;
+}
+bool loadConfig() {
+  File configFile = SPIFFS.open("/config.json", "r");
+  if (!configFile) {
+    Serial.println("Failed to open config file");
+    return false;
+  }
+
+  std::unique_ptr<char[]> buf(new char[configFile.size()]);
+  configFile.readBytes(buf.get(), configFile.size());
+
+  StaticJsonBuffer<200> jsonBuffer;
+  JsonObject& json = jsonBuffer.parseObject(buf.get());
+
+  if (!json.success()) {
+    Serial.println("Parsing failed");
+    return false;
+  }
+
+  deviceName = json["deviceName"];
+  deviceLocation = json["deviceLocation"];
+  ssid_conf = json["ssid"];
+  pass_conf = json["pass"];
+
+  Serial.print("Device Name: ");
+  Serial.println(deviceName);
+  Serial.print("Device Location: ");
+  Serial.println(deviceLocation);
+  Serial.print("pass_conf: ");
+  Serial.println(pass_conf);
+  Serial.print("ssid_conf: ");
+  Serial.println(ssid_conf);
+  return true;
 }
 

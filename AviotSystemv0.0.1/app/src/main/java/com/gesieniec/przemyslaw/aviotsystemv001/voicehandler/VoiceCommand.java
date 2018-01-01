@@ -10,8 +10,15 @@ import java.util.Set;
 
 public class VoiceCommand {
 
+
+
+
     public enum VoiceCommandType{
         INVALID,DEVICE_RELATED,SYSTEM_RELATED
+    }
+    public enum Language{
+        PL_POLISH,
+        ENG_ENGLISH
     }
     /**
      * fields
@@ -23,6 +30,7 @@ public class VoiceCommand {
     private boolean negation;
     private String action;
     private VoiceCommandType voiceCommandType;
+    private Language commandLanguage = Language.ENG_ENGLISH;
 
     /**
      * getters
@@ -43,6 +51,9 @@ public class VoiceCommand {
     }
     public VoiceCommandType getVoiceCommandType() {
         return voiceCommandType;
+    }
+    public Language getCommandLanguage() {
+        return commandLanguage;
     }
     /**
      * setters
@@ -67,6 +78,9 @@ public class VoiceCommand {
     }
     public void setVoiceCommandType(VoiceCommandType voiceCommandType) {
         this.voiceCommandType = voiceCommandType;
+    }
+    public void setCommandLanguage(Language commandLanguage) {
+        this.commandLanguage = commandLanguage;
     }
 
     /**
