@@ -4,6 +4,10 @@
 #include <ArduinoJson.h>
 #include "FS.h"
 
+String getCapabilities();
+void sendReply();
+String boolToString(bool value);
+
 const char IPD[] PROGMEM = "IPD,";
 const char READY[] PROGMEM = "ready";
 
@@ -28,17 +32,85 @@ const char* pass_conf;
 
 String replyBuffer = "empty";
 
+class CommonDevice
+{
+  public:
+    CommonDevice(String deviceName, String deviceLocation) {
+      this->deviceName = deviceName;
+      this->deviceLocation = deviceLocation;
+    }
+    virtual void handleIncomingMessage(String message) = 0;
+    virtual String getCapabilities() = 0;
+    
+  protected:
+    String deviceName;
+    String deviceLocation;
+    String deviceType;
+
+
+};
+
+class LightSwitch : public CommonDevice
+{
+  public:
+    LightSwitch(String deviceName, String deviceLocation, String deviceType, bool switchState, int operablePin) : CommonDevice(deviceName, deviceLocation), operablePin(operablePin), switchState(switchState)
+    {
+      pinMode(operablePin, OUTPUT);
+      digitalWrite(operablePin, LOW);
+    }
+  private:
+    int operablePin;
+    bool switchState;
+
+    void handleIncomingMessage(String message)
+    {
+      if (message == "LightSwitchON")
+      {
+        message = "";
+        digitalWrite(operablePin, HIGH);
+        switchState = true;
+        messageType = "stateupdate";
+        replyBuffer = getCapabilities();
+        sendReply();
+      }
+      if (message == "LightSwitchOFF")
+      {
+        message = "";
+        digitalWrite(operablePin, LOW);
+        switchState = false;
+        messageType = "stateupdate";
+        replyBuffer = getCapabilities();
+        sendReply();
+      }
+    }
+
+    String getCapabilities()
+    {
+      String capabilities = deviceType;
+      capabilities += ";" + messageType;
+      capabilities += ";" + mac;
+      capabilities += ";1";
+      capabilities += ";" + boolToString(switchState);
+      return capabilities;
+    }
+
+};
+
+
+CommonDevice *device;
 IPAddress broadcastIp(192, 168, 137, 255); //TODO: zmienic zevby sam ustawial w zaleznosci od maski sieci
 
 WiFiUDP Udp;
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
-  pinMode(13, OUTPUT);
-  digitalWrite(13, LOW);
+  //  pinMode(13, OUTPUT);
+  //  digitalWrite(13, LOW);
   Serial.begin(115200);
   Serial.println("");
   Serial.println("Starting module ESP012e");
+
+  device = new LightSwitch("switch", "room", "LightSwitch", false, 13);
 
   if (!SPIFFS.begin()) {
     Serial.println("Failed to mount file system");
@@ -79,26 +151,7 @@ void loop() {
   if (WiFi.status() == WL_CONNECTED)
   {
     String msg = receiveUDPPacket();
-    if (msg == "LightSwitchON")
-    {
-      msg = "";
-      digitalWrite(13, HIGH);
-      Serial.print("Light on: ");
-      switchState = true;
-      messageType = "stateupdate";
-      replyBuffer = getCapabilities();
-      sendReply();
-    }
-    if (msg == "LightSwitchOFF")
-    {
-      msg = "";
-      Serial.print("Light off: ");
-      digitalWrite(13, LOW);
-      switchState = false;
-      messageType = "stateupdate";
-      replyBuffer = getCapabilities();
-      sendReply();
-    }
+    device->handleIncomingMessage(msg);
   }
   else
   {
@@ -191,7 +244,7 @@ void hardwareSignalizeConnection()
 
 void sendDeviceCapabilities()
 {
-  String caps = getCapabilities();
+  String caps = device->getCapabilities();
   const char *capabilityMsg = caps.c_str();
   Serial.println("Send Capabilities");
   Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
@@ -213,15 +266,15 @@ String boolToString(bool value)
 {
   return value ? "true" : "false";
 }
-String getCapabilities()
-{
-  String capabilities = deviceType;
-  capabilities += ";" + messageType;
-  capabilities += ";" + mac;
-  capabilities += ";1";
-  capabilities += ";" + boolToString(switchState);
-  return capabilities;
-}
+//String getCapabilities()
+//{
+//  String capabilities = deviceType;
+//  capabilities += ";" + messageType;
+//  capabilities += ";" + mac;
+//  capabilities += ";1";
+//  capabilities += ";" + boolToString(switchState);
+//  return capabilities;
+//}
 
 //SPIFFS memory functions
 bool saveConfig() {
@@ -274,4 +327,6 @@ bool loadConfig() {
   Serial.println(ssid_conf);
   return true;
 }
+
+
 
