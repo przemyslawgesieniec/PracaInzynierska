@@ -20,7 +20,7 @@ byte readCommand(int timeout, const char* text1 = NULL, const char* text2 = NULL
 unsigned int broadcastPort = 11000;
 unsigned int localPort = 2390;
 String mac = "";
-String deviceType = "switch";
+//String deviceType = "switch";
 String messageType;
 
 //JSON config
@@ -35,13 +35,14 @@ String replyBuffer = "empty";
 class CommonDevice
 {
   public:
-    CommonDevice(String deviceName, String deviceLocation) {
+    CommonDevice(String deviceName, String deviceLocation, String deviceType) {
       this->deviceName = deviceName;
       this->deviceLocation = deviceLocation;
+      this->deviceType = deviceType;
     }
     virtual void handleIncomingMessage(String message) = 0;
     virtual String getCapabilities() = 0;
-    
+
   protected:
     String deviceName;
     String deviceLocation;
@@ -53,7 +54,7 @@ class CommonDevice
 class LightSwitch : public CommonDevice
 {
   public:
-    LightSwitch(String deviceName, String deviceLocation, String deviceType, bool switchState, int operablePin) : CommonDevice(deviceName, deviceLocation), operablePin(operablePin), switchState(switchState)
+    LightSwitch(String deviceName, String deviceLocation, String deviceType, bool switchState, int operablePin) : CommonDevice(deviceName, deviceLocation, deviceType), operablePin(operablePin), switchState(switchState)
     {
       pinMode(operablePin, OUTPUT);
       digitalWrite(operablePin, LOW);
@@ -104,13 +105,11 @@ WiFiUDP Udp;
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
-  //  pinMode(13, OUTPUT);
-  //  digitalWrite(13, LOW);
   Serial.begin(115200);
   Serial.println("");
   Serial.println("Starting module ESP012e");
 
-  device = new LightSwitch("switch", "room", "LightSwitch", false, 13);
+  device = new LightSwitch("switch", "room", "switch", false, 13);
 
   if (!SPIFFS.begin()) {
     Serial.println("Failed to mount file system");
@@ -246,7 +245,8 @@ void sendDeviceCapabilities()
 {
   String caps = device->getCapabilities();
   const char *capabilityMsg = caps.c_str();
-  Serial.println("Send Capabilities");
+  Serial.println("Send Capabilities: ");
+  Serial.println(caps);
   Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
   Udp.write(capabilityMsg);
   Udp.endPacket();
@@ -266,15 +266,6 @@ String boolToString(bool value)
 {
   return value ? "true" : "false";
 }
-//String getCapabilities()
-//{
-//  String capabilities = deviceType;
-//  capabilities += ";" + messageType;
-//  capabilities += ";" + mac;
-//  capabilities += ";1";
-//  capabilities += ";" + boolToString(switchState);
-//  return capabilities;
-//}
 
 //SPIFFS memory functions
 bool saveConfig() {
