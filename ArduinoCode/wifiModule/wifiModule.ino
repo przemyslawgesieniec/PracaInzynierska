@@ -7,20 +7,20 @@
 String getCapabilities();
 void sendReply();
 String boolToString(bool value);
+bool saveConfig();
 
 const char IPD[] PROGMEM = "IPD,";
 const char READY[] PROGMEM = "ready";
 
 unsigned long oldTimerStatus = 0;
 const int attachRequestResendTimer = 4000;
-bool switchState = false;
 
 byte readCommand(int timeout, const char* text1 = NULL, const char* text2 = NULL);
 
 unsigned int broadcastPort = 11000;
 unsigned int localPort = 2390;
 String mac = "";
-//String deviceType = "switch";
+
 String messageType;
 
 //JSON config
@@ -40,7 +40,7 @@ class CommonDevice
       this->deviceLocation = deviceLocation;
       this->deviceType = deviceType;
     }
-    virtual void handleIncomingMessage(String message) = 0;
+    virtual bool handleIncomingMessage(String message) = 0;
     virtual String getCapabilities() = 0;
 
   protected:
@@ -48,6 +48,26 @@ class CommonDevice
     String deviceLocation;
     String deviceType;
 
+public:
+    //Getters
+    String getDeviceName()
+    {
+      return deviceName;
+    }
+    String getDeviceLocation()
+    {
+      return deviceLocation;
+    }
+    
+    //Setters
+    void setDeviceName(String deviceName)
+    {
+      this->deviceName = deviceName;
+    }
+    void setDeviceLocation (String deviceLocation)
+    {
+      this->deviceLocation = deviceLocation;
+    }
 
 };
 
@@ -63,7 +83,7 @@ class LightSwitch : public CommonDevice
     int operablePin;
     bool switchState;
 
-    void handleIncomingMessage(String message)
+    bool handleIncomingMessage(String message)
     {
       if (message == "LightSwitchON")
       {
@@ -73,6 +93,7 @@ class LightSwitch : public CommonDevice
         messageType = "stateupdate";
         replyBuffer = getCapabilities();
         sendReply();
+        return true;
       }
       if (message == "LightSwitchOFF")
       {
@@ -82,7 +103,38 @@ class LightSwitch : public CommonDevice
         messageType = "stateupdate";
         replyBuffer = getCapabilities();
         sendReply();
+        return true;
       }
+      //      if (message.startsWith("UpdateDeviceName"))
+      //      {
+      //        String tmpDeviceName = deviceName;
+      //        int slength = message.length();
+      //        message = message.substring(17, slength);
+      //        messageType = "dataupdate";
+      //        if (saveConfig()) {
+      //          messageType = "updatefail";
+      //          deviceName = tmpDeviceName;
+      //        }
+      //        replyBuffer = getCapabilities();
+      //        sendReply();
+      //        return true;
+      //      }
+      //      if (message.startsWith("UpdateDeviceLocation"))
+      //      {
+      //        String tmpDeviceLocation = deviceLocation;
+      //        int slength = message.length();
+      //        message = message.substring(21, slength);
+      //        deviceLocation = message;
+      //        messageType = "dataupdate";
+      //        if (saveConfig()) {
+      //          messageType = "updatefail";
+      //          deviceLocation = tmpDeviceLocation;
+      //        }
+      //        replyBuffer = getCapabilities();
+      //        sendReply();
+      //        return true;
+      //      }
+      return false;
     }
 
     String getCapabilities()
@@ -150,14 +202,46 @@ void loop() {
   if (WiFi.status() == WL_CONNECTED)
   {
     String msg = receiveUDPPacket();
-    device->handleIncomingMessage(msg);
+    if (!device->handleIncomingMessage(msg)) {
+      handleGeneralMessage(msg);
+    }
   }
   else
   {
     Serial.println(WiFi.status());
   }
 }
-
+void handleGeneralMessage(String message)
+{
+  if (message.startsWith("UpdateDeviceName"))
+  {
+    String tmpDeviceName = device->getDeviceName();
+    int slength = message.length();
+    message = message.substring(17, slength);
+    device->setDeviceName(message);
+    messageType = "dataupdate";
+    if (saveConfig()) {
+      messageType = "updatefail";
+      device->setDeviceName(tmpDeviceName);
+    }
+    replyBuffer = device->getCapabilities();
+    sendReply();
+  }
+  if (message.startsWith("UpdateDeviceLocation"))
+  {
+    String tmpDeviceLocation = device->getDeviceLocation();
+    int slength = message.length();
+    message = message.substring(21, slength);
+    device->setDeviceLocation(message);
+    messageType = "dataupdate";
+    if (saveConfig()) {
+      messageType = "updatefail";
+      device->setDeviceLocation(tmpDeviceLocation);
+    }
+    replyBuffer = device->getCapabilities();
+    sendReply();
+  }
+}
 String receiveUDPPacket()
 {
   int packetSize = Udp.parsePacket();
@@ -183,20 +267,11 @@ String receiveUDPPacket()
 }
 void sendReply()
 {
-  Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
   Serial.print("reply msg: ");
   Serial.println(replyBuffer);
-  int replyMsgLenght = replyBuffer.length();
-  Serial.print("replyMsgLenght:");
-  Serial.println(replyMsgLenght);
-  char *replyMsg = new char[replyMsgLenght];
-  replyBuffer.toCharArray(replyMsg, replyMsgLenght + 1);
-  Serial.println(replyMsg);
-
-  Udp.write(replyMsg);
-  delete [] replyMsg;
+  const char *replyMsg = replyBuffer.c_str();
+  sendUDPMessage(replyMsg);
   replyBuffer = "empty";
-  Udp.endPacket();
 }
 
 void sendAttachRequest()
@@ -223,21 +298,9 @@ void waitForApplicationAttach()
       messageType = "capabilities";
       msg = "";
       sendDeviceCapabilities();
-      hardwareSignalizeConnection();
+      Serial.println("Device attached to application correctly");
       break;
     }
-  }
-}
-
-void hardwareSignalizeConnection()
-{
-  Serial.println("Device attached to application correctly");
-  for (int i = 0; i < 3; i++)
-  {
-    digitalWrite(LED_BUILTIN, HIGH);
-    delay(100);
-    digitalWrite(LED_BUILTIN, LOW);
-    delay(100);
   }
 }
 
@@ -247,11 +310,18 @@ void sendDeviceCapabilities()
   const char *capabilityMsg = caps.c_str();
   Serial.println("Send Capabilities: ");
   Serial.println(caps);
-  Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
-  Udp.write(capabilityMsg);
-  Udp.endPacket();
+  sendUDPMessage(capabilityMsg);
 }
 
+void sendUDPMessage(const char* message)
+{
+  Udp.beginPacket(Udp.remoteIP(), Udp.remotePort());
+  Udp.write(message);
+  Udp.endPacket();
+}
+//////////////////////////
+//support functions
+/////////////////////////
 String macToStr(const uint8_t* mac)
 {
   String result;
@@ -267,7 +337,9 @@ String boolToString(bool value)
   return value ? "true" : "false";
 }
 
+//////////////////////////
 //SPIFFS memory functions
+/////////////////////////
 bool saveConfig() {
   StaticJsonBuffer<200> jsonBuffer;
   JsonObject& json = jsonBuffer.createObject();
