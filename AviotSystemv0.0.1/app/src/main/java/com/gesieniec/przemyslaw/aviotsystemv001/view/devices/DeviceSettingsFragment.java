@@ -41,16 +41,3 @@ public class DeviceSettingsFragment extends android.support.v4.app.Fragment {
 
 
 }
-//    @Override
-//    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-//        /** Inflating the layout for this fragment **/
-//        capabilities = getArguments().getString("capabilities");
-//        deviceID = getArguments().getInt("fragmentID");
-//        deviceCapabilities = new DeviceCapabilities(getArguments().getString("capabilities"));
-//        Log.d("DeviceInstance caps:","caps: "+capabilities);
-//        View v = inflater.inflate(R.layout.device_instance_fragment, null);
-//
-//
-//        setViewElements(v);
-//        return v;
-//    }

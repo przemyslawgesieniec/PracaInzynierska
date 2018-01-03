@@ -82,12 +82,8 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
         }
@@ -132,15 +128,12 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
         Log.d("voice fragment","onClickStartStopCapturing");
         if (voiceControlFragment.getAviotButtonState() == false) {
             Log.d("voice fragment","onClickS tartStopCapturing false");
-            //  Toast.makeText(this, "was off and clicked", Toast.LENGTH_SHORT).show();
             applicationContext.getVoiceRecognition().getSpeechRecognizer().startListening(applicationContext.getVoiceRecognition().getSpeechRecognizerIntent());
             voiceControlFragment.setAviotButtonState(true);
         }
         else {
             Log.d("voice fragment","onClickStartStopCapturing true");
             applicationContext.getVoiceRecognition().getSpeechRecognizer().stopListening();
-            //voiceRecognition.getSpeechRecognizer().cancel();
-            //  Toast.makeText(this, "was on and clicked", Toast.LENGTH_SHORT).show();
             voiceControlFragment.setAviotButtonState(false);
         }
         scrollDownScrollView();
@@ -166,7 +159,7 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
             scrollDownScrollView();
         }
         else{
-            //TODO : get langiage
+            //TODO : get language
             t.setTextColor(Color.rgb(255,255,40));
             ll.addView(t);
             writeAviotMessage("I can not do that");
@@ -190,7 +183,8 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
 
     @Override
     public void handleDispatchedIoTCommandExecution(String capabilities) {
-        writeAviotMessage("New device connected capabilities: "+capabilities);
+       // writeAviotMessage("New device connected capabilities: "+capabilities);
+        writeAviotMessage("New device: Switch, connected");
 
         //TODO : zrobic osobne fragmenty dla roznego rodzaju urzadzen i metode pozwalajaca je odroznic
         addManualControlFragment(capabilities);
@@ -203,12 +197,17 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
     }
 
     @Override
+    public void handleDispatchedUpdateDeviceDataCommandExecution(DeviceCapabilities capabilities) {
+
+    }
+
+    @Override
     public void handleDispatchedIoTUpdateCommandExecution(DeviceCapabilities capabilities) {
         //TODO: enable related button
         Switch s = (Switch)findViewById(capabilities.getID());
-        s.setChecked(capabilities.getState());
+        s.setChecked(capabilities.getStates().get(0));
         String state = "OFF";
-        if(capabilities.getState()){
+        if(capabilities.getStates().get(0)){
             state = "ON";
         }
         writeAviotMessage(capabilities.getDeviceName()+" is now "+state);

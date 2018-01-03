@@ -38,6 +38,7 @@ public class TaskDispatcher {
 
     public enum GuiTaskContext {
         SWITCH_STATE_CHANGED,
+        UPDATE_DEVICE_DATA
 
     }
 
@@ -124,6 +125,11 @@ public class TaskDispatcher {
             case SWITCH_STATE_CHANGED:
                 for (ITaskDispatcherListener executeSystemCommandListener : listeners) {
                     executeSystemCommandListener.handleDispatchedGUICommandExecution(capabilities);
+                }
+            case UPDATE_DEVICE_DATA:
+                capabilities.setMessageType("updatecapabilities");
+                for (ITaskDispatcherListener executeSystemCommandListener : listeners) {
+                    executeSystemCommandListener.handleDispatchedUpdateDeviceDataCommandExecution(capabilities);
                 }
         }
     }

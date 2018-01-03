@@ -45,6 +45,7 @@ public class MessageHandler {
                  * w8 4 message from device
                  */
 
+                //TODO : TIMER Z retransmisjami !!!!
                 byte[] buf = new byte[512];
                 DatagramPacket receivedPacket = new DatagramPacket(buf,buf.length);
                 socket.receive(receivedPacket);

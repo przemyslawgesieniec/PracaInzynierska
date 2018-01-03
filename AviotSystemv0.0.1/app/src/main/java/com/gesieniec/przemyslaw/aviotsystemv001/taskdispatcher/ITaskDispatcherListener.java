@@ -17,5 +17,5 @@ public interface ITaskDispatcherListener {
     void handleDispatchedIoTCommandExecution(String capabilities);
     void handleDispatchedIoTUpdateCommandExecution(DeviceCapabilities capabilities);
     void handleDispatchedGUICommandExecution(DeviceCapabilities capabilities);
-
+    void handleDispatchedUpdateDeviceDataCommandExecution(DeviceCapabilities capabilities);
 }

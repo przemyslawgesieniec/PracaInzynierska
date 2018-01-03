@@ -1,8 +1,6 @@
 package com.gesieniec.przemyslaw.aviotsystemv001.iothandler;
 
-import android.bluetooth.BluetoothClass;
 import android.util.Log;
-import android.widget.Switch;
 
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.LightSwitch;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.messagehandler.MessageHandler;
@@ -17,7 +15,6 @@ import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -67,6 +64,11 @@ public class DeviceHandler implements ITaskDispatcherListener {
         sendMessageToRelatedDevice(capabilities);
     }
 
+    @Override
+    public void handleDispatchedUpdateDeviceDataCommandExecution(DeviceCapabilities capabilities) {
+        sendMessageToRelatedDevice(capabilities);
+    }
+
 
     private List<CommonDevice> getDevicesByNameFromTheCommand(String deviceNameFromCommand) {
 
@@ -79,7 +81,7 @@ public class DeviceHandler implements ITaskDispatcherListener {
         return commonDeviceArrayList;
     }
 
-    private CommonDevice getDeviceByCapabilities(DeviceCapabilities deviceCapabilities) {
+    private CommonDevice getDeviceByMacAddress(DeviceCapabilities deviceCapabilities) {
         for (CommonDevice device : ApplicationContext.getCommonDevices()) {
             if (device.getMacAddress().equals(deviceCapabilities.getMacAddress())) {
                 return device;
@@ -124,7 +126,7 @@ public class DeviceHandler implements ITaskDispatcherListener {
     }
 
     private void sendMessageToRelatedDevice(DeviceCapabilities deviceCapabilities) {
-        CommonDevice device = getDeviceByCapabilities(deviceCapabilities);
+        CommonDevice device = getDeviceByMacAddress(deviceCapabilities);
         try {
             device.updateDeviceWithCapabilities(deviceCapabilities);
             new MessageHandler().sendAndReceiveUDPMessage(device.getMessageToSend(deviceCapabilities), device.getDeviceAddress());
@@ -138,7 +140,6 @@ public class DeviceHandler implements ITaskDispatcherListener {
     private void sendCapabilityRequest(DatagramPacket datagramPacket) {
         MessageHandler messageHandler = new MessageHandler();
         messageHandler.sendAndReceiveUDPMessage("CapabilityRequest", datagramPacket.getAddress());
-        Log.d("MessageHandler", "capr req message sent");
     }
 
     /**
@@ -162,9 +163,9 @@ public class DeviceHandler implements ITaskDispatcherListener {
 
 
         if (deviceAddress != null) {
-            switch (checkDeviceType(deviceCapabilities.getDeviceName())) {
+            switch (checkDeviceType(deviceCapabilities.getDeviceType())) {
                 case SWITCH:
-                    boolean switchState = deviceCapabilities.getState();
+                    boolean switchState = deviceCapabilities.getStates().get(0);
                     return new LightSwitch(deviceCapabilities.getDeviceName(), deviceCapabilities.getDeviceLocation(), deviceAddress, deviceCapabilities.getMacAddress(), switchState);//TODO: FIX LOCATION !!!
                 //TODO: MULTI SWITCH !!!
                 case NONE:

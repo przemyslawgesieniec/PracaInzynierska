@@ -1,6 +1,9 @@
 package com.gesieniec.przemyslaw.aviotsystemv001.view.devices;
 
 import android.graphics.Color;
+import android.net.wifi.SupplicantState;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.support.design.widget.TextInputEditText;
 import android.support.design.widget.TextInputLayout;
@@ -20,6 +23,7 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Switch;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gesieniec.przemyslaw.aviotsystemv001.R;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceCapabilities;
@@ -53,6 +57,11 @@ public class DeviceInstanceFragment extends android.support.v4.app.Fragment {
 
     TextInputEditText deviceNameInput;
     TextInputEditText deviceLocationInput;
+    TextInputEditText deviceWifiSSIDInput;
+    TextInputEditText deviceWifiPASSInput;
+
+    String oldWifiPassword;
+    String oldWifiSSID;
 
     DeviceCapabilities deviceCapabilities;
 
@@ -92,13 +101,13 @@ public class DeviceInstanceFragment extends android.support.v4.app.Fragment {
         s = new Switch(getActivity());
         s.setGravity(Gravity.FILL_VERTICAL);
         s.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-        s.setChecked(deviceCapabilities.getState());
+        s.setChecked(deviceCapabilities.getStates().get(0));
         s.setId(deviceCapabilities.getID());
         s.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                deviceCapabilities.setState(!deviceCapabilities.getState());
-                Log.d("button state ", String.valueOf(deviceCapabilities.getState()));
+                deviceCapabilities.getStates().set(0, (!deviceCapabilities.getStates().get(0)));
+                Log.d("button state ", String.valueOf(deviceCapabilities.getStates().get(0)));
                 TaskDispatcher.newTask(TaskDispatcher.GuiTaskContext.SWITCH_STATE_CHANGED, deviceCapabilities);
             }
         });
@@ -142,6 +151,7 @@ public class DeviceInstanceFragment extends android.support.v4.app.Fragment {
             @Override
             public void onClick(View v) {
                 editDeviceFragmentData();
+                saveOldData();
             }
         });
 
@@ -152,7 +162,19 @@ public class DeviceInstanceFragment extends android.support.v4.app.Fragment {
         saveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d("hahahah", "hahahah");
+                Log.d("SAVE SAVE SAVE;", "save button clicked !!!!");
+                if (isAnyDataChanged()) {
+                    if(validateInputData()){
+
+                        deviceName.setText(deviceNameInput.getText().toString());
+                        deviceLocation.setText(deviceLocationInput.getText().toString());
+                        deviceCapabilities.setDeviceName(deviceName.getText().toString());
+                        deviceCapabilities.setDeviceLocation(deviceLocation.getText().toString());
+                        TaskDispatcher.newTask(TaskDispatcher.GuiTaskContext.UPDATE_DEVICE_DATA,deviceCapabilities);
+                        Log.d("SAVE SAVE SAVE;", "data has changed !");
+                    }
+                    Toast.makeText(getContext(),"Invalid data, you can not save",Toast.LENGTH_LONG);
+                }
             }
         });
 
@@ -169,24 +191,6 @@ public class DeviceInstanceFragment extends android.support.v4.app.Fragment {
         });
     }
 
-    /**
-     *  Edit fields
-     */
-    private void insertEditFields() {
-        deviceNameInput = (TextInputEditText) view.findViewById(R.id.deviceNameInputField);
-        deviceLocationInput = (TextInputEditText) view.findViewById(R.id.deviceLocationInputField);
-
-        deviceNameInput.setText(deviceCapabilities.getDeviceName());
-        deviceLocationInput.setText(deviceCapabilities.getDeviceLocation());
-
-    }
-
-    private void editDeviceFragmentData() {
-        view.findViewById(R.id.deviceSettings).setVisibility(RelativeLayout.VISIBLE);
-        view.findViewById(R.id.contentContainer).setVisibility(LinearLayout.GONE);
-        insertEditFields();
-    }
-
 
     private void setViewElements(View v) {
         deviceName = ((TextView) (v.findViewById(R.id.deviceName)));
@@ -199,6 +203,80 @@ public class DeviceInstanceFragment extends android.support.v4.app.Fragment {
         ((TextView) (v.findViewById(R.id.macAddress))).append(deviceCapabilities.getMacAddress());
         ((TextView) (v.findViewById(R.id.deviceType))).append(deviceCapabilities.getDeviceType());
 
+    }
+
+
+    /**
+     * Device settings fields
+     */
+    private void insertEditFields() {
+        deviceNameInput = (TextInputEditText) view.findViewById(R.id.deviceNameInputField);
+        deviceLocationInput = (TextInputEditText) view.findViewById(R.id.deviceLocationInputField);
+        deviceWifiSSIDInput = (TextInputEditText) view.findViewById(R.id.devicessidInputField);
+        deviceWifiPASSInput = (TextInputEditText) view.findViewById(R.id.devicepassInputField);
+
+        deviceNameInput.setText(deviceCapabilities.getDeviceName());
+        deviceLocationInput.setText(deviceCapabilities.getDeviceLocation());
+        deviceWifiSSIDInput.setText(getWiFiSSID());
+
+
+    }
+
+    private void editDeviceFragmentData() {
+        view.findViewById(R.id.deviceSettings).setVisibility(RelativeLayout.VISIBLE);
+        view.findViewById(R.id.contentContainer).setVisibility(LinearLayout.GONE);
+        insertEditFields();
+    }
+
+
+    private String getWiFiSSID() {
+        WifiManager wifiManager = (WifiManager) getActivity().getApplicationContext().getSystemService(getActivity().getApplicationContext().WIFI_SERVICE);
+        WifiInfo wifiInfo;
+
+        wifiInfo = wifiManager.getConnectionInfo();
+        if (wifiInfo.getSupplicantState() == SupplicantState.COMPLETED) {
+            return wifiInfo.getSSID();
+        }
+        return "none";
+    }
+
+    private void saveOldData() {
+        oldWifiPassword = deviceWifiPASSInput.getText().toString();
+        oldWifiSSID = deviceWifiSSIDInput.getText().toString();
+    }
+
+    private boolean isAnyDataChanged() {
+        boolean returnValue = false;
+        if (!oldWifiSSID.equals(deviceWifiSSIDInput.getText().toString())) {
+            Log.d("isAnyDataChanged", "deviceWifiSSIDInput changed");
+            returnValue = true;
+        }
+        if (!oldWifiPassword.equals(deviceWifiPASSInput.getText().toString())) {
+            Log.d("isAnyDataChanged", "deviceWifiPASSInput changed");
+            returnValue = true;
+        }
+        if (!deviceLocation.equals(deviceLocationInput.getText().toString())) {
+            Log.d("isAnyDataChanged", "deviceLocationInput changed");
+            returnValue = true;
+        }
+        if (!deviceName.equals(deviceNameInput.getText().toString())) {
+            Log.d("isAnyDataChanged", "deviceNameInput changed");
+            returnValue = true;
+        }
+        return returnValue;
+    }
+    private boolean validateInputData(){
+        if(deviceNameInput.getText().toString().length() == 0){
+            deviceNameInput.setError("Device name is required");
+            Log.d("validateInputData", "Device name is required");
+            return false;
+        }
+        if(deviceLocationInput.getText().toString().length() == 0){
+            deviceLocationInput.setError("Device location is required");
+            Log.d("validateInputData", "Device location is required");
+            return false;
+        }
+        return true;
     }
 
 }

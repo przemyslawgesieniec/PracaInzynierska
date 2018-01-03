@@ -4,18 +4,14 @@
 #include <ArduinoJson.h>
 #include "FS.h"
 
-String getCapabilities();
+#define CONF_PIN 4
+
 void sendReply();
 String boolToString(bool value);
 bool saveConfig();
 
-const char IPD[] PROGMEM = "IPD,";
-const char READY[] PROGMEM = "ready";
-
 unsigned long oldTimerStatus = 0;
 const int attachRequestResendTimer = 4000;
-
-byte readCommand(int timeout, const char* text1 = NULL, const char* text2 = NULL);
 
 unsigned int broadcastPort = 11000;
 unsigned int localPort = 2390;
@@ -24,8 +20,8 @@ String mac = "";
 String messageType;
 
 //JSON config
-const char* deviceName;
-const char* deviceLocation;
+const char* deviceName_conf;
+const char* deviceLocation_conf;
 const char* ssid_conf;
 const char* pass_conf;
 //~JSON config
@@ -48,7 +44,7 @@ class CommonDevice
     String deviceLocation;
     String deviceType;
 
-public:
+  public:
     //Getters
     String getDeviceName()
     {
@@ -58,7 +54,7 @@ public:
     {
       return deviceLocation;
     }
-    
+
     //Setters
     void setDeviceName(String deviceName)
     {
@@ -105,50 +101,69 @@ class LightSwitch : public CommonDevice
         sendReply();
         return true;
       }
-      //      if (message.startsWith("UpdateDeviceName"))
-      //      {
-      //        String tmpDeviceName = deviceName;
-      //        int slength = message.length();
-      //        message = message.substring(17, slength);
-      //        messageType = "dataupdate";
-      //        if (saveConfig()) {
-      //          messageType = "updatefail";
-      //          deviceName = tmpDeviceName;
-      //        }
-      //        replyBuffer = getCapabilities();
-      //        sendReply();
-      //        return true;
-      //      }
-      //      if (message.startsWith("UpdateDeviceLocation"))
-      //      {
-      //        String tmpDeviceLocation = deviceLocation;
-      //        int slength = message.length();
-      //        message = message.substring(21, slength);
-      //        deviceLocation = message;
-      //        messageType = "dataupdate";
-      //        if (saveConfig()) {
-      //          messageType = "updatefail";
-      //          deviceLocation = tmpDeviceLocation;
-      //        }
-      //        replyBuffer = getCapabilities();
-      //        sendReply();
-      //        return true;
-      //      }
       return false;
     }
 
     String getCapabilities()
     {
-      String capabilities = deviceType;
+      String capabilities = "";
+      capabilities += "" + deviceType;
       capabilities += ";" + messageType;
+      capabilities += ";" + deviceName;
+      capabilities += ";" + deviceLocation;
       capabilities += ";" + mac;
       capabilities += ";1";
       capabilities += ";" + boolToString(switchState);
+
+      //      String capabilities = deviceType;
+      //      capabilities += ";" + messageType;
+      //      capabilities += ";" + mac;
+      //      capabilities += ";1";
+      //      capabilities += ";" + boolToString(switchState);
       return capabilities;
     }
 
 };
 
+class MultiLightSwitch : public CommonDevice
+{
+  public:
+    MultiLightSwitch(String deviceName, String deviceLocation, String deviceType, bool switchState[2], int operablePin[2]) : CommonDevice(deviceName, deviceLocation, deviceType)
+    {
+      this->operablePin[0] = operablePin[0];
+      this->switchState[0] = switchState[0];
+      this->operablePin[1] = operablePin[1];
+      this->switchState[1] = switchState[1];
+
+      pinMode(operablePin[0], OUTPUT);
+      pinMode(operablePin[1], OUTPUT);
+      digitalWrite(operablePin[0], switchState[0]);
+      digitalWrite(operablePin[0], switchState[1]);
+    }
+  private:
+    int operablePin[2];
+    bool switchState[2];
+
+    bool handleIncomingMessage(String message)
+    {
+
+    }
+
+    String getCapabilities()
+    {
+      String capabilities = "";
+      capabilities += ";" + deviceType;
+      capabilities += ";" + messageType;
+      capabilities += ";" + deviceName;
+      capabilities += ";" + deviceLocation;
+      capabilities += ";" + mac;
+      capabilities += ";2";
+      capabilities += ";" + boolToString(switchState[0]);
+      capabilities += ";" + boolToString(switchState[1]);
+      return capabilities;
+    }
+
+};
 
 CommonDevice *device;
 IPAddress broadcastIp(192, 168, 137, 255); //TODO: zmienic zevby sam ustawial w zaleznosci od maski sieci
@@ -157,24 +172,37 @@ WiFiUDP Udp;
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
+  pinMode(CONF_PIN, INPUT);
   Serial.begin(115200);
   Serial.println("");
   Serial.println("Starting module ESP012e");
 
-  device = new LightSwitch("switch", "room", "switch", false, 13);
-
+  Serial.println("Mounting file system...");
   if (!SPIFFS.begin()) {
     Serial.println("Failed to mount file system");
     return;
   }
-
-  loadConfig();
+  Serial.println("Reading configuration file...");
   if (!loadConfig()) {
-    Serial.println("Module will not start, can not read WiFi credentials");
-    //     ESP.restart();
+    Serial.println("Can not read WiFi credentials");
+    Serial.println("Restoring default settings");
+    deviceName_conf = "switch";
+    deviceLocation_conf = "room";
+  }
+
+  if (digitalRead(CONF_PIN) == HIGH) {
+    Serial.println("Creating instance of Light switch");
+    device = new LightSwitch(deviceName_conf, deviceLocation_conf, "switch", false, 13);
+  }
+  else if (digitalRead(CONF_PIN) == LOW) {
+    Serial.println("Creating instance of Multi Light Switch");
+    bool states[2] = {false, false};
+    int operablePins[2] = {12, 13};
+    device = new MultiLightSwitch (deviceName_conf, deviceLocation_conf, "multiswitch", states, operablePins);
   }
 
   WiFi.begin(ssid_conf, pass_conf);
+  //WiFi.begin("DESKTOP_WIFI","przemek123");
   while (WiFi.waitForConnectResult() != WL_CONNECTED)
   {
     Serial.print(".");
@@ -213,29 +241,22 @@ void loop() {
 }
 void handleGeneralMessage(String message)
 {
-  if (message.startsWith("UpdateDeviceName"))
+  if (message.startsWith("UpdateDeviceData"))
   {
     String tmpDeviceName = device->getDeviceName();
-    int slength = message.length();
-    message = message.substring(17, slength);
-    device->setDeviceName(message);
-    messageType = "dataupdate";
-    if (saveConfig()) {
-      messageType = "updatefail";
-      device->setDeviceName(tmpDeviceName);
-    }
-    replyBuffer = device->getCapabilities();
-    sendReply();
-  }
-  if (message.startsWith("UpdateDeviceLocation"))
-  {
     String tmpDeviceLocation = device->getDeviceLocation();
     int slength = message.length();
-    message = message.substring(21, slength);
-    device->setDeviceLocation(message);
-    messageType = "dataupdate";
-    if (saveConfig()) {
+    message = message.substring(17, slength);
+    device->setDeviceName(getDeviceNameFromMessage(message));
+    device->setDeviceLocation(getDeviceLocationFromMessage(message));
+    Serial.println("new device name:");
+    Serial.println(device->getDeviceName());
+    Serial.println("new device location:");
+    Serial.println(device->getDeviceLocation());
+    messageType = "dataupdatecfm";
+    if (!saveConfig()) {
       messageType = "updatefail";
+      device->setDeviceName(tmpDeviceName);
       device->setDeviceLocation(tmpDeviceLocation);
     }
     replyBuffer = device->getCapabilities();
@@ -337,16 +358,31 @@ String boolToString(bool value)
   return value ? "true" : "false";
 }
 
+String getDeviceNameFromMessage(String message)
+{
+  int divider = message.indexOf(";");
+  String newName = message.substring(0, divider);
+  return newName;
+}
+String getDeviceLocationFromMessage(String message)
+{
+  String shorterMessage = message.substring(device->getDeviceName().length() + 1, message.length());
+  int divider = shorterMessage.indexOf(";");
+  String newLocation = shorterMessage.substring(0, divider);
+  return newLocation;
+}
+
 //////////////////////////
 //SPIFFS memory functions
 /////////////////////////
 bool saveConfig() {
+  Serial.println("SAVING CONFIG !");
   StaticJsonBuffer<200> jsonBuffer;
   JsonObject& json = jsonBuffer.createObject();
   json["ssid"] = "DESKTOP_WIFI";
   json["pass"] = "przemek123";
-  json["deviceName"] = "switch";
-  json["deviceLocation"] = "room";
+  json["deviceName"] = device->getDeviceName();
+  json["deviceLocation"] = device->getDeviceLocation();
 
   File configFile = SPIFFS.open("/config.json", "w");
   if (!configFile) {
@@ -375,15 +411,15 @@ bool loadConfig() {
     return false;
   }
 
-  deviceName = json["deviceName"];
-  deviceLocation = json["deviceLocation"];
+  deviceName_conf = json["deviceName"];
+  deviceLocation_conf = json["deviceLocation"];
   ssid_conf = json["ssid"];
   pass_conf = json["pass"];
 
   Serial.print("Device Name: ");
-  Serial.println(deviceName);
+  Serial.println(deviceName_conf);
   Serial.print("Device Location: ");
-  Serial.println(deviceLocation);
+  Serial.println(deviceLocation_conf);
   Serial.print("pass_conf: ");
   Serial.println(pass_conf);
   Serial.print("ssid_conf: ");

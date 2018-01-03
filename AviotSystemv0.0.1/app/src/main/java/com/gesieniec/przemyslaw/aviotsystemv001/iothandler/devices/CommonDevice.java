@@ -27,7 +27,7 @@ public abstract class CommonDevice {
     protected String macAddress;
     protected HashMap<String,DeviceAction> actionMapENG;
     protected HashMap<String,DeviceAction> actionMapPL;
-
+    protected boolean isDataUpdated = false;
     /**
      * getters
      */

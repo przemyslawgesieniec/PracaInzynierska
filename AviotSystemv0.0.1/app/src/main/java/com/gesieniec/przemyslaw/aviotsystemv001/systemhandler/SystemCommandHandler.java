@@ -105,4 +105,9 @@ public class SystemCommandHandler implements ITaskDispatcherListener {
 
     }
 
+    @Override
+    public void handleDispatchedUpdateDeviceDataCommandExecution(DeviceCapabilities capabilities) {
+
+    }
+
 }
