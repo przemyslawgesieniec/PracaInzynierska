@@ -4,6 +4,7 @@ import android.util.Log;
 import android.widget.Switch;
 
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceCapabilities;
+import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.CommonDevice;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.SystemCommandHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommandHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommand;
@@ -49,7 +50,9 @@ public class TaskDispatcher {
     public enum IoTTaskContext {
         ATTACH_REQUEST,
         ATTACH_COMPLETE,
-        UPDATE_DEVICE_DATA
+        UPDATE_DEVICE_DATA,
+        CONSISTENCY_MESSGE_RECEIVED,
+        DEVICE_NOT_RESPONDING
     }
 
     private static ArrayList<ITaskDispatcherListener> listeners = new ArrayList<>();
@@ -91,7 +94,7 @@ public class TaskDispatcher {
         }
     }
 
-    public static void newTask(IoTTaskContext cause, DatagramPacket data) {
+    public static void newTask(IoTTaskContext cause, List<String> data) {
         switch (cause) {
             case ATTACH_REQUEST:
                 Log.d("TaskDispatcher:", "new task IoTCommand");
@@ -110,8 +113,11 @@ public class TaskDispatcher {
                 for (ITaskDispatcherListener executeSystemCommandListener : listeners) {
                     executeSystemCommandListener.handleDispatchedIoTCommandExecution(data);
                 }
+                break;
+
         }
     }
+
     public static void newTask(IoTTaskContext cause, DeviceCapabilities data) {
         switch (cause) {
             case UPDATE_DEVICE_DATA:
@@ -119,8 +125,21 @@ public class TaskDispatcher {
                     executeSystemCommandListener.handleDispatchedIoTUpdateCommandExecution(data);
                 }
                 break;
+            case CONSISTENCY_MESSGE_RECEIVED:
+                for (ITaskDispatcherListener executeSystemCommandListener : listeners) {
+                    executeSystemCommandListener.handleDispatchedIoTConsistencyControl(data);
+                }
         }
     }
+    public static void newTask(IoTTaskContext cause, CommonDevice data) {
+        switch (cause){
+            case DEVICE_NOT_RESPONDING:
+                for (ITaskDispatcherListener executeSystemCommandListener : listeners) {
+                    executeSystemCommandListener.handleDispatchedIoTDeviceNotResponding(data);
+                }
+        }
+    }
+
     //    }
     public static void newTask(GuiTaskContext cause, DeviceCapabilities capabilities) {
         switch (cause) {

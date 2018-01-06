@@ -15,6 +15,7 @@ public final class CommandDataClass {
      */
 
     private static ArrayList<String> systemStatusCommandsENG;
+    private static ArrayList<String> consoleCrearingCommandsENG;
     private static ArrayList<String> devicesListENG;
     private static ArrayList<String> negationENG;
 
@@ -37,7 +38,9 @@ public final class CommandDataClass {
     public static ArrayList<String> getSystemStatusCommandsENG() {
         return systemStatusCommandsENG;
     }
-
+    public static ArrayList<String> getConsoleCrearingCommandsENG() {
+        return consoleCrearingCommandsENG;
+    }
 
 
     /**
@@ -54,8 +57,10 @@ public final class CommandDataClass {
          * English commands init
          */
         systemStatusCommandsENG = new ArrayList<>();
+        consoleCrearingCommandsENG = new ArrayList<>();
         devicesListENG = new ArrayList<>();
         negationENG = new ArrayList<>();
+        fillClearingConsoleCommands();
         fillDefaultFullCommandsListENG();
         fillNegationListENG();
 
@@ -68,6 +73,12 @@ public final class CommandDataClass {
         fillDefaultFullCommandsListPL();
         fillNegationListPL();
 
+    }
+
+    private static void fillClearingConsoleCommands() {
+        consoleCrearingCommandsENG.add("clear console");
+        consoleCrearingCommandsENG.add("clear output");
+        consoleCrearingCommandsENG.add("clean up");
     }
 
     /**

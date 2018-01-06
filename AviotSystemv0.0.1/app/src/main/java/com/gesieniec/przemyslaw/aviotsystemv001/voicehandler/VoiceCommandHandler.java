@@ -90,21 +90,24 @@ public class VoiceCommandHandler {
     private boolean tryToMachWitchSystemCommands(String possibleCommand) {
         Log.d("VoiceCommandHandler", "tryToMachWitchSystemCommands");
         for (String systemCommand : CommandDataClass.getSystemStatusCommandsENG()) {
-            Log.d("SYSTEM COMMAND", systemCommand);
-            Log.d("possibleCommand", possibleCommand);
             if (systemCommand.equals(possibleCommand)) {
                 voiceCommand.setCommandLanguage(VoiceCommand.Language.ENG_ENGLISH);
                 return true;
             }
         }
         for (String systemCommand : CommandDataClass.getSystemStatusCommandsPL()) {
-            Log.d("SYSTEM COMMAND", systemCommand);
-            Log.d("mozliwa komenda", possibleCommand);
             if (systemCommand.equals(possibleCommand)) {
                 voiceCommand.setCommandLanguage(VoiceCommand.Language.PL_POLISH);
                 return true;
             }
         }
+        for (String systemCommand : CommandDataClass.getConsoleCrearingCommandsENG()) {
+            if (systemCommand.equals(possibleCommand)) {
+                voiceCommand.setCommandLanguage(VoiceCommand.Language.ENG_ENGLISH);
+                return true;
+            }
+        }
+
         return false;
     }
 
@@ -140,6 +143,14 @@ public class VoiceCommandHandler {
 //            }
 //        }
         for (CommonDevice device : ApplicationContext.getCommonDevices()) {
+            int i = 1;
+            Log.d("VoiceCommandHandler ", "match with connected Devices");
+            Log.d("Device nr", ""+i);
+            Log.d("Device name", device.getName());
+            Log.d("Device location", device.getLocation());
+            for (String action: device.getActionList()){
+                Log.d("Device action", action);
+            }
 
             for (String action : device.getActionList()) {
                 if (possibleCommand.contains(action)) {
@@ -156,6 +167,7 @@ public class VoiceCommandHandler {
                 mPlace = device.getLocation();
                 ENG_score++;
             }
+            i++;
         }
 
         for (String negation : CommandDataClass.getNegationENG()) {
@@ -164,6 +176,7 @@ public class VoiceCommandHandler {
                 ENG_score++;
             }
         }
+
 
 
 

@@ -6,6 +6,7 @@ import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.LightSwitch;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.messagehandler.MessageHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.ApplicationContext;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.CommonDevice;
+import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.CommandDataClass;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.SystemCommandHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.ITaskDispatcherListener;
 import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.TaskDispatcher;
@@ -16,12 +17,16 @@ import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /**
  * Created by przem on 10.11.2017.
  */
 
 public class DeviceHandler implements ITaskDispatcherListener {
+
+
 
     @Override
     public void handleDispatchedVoiceCommandExecution(VoiceCommand voiceCommand) {
@@ -41,8 +46,9 @@ public class DeviceHandler implements ITaskDispatcherListener {
     }
 
     @Override
-    public void handleDispatchedIoTCommandExecution(DatagramPacket datagramPacket) {
-        sendCapabilityRequest(datagramPacket);
+    public void handleDispatchedIoTCommandExecution(List<String> data) {
+        Log.d("ATTACH REQ","sending capabilities");
+        sendCapabilityRequest(data);
     }
 
     @Override
@@ -56,7 +62,7 @@ public class DeviceHandler implements ITaskDispatcherListener {
 
     @Override
     public void handleDispatchedIoTUpdateCommandExecution(DeviceCapabilities capabilities) {
-
+        //DO NOT IMPLEMENT
     }
 
     @Override
@@ -67,6 +73,18 @@ public class DeviceHandler implements ITaskDispatcherListener {
     @Override
     public void handleDispatchedUpdateDeviceDataCommandExecution(DeviceCapabilities capabilities) {
         sendMessageToRelatedDevice(capabilities);
+    }
+
+    @Override
+    public void handleDispatchedIoTConsistencyControl(DeviceCapabilities capabilities) {
+        CommonDevice device = getDeviceByMacAddress(capabilities);
+        device.restoreDeviceStatusCounter();
+    }
+
+    @Override
+    public void handleDispatchedIoTDeviceNotResponding(CommonDevice device) {
+        ApplicationContext.getDisconnectedCommonDevices().add(device);
+        ApplicationContext.getCommonDevices().remove(device);
     }
 
 
@@ -137,9 +155,17 @@ public class DeviceHandler implements ITaskDispatcherListener {
         }
     }
 
-    private void sendCapabilityRequest(DatagramPacket datagramPacket) {
+    private void sendCapabilityRequest(List<String> data) {
         MessageHandler messageHandler = new MessageHandler();
-        messageHandler.sendAndReceiveUDPMessage("CapabilityRequest", datagramPacket.getAddress());
+        Log.d("ATTACH REQ","przed sendAnd rcv");
+        Log.d("ATTACH REQ", "message: "+data.get(1));
+        InetAddress ipAddress = null;
+        try {
+            ipAddress = InetAddress.getByName(data.get(1));
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        messageHandler.sendAndReceiveUDPMessage("CapabilityRequest", ipAddress);
     }
 
     /**
@@ -185,6 +211,24 @@ public class DeviceHandler implements ITaskDispatcherListener {
             default:
                 return null;
         }
+    }
+    public void startSendingConsistencyControlMessage(){
+
+        new Timer().scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                for(CommonDevice device : ApplicationContext.getCommonDevices()){
+                    if(device.getDeviceStatusCounter() > 0){
+                        new MessageHandler().sendAndReceiveUDPMessage("connectionControl", device.getDeviceAddress());
+                        device.decreseDeviceStatusCounter();
+                    }
+                    else {
+                        TaskDispatcher.newTask(TaskDispatcher.IoTTaskContext.DEVICE_NOT_RESPONDING,device);
+
+                    }
+                }
+            }
+        },1000,4000);
     }
 
 }

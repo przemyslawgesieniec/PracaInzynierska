@@ -14,6 +14,8 @@ import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceRecognition;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by przem on 08.11.2017.
@@ -36,8 +38,14 @@ public final class ApplicationContext {
     private DeviceHandler deviceHandler;
     private VoiceRecognition voiceRecognition;
     private static ArrayList<CommonDevice> commonDevices;
+    private static ArrayList<CommonDevice> disconnectedCommonDevices;
     private SystemCommandHandler systemCommandHandler;
+    public static HashMap<String,Integer> macIdMap;
 
+
+    public static ArrayList<CommonDevice> getDisconnectedCommonDevices() {
+        return disconnectedCommonDevices;
+    }
 
     public ApplicationContext(MainActivity mainActivity) {
         /**
@@ -47,7 +55,9 @@ public final class ApplicationContext {
         deviceHandler = new DeviceHandler();
         voiceRecognition = new VoiceRecognition(mainActivity);
         commonDevices = new ArrayList<>();
+        disconnectedCommonDevices = new ArrayList<>();
         systemCommandHandler = new SystemCommandHandler();
+        macIdMap = new HashMap<>();
 
         //TODO: move to taskDispatcher (on application start)
         BroadcastListener asyncTask = new BroadcastListener();
@@ -57,6 +67,7 @@ public final class ApplicationContext {
         else{ // Below Api Level 13
             asyncTask.execute();
         }
+        //deviceHandler.startSendingConsistencyControlMessage();
 
     }
 
@@ -79,9 +90,14 @@ public final class ApplicationContext {
      */
     public static void addCommonDevice(CommonDevice commonDevice) {
         ApplicationContext.commonDevices.add(commonDevice);
+        if(macIdMap.get(commonDevice.getMacAddress()) == null){
+            macIdMap.put(commonDevice.getMacAddress(),commonDevice.getDeviceId());
+        }
+
     }
     public void setSystemLanguage(Language systemLanguage) {
         this.systemLanguage = systemLanguage;
     }
+
 
 }

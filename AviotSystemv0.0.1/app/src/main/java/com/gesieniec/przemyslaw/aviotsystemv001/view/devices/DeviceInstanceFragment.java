@@ -1,5 +1,6 @@
 package com.gesieniec.przemyslaw.aviotsystemv001.view.devices;
 
+import android.app.Activity;
 import android.graphics.Color;
 import android.net.wifi.SupplicantState;
 import android.net.wifi.WifiInfo;
@@ -17,6 +18,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.AccelerateDecelerateInterpolator;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -102,7 +104,8 @@ public class DeviceInstanceFragment extends android.support.v4.app.Fragment {
         s.setGravity(Gravity.FILL_VERTICAL);
         s.setLayoutParams(new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
         s.setChecked(deviceCapabilities.getStates().get(0));
-        s.setId(deviceCapabilities.getID());
+        s.setId(deviceCapabilities.getIdBasedOnMAC(deviceCapabilities.getMacAddress()));
+        Log.d("oSWITCH IDIDIDIDIDIID, ",""+deviceCapabilities.getID());
         s.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -175,6 +178,10 @@ public class DeviceInstanceFragment extends android.support.v4.app.Fragment {
                     }
                     Toast.makeText(getContext(),"Invalid data, you can not save",Toast.LENGTH_LONG);
                 }
+                view.findViewById(R.id.deviceSettings).setVisibility(RelativeLayout.GONE);
+                view.findViewById(R.id.contentContainer).setVisibility(LinearLayout.VISIBLE);
+                InputMethodManager inputMethodManager =(InputMethodManager)getContext().getApplicationContext().getSystemService(Activity.INPUT_METHOD_SERVICE);
+                inputMethodManager.hideSoftInputFromWindow(view.getWindowToken(), 0);
             }
         });
 

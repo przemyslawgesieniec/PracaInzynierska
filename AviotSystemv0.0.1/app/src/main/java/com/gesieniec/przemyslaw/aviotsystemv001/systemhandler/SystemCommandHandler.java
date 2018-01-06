@@ -67,6 +67,15 @@ public class SystemCommandHandler implements ITaskDispatcherListener {
                 return;
             }
         }
+        for (String cmnd : CommandDataClass.getConsoleCrearingCommandsENG()) {
+            if (cmnd.equals(command)) {
+                systemCommandType = SystemCommandType.ACCEPT;
+                systemAnswer = "Console cleared";
+                TaskDispatcher.newTask(TaskDispatcher.SystemTaskContext.EXECUTE_SYSTEM_COMMAND, this);
+                return;
+            }
+        }
+        systemCommandType = SystemCommandType.REJECT;
     }
 
     private List<String> checkConnectedDevices(){
@@ -82,13 +91,11 @@ public class SystemCommandHandler implements ITaskDispatcherListener {
      */
     @Override
     public void handleDispatchedSystemCommandExecution(SystemCommandHandler systemCommandHandler) {
-        /**
-         * DO NOT IMPLEMENT HERE
-         */
+
     }
 
     @Override
-    public void handleDispatchedIoTCommandExecution(DatagramPacket datagramPacket) {}
+    public void handleDispatchedIoTCommandExecution(List<String> data) {}
 
     @Override
     public void handleDispatchedIoTCommandExecution(String capabilities) {
@@ -107,6 +114,16 @@ public class SystemCommandHandler implements ITaskDispatcherListener {
 
     @Override
     public void handleDispatchedUpdateDeviceDataCommandExecution(DeviceCapabilities capabilities) {
+
+    }
+
+    @Override
+    public void handleDispatchedIoTConsistencyControl(DeviceCapabilities capabilities) {
+
+    }
+
+    @Override
+    public void handleDispatchedIoTDeviceNotResponding(CommonDevice data) {
 
     }
 

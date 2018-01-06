@@ -10,6 +10,7 @@ void sendReply();
 String boolToString(bool value);
 bool saveConfig();
 
+IPAddress local_ip;
 unsigned long oldTimerStatus = 0;
 const int attachRequestResendTimer = 4000;
 
@@ -43,6 +44,7 @@ class CommonDevice
     String deviceName;
     String deviceLocation;
     String deviceType;
+    String ip;
 
   public:
     //Getters
@@ -107,19 +109,14 @@ class LightSwitch : public CommonDevice
     String getCapabilities()
     {
       String capabilities = "";
-      capabilities += "" + deviceType;
+      capabilities += "" + local_ip.toString();
+      capabilities += ";" + deviceType;
       capabilities += ";" + messageType;
       capabilities += ";" + deviceName;
       capabilities += ";" + deviceLocation;
       capabilities += ";" + mac;
       capabilities += ";1";
       capabilities += ";" + boolToString(switchState);
-
-      //      String capabilities = deviceType;
-      //      capabilities += ";" + messageType;
-      //      capabilities += ";" + mac;
-      //      capabilities += ";1";
-      //      capabilities += ";" + boolToString(switchState);
       return capabilities;
     }
 
@@ -152,6 +149,7 @@ class MultiLightSwitch : public CommonDevice
     String getCapabilities()
     {
       String capabilities = "";
+      capabilities += "" + local_ip.toString();
       capabilities += ";" + deviceType;
       capabilities += ";" + messageType;
       capabilities += ";" + deviceName;
@@ -200,7 +198,7 @@ void setup() {
     int operablePins[2] = {4, 5};
     device = new MultiLightSwitch (deviceName_conf, deviceLocation_conf, "multiswitch", states, operablePins);
   }
-// saveConfig();
+  // saveConfig();
   WiFi.begin(ssid_conf, pass_conf);
   while (WiFi.waitForConnectResult() != WL_CONNECTED)
   {
@@ -217,7 +215,7 @@ void setup() {
   Serial.print("MAC:");
   Serial.println(mac);
 
-  IPAddress local_ip = WiFi.localIP();
+  local_ip = WiFi.localIP();
   Serial.print("IP address: ");
   Serial.println(local_ip);
   Udp.begin(localPort);
@@ -248,16 +246,19 @@ void handleGeneralMessage(String message)
     message = message.substring(17, slength);
     device->setDeviceName(getDeviceNameFromMessage(message));
     device->setDeviceLocation(getDeviceLocationFromMessage(message));
-    Serial.println("new device name:");
-    Serial.println(device->getDeviceName());
-    Serial.println("new device location:");
-    Serial.println(device->getDeviceLocation());
     messageType = "dataupdatecfm";
     if (!saveConfig()) {
       messageType = "updatefail";
       device->setDeviceName(tmpDeviceName);
       device->setDeviceLocation(tmpDeviceLocation);
     }
+    replyBuffer = device->getCapabilities();
+    sendReply();
+  }
+  if (message.startsWith("connectionControl"))
+  {
+    message = "empty";
+    messageType = "connectioncfm";
     replyBuffer = device->getCapabilities();
     sendReply();
   }
@@ -296,7 +297,8 @@ void sendReply()
 
 void sendAttachRequest()
 {
-  char attachRequestMsg[] = "AttachRequest";
+  String attachRequest = "AttachRequest;" + local_ip.toString();
+  const char *attachRequestMsg = attachRequest.c_str();
   Serial.println("Send AttachRequest");
   Udp.beginPacket(broadcastIp, broadcastPort);
   Udp.write(attachRequestMsg);

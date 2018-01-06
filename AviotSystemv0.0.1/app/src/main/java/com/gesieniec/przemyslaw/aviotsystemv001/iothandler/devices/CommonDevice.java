@@ -17,6 +17,7 @@ import java.util.List;
 public abstract class CommonDevice {
 
 
+    private static int id = 0;
     /**
      * fields
      */
@@ -30,6 +31,9 @@ public abstract class CommonDevice {
     protected HashMap<String,DeviceAction> actionMapPL;
     protected List<String> actionList;
     protected boolean isDataUpdated = false;
+    protected int deviceId;
+    protected int deviceStatusCounter = 3;
+
     /**
      * getters
      */
@@ -54,6 +58,12 @@ public abstract class CommonDevice {
     public List<String> getActionList() {
         return actionList;
     }
+    public int getDeviceStatusCounter() {
+        return deviceStatusCounter;
+    }
+    public int getDeviceId() {
+        return deviceId;
+    }
 
     /**
      * setters
@@ -77,12 +87,21 @@ public abstract class CommonDevice {
         this.location = location;
         this.deviceAddress = deviceAddress;
         this.macAddress = macAddress;
+        deviceId = id;
+        id++;
         Log.d("CommonDevice: ","New device:" );
     }
+    public void restoreDeviceStatusCounter(){
+        deviceStatusCounter = 3;
+    }
+    public void decreseDeviceStatusCounter(){
+        deviceStatusCounter --;
+    }
+
     public abstract DeviceType getDeviceType();
     public abstract HashMap<String, DeviceAction> getActionMapENG();
     public abstract HashMap<String, DeviceAction> getActionMapPL();
-//    public abstract void updateCommonDataClass();
     public abstract String getMessageToSend(DeviceCapabilities capabilities);
     public abstract void updateDeviceWithCapabilities(DeviceCapabilities deviceCapabilities);
+
 }

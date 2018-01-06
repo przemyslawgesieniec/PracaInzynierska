@@ -2,6 +2,8 @@ package com.gesieniec.przemyslaw.aviotsystemv001.iothandler;
 
 import android.util.Log;
 
+import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.ApplicationContext;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,6 +13,7 @@ import java.util.List;
 
 public class DeviceCapabilities {
 
+    private static int id = 0;
     public DeviceCapabilities(String capabilities) {
         /**
          * caps(0) - ipAddress
@@ -71,14 +74,12 @@ public class DeviceCapabilities {
             }
         }
 
-
         Log.d("ASDFASD ipAddress;",ipAddress);
         Log.d("ASDFASD deviceType;",deviceType);
         Log.d("ASDFASD messageType;",messageType);
         Log.d("ASDFASD deviceName;",deviceName);
         Log.d("ASDFASD deviceLocation;",deviceLocation);
         Log.d("ASDFASD macAddress;",macAddress);
-
 
 
 }
@@ -167,4 +168,7 @@ public class DeviceCapabilities {
         this.states = states;
     }
 
+    public int getIdBasedOnMAC(String mac){
+        return ApplicationContext.macIdMap.get(mac);
+    }
 }

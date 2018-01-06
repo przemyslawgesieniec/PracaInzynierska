@@ -1,6 +1,7 @@
 package com.gesieniec.przemyslaw.aviotsystemv001.iothandler.messagehandler;
 
 import android.os.AsyncTask;
+import android.os.Build;
 import android.util.Log;
 
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceCapabilities;
@@ -24,6 +25,7 @@ public class MessageHandler {
 
     public void sendAndReceiveUDPMessage(String message, InetAddress address) {
         byte[] buf = message.getBytes();
+        Log.d("MessgageHandler","address: "+address.toString());
         DatagramPacket packet = new DatagramPacket(buf, buf.length, address, 2390);
         new SendAndReceive().execute(packet);
         Log.d("MessgageHandler","new task started");
@@ -39,6 +41,7 @@ public class MessageHandler {
                 /**
                  * send message
                  */
+                Log.d("MessageHandler","sendoig message");
                 socket = new DatagramSocket();
                 socket.send(datagramPackets[0]);
                 /**
@@ -48,16 +51,19 @@ public class MessageHandler {
                 //TODO : TIMER Z retransmisjami !!!!
                 byte[] buf = new byte[512];
                 DatagramPacket receivedPacket = new DatagramPacket(buf,buf.length);
+//                socket.setSoTimeout(1000);
                 socket.receive(receivedPacket);
                 String receivedMessage = new String(buf,0,receivedPacket.getLength());
                 Log.d("MessageHandler","MESSAGE BACK: "+ receivedMessage);
-                enchantedCaps =  receivedPacket.getAddress().getHostAddress() +";"+receivedMessage ;
+               // enchantedCaps =  receivedPacket.getAddress().getHostAddress() +";"+receivedMessage ;
+                enchantedCaps = receivedMessage;
                 socket.close();
             } catch (SocketException e) {
                 e.printStackTrace();
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             } catch (IOException e) {
+
                 e.printStackTrace();
             }
             return enchantedCaps;
@@ -74,6 +80,9 @@ public class MessageHandler {
             else if(messageBack.contains("capabilities")){
                 Log.d("MessageHandler","ATTACH_COMPLETE  "+ messageBack);
                 TaskDispatcher.newTask(TaskDispatcher.IoTTaskContext.ATTACH_COMPLETE,messageBack);
+            }
+            else if(messageBack.contains("connectioncfm")){
+                TaskDispatcher.newTask(TaskDispatcher.IoTTaskContext.CONSISTENCY_MESSGE_RECEIVED,new DeviceCapabilities(messageBack));
             }
         }
     }
