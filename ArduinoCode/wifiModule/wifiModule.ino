@@ -4,7 +4,7 @@
 #include <ArduinoJson.h>
 #include "FS.h"
 
-#define CONF_PIN 4
+#define CONF_PIN 12
 
 void sendReply();
 String boolToString(bool value);
@@ -192,17 +192,16 @@ void setup() {
 
   if (digitalRead(CONF_PIN) == HIGH) {
     Serial.println("Creating instance of Light switch");
-    device = new LightSwitch(deviceName_conf, deviceLocation_conf, "switch", false, 13);
+    device = new LightSwitch(deviceName_conf, deviceLocation_conf, "switch", false, 5);
   }
   else if (digitalRead(CONF_PIN) == LOW) {
     Serial.println("Creating instance of Multi Light Switch");
     bool states[2] = {false, false};
-    int operablePins[2] = {12, 13};
+    int operablePins[2] = {4, 5};
     device = new MultiLightSwitch (deviceName_conf, deviceLocation_conf, "multiswitch", states, operablePins);
   }
-
+// saveConfig();
   WiFi.begin(ssid_conf, pass_conf);
-  //WiFi.begin("DESKTOP_WIFI","przemek123");
   while (WiFi.waitForConnectResult() != WL_CONNECTED)
   {
     Serial.print(".");

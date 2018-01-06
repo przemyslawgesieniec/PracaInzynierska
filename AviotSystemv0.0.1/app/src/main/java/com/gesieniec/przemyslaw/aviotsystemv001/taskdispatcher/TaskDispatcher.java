@@ -98,6 +98,7 @@ public class TaskDispatcher {
                 for (ITaskDispatcherListener executeSystemCommandListener : listeners) {
                     executeSystemCommandListener.handleDispatchedIoTCommandExecution(data);
                 }
+                break;
 
 
         }
@@ -117,6 +118,7 @@ public class TaskDispatcher {
                 for (ITaskDispatcherListener executeSystemCommandListener : listeners) {
                     executeSystemCommandListener.handleDispatchedIoTUpdateCommandExecution(data);
                 }
+                break;
         }
     }
     //    }
@@ -126,11 +128,13 @@ public class TaskDispatcher {
                 for (ITaskDispatcherListener executeSystemCommandListener : listeners) {
                     executeSystemCommandListener.handleDispatchedGUICommandExecution(capabilities);
                 }
+                break;
             case UPDATE_DEVICE_DATA:
                 capabilities.setMessageType("updatecapabilities");
                 for (ITaskDispatcherListener executeSystemCommandListener : listeners) {
                     executeSystemCommandListener.handleDispatchedUpdateDeviceDataCommandExecution(capabilities);
                 }
+                break;
         }
     }
 }

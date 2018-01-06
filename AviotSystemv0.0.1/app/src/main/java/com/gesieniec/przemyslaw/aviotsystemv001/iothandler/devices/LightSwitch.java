@@ -122,16 +122,32 @@ public class LightSwitch extends CommonDevice {
     @Override
     public void updateDeviceWithCapabilities(DeviceCapabilities deviceCapabilities) {
         Log.d("LightSwitch", "updateDeviceWithCapabilities");
+        isUpdated = false;
+        isDataUpdated = false;
         if (state != deviceCapabilities.getStates().get(0)) {
+
+            Log.d("LightSwitch", "updateDeviceWithCapabilities update state");
+            Log.d("mstate", ""+state);
+            Log.d("getState", deviceCapabilities.getStates().get(0).toString());
+
             state = deviceCapabilities.getStates().get(0);
             isUpdated = true;
         }
-        if (name != deviceCapabilities.getDeviceName()) {
+        if (!name.equals(deviceCapabilities.getDeviceName())) {
+
+            Log.d("LightSwitch", "updateDeviceWithCapabilities update name");
+            Log.d("mname", ""+name);
+            Log.d("getName", deviceCapabilities.getDeviceName());
             name = deviceCapabilities.getDeviceName();
             isDataUpdated = true;
         }
-        if (location != deviceCapabilities.getDeviceLocation()) {
+        if (!location.equals(deviceCapabilities.getDeviceLocation())) {
+            Log.d("LightSwitch", "updateDeviceWithCapabilities update location");
+            Log.d("mlocation", ""+location);
+            Log.d("getlocation", deviceCapabilities.getDeviceLocation());
             location = deviceCapabilities.getDeviceLocation();
+
+
             isDataUpdated = true;
         }
     }
@@ -148,6 +164,7 @@ public class LightSwitch extends CommonDevice {
             return toString() + action;
         }
         if(isDataUpdated){
+            Log.d("isDataUpdated", ""+isDataUpdated);
             String action = "UpdateDeviceData;";
             action+=name;
             action+=";";
