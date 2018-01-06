@@ -72,10 +72,10 @@ public class MulitLightSwitch extends CommonDevice {
         return null;
     }
 
-    @Override
-    public void updateCommonDataClass() {
-        //TODO: implement
-    }
+//    @Override
+//    public void updateCommonDataClass() {
+//        //TODO: implement
+//    }
 
     @Override
     public String getMessageToSend(DeviceCapabilities capabilities) {

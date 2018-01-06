@@ -8,6 +8,7 @@ import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceType;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.CommandDataClass;
 
 import java.net.InetAddress;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 /**
@@ -57,16 +58,17 @@ public class LightSwitch extends CommonDevice {
      */
     public LightSwitch(String name, String location, InetAddress deviceAddress, String macAddress, boolean state) {
         super(name, location, deviceAddress, macAddress);
-        //TODO: odhardkodować !!!
-        namePL = "światło";
-        locationPL = "pokoju";
+
         type = DeviceType.SWITCH;
         this.state = state;
         actionMapENG = new HashMap<>();
         actionMapPL = new HashMap<>();
         fillActionMap();
-        updateCommonDataClass();
+//        updateCommonDataClass();
+        actionList = new ArrayList<>(actionMapENG.keySet());
     }
+
+
 
     /**
      * methods
@@ -101,18 +103,18 @@ public class LightSwitch extends CommonDevice {
         return "LightSwitch";
     }
 
-    @Override
-    public void updateCommonDataClass() {
-
-        CommandDataClass.getActionsListENG().addAll(actionMapENG.keySet());
-        CommandDataClass.getDevicesListENG().add(name);
-        CommandDataClass.getPlacesListENG().add(location);
-
-        CommandDataClass.getActionsListPL().addAll(actionMapPL.keySet());
-        CommandDataClass.getDevicesListPL().add(namePL);
-        CommandDataClass.getPlacesListPL().add(locationPL);
-        //TODO: Polish commands
-    }
+//    @Override
+//    public void updateCommonDataClass() {
+//
+//        CommandDataClass.getActionsListENG().addAll(actionMapENG.keySet());
+//        CommandDataClass.getDevicesListENG().add(name);
+//        CommandDataClass.getPlacesListENG().add(location);
+//
+//        CommandDataClass.getActionsListPL().addAll(actionMapPL.keySet());
+//        CommandDataClass.getDevicesListPL().add(namePL);
+//        CommandDataClass.getPlacesListPL().add(locationPL);
+//        //TODO: Polish commands
+//    }
 
     @Override
     public String getMessageToSend(DeviceCapabilities capabilities) { //TODO: rozbic na state update i na getmessage to send
@@ -125,29 +127,15 @@ public class LightSwitch extends CommonDevice {
         isUpdated = false;
         isDataUpdated = false;
         if (state != deviceCapabilities.getStates().get(0)) {
-
-            Log.d("LightSwitch", "updateDeviceWithCapabilities update state");
-            Log.d("mstate", ""+state);
-            Log.d("getState", deviceCapabilities.getStates().get(0).toString());
-
             state = deviceCapabilities.getStates().get(0);
             isUpdated = true;
         }
         if (!name.equals(deviceCapabilities.getDeviceName())) {
-
-            Log.d("LightSwitch", "updateDeviceWithCapabilities update name");
-            Log.d("mname", ""+name);
-            Log.d("getName", deviceCapabilities.getDeviceName());
             name = deviceCapabilities.getDeviceName();
             isDataUpdated = true;
         }
         if (!location.equals(deviceCapabilities.getDeviceLocation())) {
-            Log.d("LightSwitch", "updateDeviceWithCapabilities update location");
-            Log.d("mlocation", ""+location);
-            Log.d("getlocation", deviceCapabilities.getDeviceLocation());
             location = deviceCapabilities.getDeviceLocation();
-
-
             isDataUpdated = true;
         }
     }

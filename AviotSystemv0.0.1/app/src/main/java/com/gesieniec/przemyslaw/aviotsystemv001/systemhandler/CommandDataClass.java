@@ -15,13 +15,6 @@ public final class CommandDataClass {
      */
 
     private static ArrayList<String> systemStatusCommandsENG;
-
-
-
-    private static ArrayList<String> singlePurposeCommandsENG;
-
-    private static ArrayList<String> actionsListENG;
-    private static ArrayList<String> placesListENG;
     private static ArrayList<String> devicesListENG;
     private static ArrayList<String> negationENG;
 
@@ -30,20 +23,11 @@ public final class CommandDataClass {
      * Polish embedded commands
      */
     private static ArrayList<String> systemStatusCommandsPL;
-    private static ArrayList<String> actionsListPL;
-    private static ArrayList<String> placesListPL;
-    private static ArrayList<String> devicesListPL;
     private static ArrayList<String> negationPL;
 
     /**
      * Getters for english commands
      */
-    public static ArrayList<String> getActionsListENG() {
-        return actionsListENG;
-    }
-    public static ArrayList<String> getPlacesListENG() {
-        return placesListENG;
-    }
     public static ArrayList<String> getDevicesListENG() {
         return devicesListENG;
     }
@@ -53,26 +37,12 @@ public final class CommandDataClass {
     public static ArrayList<String> getSystemStatusCommandsENG() {
         return systemStatusCommandsENG;
     }
-    public static ArrayList<String> getSinglePurposeCommandsENG() {
-        return singlePurposeCommandsENG;
-    }
+
 
 
     /**
      * Getters for polish commands
      */
-    public static ArrayList<String> getActionsListPL() {
-        return actionsListPL;
-    }
-    public static ArrayList<String> getPlacesListPL() {
-        return placesListPL;
-    }
-    public static ArrayList<String> getDevicesListPL() {
-        return devicesListPL;
-    }
-    public static ArrayList<String> getNegationPL() {
-        return negationPL;
-    }
     public static ArrayList<String> getSystemStatusCommandsPL() {
         return systemStatusCommandsPL;
     }
@@ -84,23 +54,16 @@ public final class CommandDataClass {
          * English commands init
          */
         systemStatusCommandsENG = new ArrayList<>();
-        singlePurposeCommandsENG = new ArrayList<>();
-        actionsListENG = new ArrayList<>();
-        placesListENG = new ArrayList<>();
         devicesListENG = new ArrayList<>();
         negationENG = new ArrayList<>();
         fillDefaultFullCommandsListENG();
         fillNegationListENG();
-        fillSinglePuropseCommandsENG();
 
 
         /**
          * Polish commands init
          */
         systemStatusCommandsPL = new ArrayList<>();
-        actionsListPL = new ArrayList<>();
-        placesListPL = new ArrayList<>();
-        devicesListPL = new ArrayList<>();
         negationPL = new ArrayList<>();
         fillDefaultFullCommandsListPL();
         fillNegationListPL();
@@ -140,9 +103,6 @@ public final class CommandDataClass {
         negationPL.add("nie");
     }
 
-    private static void fillSinglePuropseCommandsENG(){
-        singlePurposeCommandsENG.add("");
-    }
 
 
 

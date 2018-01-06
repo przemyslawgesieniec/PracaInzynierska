@@ -8,6 +8,7 @@ import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceType;
 
 import java.net.InetAddress;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * Created by przem on 08.11.2017.
@@ -27,6 +28,7 @@ public abstract class CommonDevice {
     protected String macAddress;
     protected HashMap<String,DeviceAction> actionMapENG;
     protected HashMap<String,DeviceAction> actionMapPL;
+    protected List<String> actionList;
     protected boolean isDataUpdated = false;
     /**
      * getters
@@ -48,6 +50,9 @@ public abstract class CommonDevice {
     }
     public String getLocationPL() {
         return locationPL;
+    }
+    public List<String> getActionList() {
+        return actionList;
     }
 
     /**
@@ -77,7 +82,7 @@ public abstract class CommonDevice {
     public abstract DeviceType getDeviceType();
     public abstract HashMap<String, DeviceAction> getActionMapENG();
     public abstract HashMap<String, DeviceAction> getActionMapPL();
-    public abstract void updateCommonDataClass();
+//    public abstract void updateCommonDataClass();
     public abstract String getMessageToSend(DeviceCapabilities capabilities);
     public abstract void updateDeviceWithCapabilities(DeviceCapabilities deviceCapabilities);
 }
