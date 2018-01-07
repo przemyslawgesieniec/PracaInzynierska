@@ -90,5 +90,6 @@ public abstract class CommonDevice {
     public abstract HashMap<String, DeviceAction> getActionMapENG();
     public abstract String getMessageToSend(DeviceCapabilities capabilities);
     public abstract void updateDeviceWithCapabilities(DeviceCapabilities deviceCapabilities);
+    public abstract String getMessageBasedOnAction(DeviceAction action);
 
 }

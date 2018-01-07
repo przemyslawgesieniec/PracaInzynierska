@@ -25,6 +25,7 @@ public class DeviceCapabilities {
          * caps(5-n) - switch state
          * Extentions:
          */
+        ordinalModifier = new ArrayList<>();
 
         String[] caps = capabilities.split(";");
         try {
@@ -68,6 +69,18 @@ public class DeviceCapabilities {
             }
         }
 
+        if(deviceType.equals(DeviceType.MULTI_SWITCH)){
+            ordinalModifier.add("first");
+            ordinalModifier.add("second");
+            ordinalModifier.add("third");
+        }
+        else {
+            ordinalModifier.add("");
+            ordinalModifier.add("");
+            ordinalModifier.add("");
+        }
+
+
         Log.d("ASDFASD ipAddress;", ipAddress);
         Log.d("ASDFASD deviceType;", deviceType.toString());
         Log.d("ASDFASD messageType;", messageType);
@@ -101,6 +114,7 @@ public class DeviceCapabilities {
     private String macAddress;
     private List<Boolean> states;
     private int numberOfSwitches;
+    private List<String> ordinalModifier;
 
 
     private int ID;
@@ -112,43 +126,36 @@ public class DeviceCapabilities {
     public int getID() {
         return ID;
     }
-
     public String getIpAddress() {
         return ipAddress;
     }
-
     public DeviceType getDeviceType() {
         return deviceType;
     }
-
     public String getMessageType() {
         return messageType;
     }
-
     public String getDeviceName() {
         return deviceName;
     }
-
     public String getDeviceLocation() {
         return deviceLocation;
     }
-
     public String getMacAddress() {
         return macAddress;
     }
-
-
     public List<Boolean> getStates() {
         return states;
     }
-
     public int getNumberOfSwitches() {
         return numberOfSwitches;
     }
     public String getDeviceTypeString() {
         return deviceTypeString;
     }
-
+    public List<String> getOrdinalModifier() {
+        return ordinalModifier;
+    }
 
     /**
      * setters
@@ -156,31 +163,24 @@ public class DeviceCapabilities {
     public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
     }
-
     public void setDeviceType(DeviceType deviceType) {
         this.deviceType = deviceType;
     }
-
     public void setMessageType(String messageType) {
         this.messageType = messageType;
     }
-
     public void setDeviceName(String deviceName) {
         this.deviceName = deviceName;
     }
-
     public void setDeviceLocation(String deviceLocation) {
         this.deviceLocation = deviceLocation;
     }
-
     public void setMacAddress(String macAddress) {
         this.macAddress = macAddress;
     }
-
     public void setStates(List<Boolean> states) {
         this.states = states;
     }
-
     public int getIdBasedOnMAC(String mac) {
         return ApplicationContext.macIdMap.get(mac);
     }

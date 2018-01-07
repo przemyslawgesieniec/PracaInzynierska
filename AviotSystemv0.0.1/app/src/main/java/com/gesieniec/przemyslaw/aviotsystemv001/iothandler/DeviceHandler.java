@@ -118,6 +118,7 @@ public class DeviceHandler implements ITaskDispatcherListener {
     private DeviceAction getDeviceAction(CommonDevice device, String action) {
         for (String key : device.getActionMapENG().keySet()) {
             if (key == action) {
+                Log.d("POSZŁO", "IFIFIFIFIF");
                 return device.getActionMapENG().get(key);
             }
         }
@@ -129,8 +130,7 @@ public class DeviceHandler implements ITaskDispatcherListener {
         List<CommonDevice> commonDevices = getDevicesByNameFromTheCommand(voiceCommand.getDeviceName());
         if (commonDevices.size() > 0) {
             for (CommonDevice device : commonDevices) {
-                String deviceAction = getDeviceAction(device, voiceCommand.getAction()).toString();
-                String message = device.toString().concat(deviceAction);
+               String message =  device.getMessageBasedOnAction(getDeviceAction(device, voiceCommand.getAction()));
                 if (message != null) {
                     Log.d("DeviceHandler", "msg: " + message);
                     MessageHandler msgHandler = new MessageHandler();

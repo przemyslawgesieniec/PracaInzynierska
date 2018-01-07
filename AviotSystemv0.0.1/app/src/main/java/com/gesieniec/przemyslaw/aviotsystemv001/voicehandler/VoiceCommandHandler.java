@@ -63,10 +63,7 @@ public class VoiceCommandHandler {
                 return;
             }
         }
-//        if(voiceCommand.getVoiceCommandType() != VoiceCommand.VoiceCommandType.INVALID){
-//            voiceCommand.setBestMatchCommand(capturedVoiceResultLowerCase.get(0));
-//            //TODO: NEED FIX , NULL IN  USER CONSOLE
-//        }
+
         if (match == CommandMathResult.NO_MATCH || match == CommandMathResult.PARTIAL_MATCH) {
             voiceCommand.setBestMatchCommand(capturedVoiceResultLowerCase.get(0));
         }
@@ -124,24 +121,6 @@ public class VoiceCommandHandler {
          * ENG
          */
 
-//        for (String action : CommandDataClass.getActionsListENG()){
-//            if(possibleCommand.contains(action)){
-//                mAction = action;
-//                ENG_score++;
-//            }
-//        }
-//        for (String device : CommandDataClass.getDevicesListENG()){
-//            if(possibleCommand.contains(device)){
-//                mDeviceName = device;
-//                ENG_score++;
-//            }
-//        }
-//        for (String place : CommandDataClass.getPlacesListENG()){
-//            if(possibleCommand.contains(place)){
-//                mPlace = place;
-//                ENG_score++;
-//            }
-//        }
         for (CommonDevice device : ApplicationContext.getCommonDevices()) {
             int i = 1;
             Log.d("VoiceCommandHandler ", "match with connected Devices");

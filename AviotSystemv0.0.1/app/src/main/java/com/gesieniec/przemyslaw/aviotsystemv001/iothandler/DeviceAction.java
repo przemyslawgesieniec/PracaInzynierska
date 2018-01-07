@@ -5,5 +5,5 @@ package com.gesieniec.przemyslaw.aviotsystemv001.iothandler;
  */
 
 public enum DeviceAction {
-    ON,OFF
+    ON,OFF,ON_FIRST,OFF_FIRST,ON_SECOND,OFF_SECOND
 }

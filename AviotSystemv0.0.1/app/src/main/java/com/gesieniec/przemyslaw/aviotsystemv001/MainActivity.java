@@ -225,14 +225,24 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
 
     @Override
     public void handleDispatchedIoTUpdateCommandExecution(DeviceCapabilities capabilities) {
-        //TODO: enable related button
-        Switch s = (Switch) findViewById(capabilities.getIdBasedOnMAC(capabilities.getMacAddress()));
-        s.setChecked(capabilities.getStates().get(0));
-        String state = "OFF";
-        if (capabilities.getStates().get(0)) {
-            state = "ON";
+
+        String state = "";
+        int index = 0;
+
+        for (int i = 0; i < capabilities.getStates().size(); i++) {
+            Switch s = (Switch) findViewById(capabilities.getIdBasedOnMAC(capabilities.getMacAddress())+i);
+            boolean oldState = s.isChecked();
+            if(oldState != capabilities.getStates().get(i)){
+                s.setChecked(capabilities.getStates().get(i));
+                state = "OFF";
+                if (capabilities.getStates().get(i)) {
+                    state = "ON";
+                }
+                index = i;
+                break;
+            }
         }
-        writeAviotMessage(capabilities.getDeviceName() + " is now " + state);
+        writeAviotMessage( capabilities.getOrdinalModifier().get(index) +" "+ capabilities.getDeviceName() + " is now " + state);
     }
 
 
@@ -249,6 +259,7 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
      * device fragment related
      */
     private int deviceID = 0;
+
     private void addManualControlFragment(String capabilities) {
         FragmentManager fragmentManager = getSupportFragmentManager();
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
@@ -256,16 +267,15 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
         bundle.putString("capabilities", capabilities);
         bundle.putInt("fragmentID", deviceID);
         DeviceCapabilities caps = new DeviceCapabilities(capabilities);
-        Log.d("ManualControlFragment", "devce type: "+caps.getDeviceType());
+        Log.d("ManualControlFragment", "devce type: " + caps.getDeviceType());
         //TODO: DZIEDZICZENIE
-        if(caps.getDeviceType() == DeviceType.SWITCH){
+        if (caps.getDeviceType() == DeviceType.SWITCH) {
             SwitchInstanceFragment device = new SwitchInstanceFragment();
             device.setArguments(bundle);
             fragmentTransaction.add(R.id.ll_devices, device, "device" + deviceID);
             deviceID++;
             fragmentTransaction.commit();
-        }
-        else if(caps.getDeviceType() == DeviceType.MULTI_SWITCH){
+        } else if (caps.getDeviceType() == DeviceType.MULTI_SWITCH) {
             MultiSwitchInstanceFragment device = new MultiSwitchInstanceFragment();
             device.setArguments(bundle);
             fragmentTransaction.add(R.id.ll_devices, device, "device" + deviceID);
