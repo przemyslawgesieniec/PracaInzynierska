@@ -21,18 +21,18 @@ import android.widget.Switch;
 import android.widget.TextView;
 
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceCapabilities;
+import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceType;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.CommonDevice;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.ApplicationContext;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.SystemCommandHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.ITaskDispatcherListener;
 import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.TaskDispatcher;
-import com.gesieniec.przemyslaw.aviotsystemv001.view.devices.DeviceInstanceFragment;
+import com.gesieniec.przemyslaw.aviotsystemv001.view.devices.MultiSwitchInstanceFragment;
+import com.gesieniec.przemyslaw.aviotsystemv001.view.devices.SwitchInstanceFragment;
 import com.gesieniec.przemyslaw.aviotsystemv001.view.ManualControlFragment;
 import com.gesieniec.przemyslaw.aviotsystemv001.view.VoiceControlFragment;
-import com.gesieniec.przemyslaw.aviotsystemv001.view.devices.DeviceSettingsFragment;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommand;
 
-import java.net.DatagramPacket;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements ITaskDispatcherListener {
@@ -254,13 +254,24 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
         FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
         Bundle bundle = new Bundle();
         bundle.putString("capabilities", capabilities);
-        //int deviceID = ApplicationContext.getCommonDevices().get(ApplicationContext.getCommonDevices().size()).getDeviceId();
         bundle.putInt("fragmentID", deviceID);
-        DeviceInstanceFragment device = new DeviceInstanceFragment();
-        device.setArguments(bundle);
-        fragmentTransaction.add(R.id.ll_devices, device, "device" + deviceID);
-        deviceID++;
-        fragmentTransaction.commit();
+        DeviceCapabilities caps = new DeviceCapabilities(capabilities);
+        Log.d("ManualControlFragment", "devce type: "+caps.getDeviceType());
+        //TODO: DZIEDZICZENIE
+        if(caps.getDeviceType() == DeviceType.SWITCH){
+            SwitchInstanceFragment device = new SwitchInstanceFragment();
+            device.setArguments(bundle);
+            fragmentTransaction.add(R.id.ll_devices, device, "device" + deviceID);
+            deviceID++;
+            fragmentTransaction.commit();
+        }
+        else if(caps.getDeviceType() == DeviceType.MULTI_SWITCH){
+            MultiSwitchInstanceFragment device = new MultiSwitchInstanceFragment();
+            device.setArguments(bundle);
+            fragmentTransaction.add(R.id.ll_devices, device, "device" + deviceID);
+            deviceID++;
+            fragmentTransaction.commit();
+        }
     }
 
     private void removeManualControlFragment(CommonDevice device) {

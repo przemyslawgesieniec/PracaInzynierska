@@ -23,8 +23,6 @@ public abstract class CommonDevice {
      */
     protected String name;
     protected String location;
-    protected String namePL;
-    protected String locationPL;
     protected InetAddress deviceAddress;
     protected String macAddress;
     protected HashMap<String,DeviceAction> actionMapENG;
@@ -33,6 +31,7 @@ public abstract class CommonDevice {
     protected boolean isDataUpdated = false;
     protected int deviceId;
     protected int deviceStatusCounter = 3;
+    protected boolean isUpdated = false;
 
     /**
      * getters
@@ -49,12 +48,6 @@ public abstract class CommonDevice {
     public String getMacAddress() {
         return macAddress;
     }
-    public String getNamePL() {
-        return namePL;
-    }
-    public String getLocationPL() {
-        return locationPL;
-    }
     public List<String> getActionList() {
         return actionList;
     }
@@ -68,12 +61,7 @@ public abstract class CommonDevice {
     /**
      * setters
      */
-    public void setNamePL(String namePL) {
-        this.namePL = namePL;
-    }
-    public void setLocationPL(String locationPL) {
-        this.locationPL = locationPL;
-    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -88,7 +76,7 @@ public abstract class CommonDevice {
         this.deviceAddress = deviceAddress;
         this.macAddress = macAddress;
         deviceId = id;
-        id++;
+        id+=100;
         Log.d("CommonDevice: ","New device:" );
     }
     public void restoreDeviceStatusCounter(){
@@ -100,7 +88,6 @@ public abstract class CommonDevice {
 
     public abstract DeviceType getDeviceType();
     public abstract HashMap<String, DeviceAction> getActionMapENG();
-    public abstract HashMap<String, DeviceAction> getActionMapPL();
     public abstract String getMessageToSend(DeviceCapabilities capabilities);
     public abstract void updateDeviceWithCapabilities(DeviceCapabilities deviceCapabilities);
 

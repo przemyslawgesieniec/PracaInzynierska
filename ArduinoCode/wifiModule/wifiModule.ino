@@ -83,7 +83,7 @@ class LightSwitch : public CommonDevice
 
     bool handleIncomingMessage(String message)
     {
-      if (message == "LightSwitchON")
+      if (message == "SwitchON")
       {
         message = "";
         digitalWrite(operablePin, HIGH);
@@ -93,7 +93,7 @@ class LightSwitch : public CommonDevice
         sendReply();
         return true;
       }
-      if (message == "LightSwitchOFF")
+      if (message == "SwitchOFF")
       {
         message = "";
         digitalWrite(operablePin, LOW);
@@ -135,7 +135,7 @@ class MultiLightSwitch : public CommonDevice
       pinMode(operablePin[0], OUTPUT);
       pinMode(operablePin[1], OUTPUT);
       digitalWrite(operablePin[0], switchState[0]);
-      digitalWrite(operablePin[0], switchState[1]);
+      digitalWrite(operablePin[1], switchState[1]);
     }
   private:
     int operablePin[2];
@@ -144,6 +144,47 @@ class MultiLightSwitch : public CommonDevice
     bool handleIncomingMessage(String message)
     {
 
+      if (message.startsWith("MultiSwitch"))
+      {
+        updateMultiSwitchState(message);
+        digitalWrite(operablePin[0], switchState[0]);
+        digitalWrite(operablePin[1], switchState[1]);
+        message = "";
+        messageType = "stateupdate";
+        replyBuffer = getCapabilities();
+        sendReply();
+        return true;
+      }
+      return false;
+    }
+
+    void updateMultiSwitchState(String message)
+    {
+      Serial.print("message ");
+      Serial.println(message);
+
+      String buba = message.substring(0, message.indexOf(";"));
+      Serial.print("state ");
+      Serial.println(buba);
+
+      message.remove(0, buba.length() + 1);
+      Serial.print("message ");
+      Serial.println(message);
+      for (int i = 0; i < 2; i++)
+      {
+        String state = message.substring(0, message.indexOf(";"));
+        Serial.print("state ");
+        Serial.print(i);
+        Serial.print(" = ");
+        Serial.println(state);
+        if (state.equals("true")) {
+          switchState[i] = true;
+        }
+        else {
+          switchState[i] = false;
+        }
+        message.remove(0, state.length()+1);
+      }
     }
 
     String getCapabilities()
@@ -198,7 +239,7 @@ void setup() {
     int operablePins[2] = {4, 5};
     device = new MultiLightSwitch (deviceName_conf, deviceLocation_conf, "multiswitch", states, operablePins);
   }
-  // saveConfig();
+
   WiFi.begin(ssid_conf, pass_conf);
   while (WiFi.waitForConnectResult() != WL_CONNECTED)
   {
@@ -372,6 +413,7 @@ String getDeviceLocationFromMessage(String message)
   String newLocation = shorterMessage.substring(0, divider);
   return newLocation;
 }
+
 
 //////////////////////////
 //SPIFFS memory functions

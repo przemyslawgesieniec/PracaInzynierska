@@ -2,17 +2,16 @@ package com.gesieniec.przemyslaw.aviotsystemv001.iothandler;
 
 import android.util.Log;
 
-import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.LightSwitch;
+import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.MultiSwitch;
+import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.Switch;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.messagehandler.MessageHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.ApplicationContext;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.CommonDevice;
-import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.CommandDataClass;
 import com.gesieniec.przemyslaw.aviotsystemv001.systemhandler.SystemCommandHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.ITaskDispatcherListener;
 import com.gesieniec.przemyslaw.aviotsystemv001.taskdispatcher.TaskDispatcher;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceCommand;
 
-import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
@@ -189,11 +188,13 @@ public class DeviceHandler implements ITaskDispatcherListener {
 
 
         if (deviceAddress != null) {
-            switch (checkDeviceType(deviceCapabilities.getDeviceType())) {
+            switch (deviceCapabilities.getDeviceType()) {
                 case SWITCH:
                     boolean switchState = deviceCapabilities.getStates().get(0);
-                    return new LightSwitch(deviceCapabilities.getDeviceName(), deviceCapabilities.getDeviceLocation(), deviceAddress, deviceCapabilities.getMacAddress(), switchState);//TODO: FIX LOCATION !!!
-                //TODO: MULTI SWITCH !!!
+                    return new Switch(deviceCapabilities.getDeviceName(), deviceCapabilities.getDeviceLocation(), deviceAddress, deviceCapabilities.getMacAddress(), switchState);
+                case MULTI_SWITCH:
+                    ArrayList<Boolean> states = new ArrayList<>(deviceCapabilities.getStates());
+                    return new MultiSwitch(states,deviceCapabilities.getDeviceName(),deviceCapabilities.getDeviceLocation(),deviceAddress,deviceCapabilities.getMacAddress());
                 case NONE:
                     return null;
             }
@@ -202,16 +203,16 @@ public class DeviceHandler implements ITaskDispatcherListener {
     }
 
     //TODO: make this as map in device handler and use find on map
-    private DeviceType checkDeviceType(String deviceType) {
-        switch (deviceType) {
-            case "switch":
-                return DeviceType.SWITCH;
-            case "multiswitch":
-                return DeviceType.MULTI_SWITCH;
-            default:
-                return null;
-        }
-    }
+//    private DeviceType checkDeviceType(String deviceType) {
+//        switch (deviceType) {
+//            case "switch":
+//                return DeviceType.SWITCH;
+//            case "multiswitch":
+//                return DeviceType.MULTI_SWITCH;
+//            default:
+//                return null;
+//        }
+//    }
     public void startSendingConsistencyControlMessage(){
 
         new Timer().scheduleAtFixedRate(new TimerTask() {

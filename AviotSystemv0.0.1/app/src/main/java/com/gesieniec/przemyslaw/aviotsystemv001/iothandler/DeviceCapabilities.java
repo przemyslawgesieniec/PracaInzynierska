@@ -14,6 +14,7 @@ import java.util.List;
 public class DeviceCapabilities {
 
     private static int id = 0;
+
     public DeviceCapabilities(String capabilities) {
         /**
          * caps(0) - ipAddress
@@ -28,71 +29,78 @@ public class DeviceCapabilities {
         String[] caps = capabilities.split(";");
         try {
             ipAddress = caps[0];
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException e) {
         }
         try {
-            deviceType = caps[1];
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
+            deviceTypeString = caps[1];
+            deviceType = establishDeviceType(caps[1]);
+
+        } catch (ArrayIndexOutOfBoundsException e) {
         }
         try {
             messageType = caps[2];
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException e) {
         }
         try {
             deviceName = caps[3];
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException e) {
         }
         try {
             deviceLocation = caps[4];
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException e) {
         }
         try {
             macAddress = caps[5];
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
+        } catch (ArrayIndexOutOfBoundsException e) {
         }
         try {
             numberOfSwitches = Integer.valueOf(caps[6]);
-        }
-        catch (ArrayIndexOutOfBoundsException e) {
-        }
-        catch (Exception e) {
+        } catch (ArrayIndexOutOfBoundsException e) {
+        } catch (Exception e) {
         }
 
         states = new ArrayList<>();
-        for(int i=0;i<numberOfSwitches;i++){
+        for (int i = 0; i < numberOfSwitches; i++) {
             try {
-                states.add(Boolean.parseBoolean(caps[7+i]));
+                states.add(Boolean.parseBoolean(caps[7 + i]));
                 Log.d("ASDFASD states;", String.valueOf(states.get(i)));
-            }
-            catch (ArrayIndexOutOfBoundsException e) {
+            } catch (ArrayIndexOutOfBoundsException e) {
             }
         }
 
-        Log.d("ASDFASD ipAddress;",ipAddress);
-        Log.d("ASDFASD deviceType;",deviceType);
-        Log.d("ASDFASD messageType;",messageType);
-        Log.d("ASDFASD deviceName;",deviceName);
-        Log.d("ASDFASD deviceLocation;",deviceLocation);
-        Log.d("ASDFASD macAddress;",macAddress);
+        Log.d("ASDFASD ipAddress;", ipAddress);
+        Log.d("ASDFASD deviceType;", deviceType.toString());
+        Log.d("ASDFASD messageType;", messageType);
+        Log.d("ASDFASD deviceName;", deviceName);
+        Log.d("ASDFASD deviceLocation;", deviceLocation);
+        Log.d("ASDFASD macAddress;", macAddress);
 
 
-}
+    }
+
+    private DeviceType establishDeviceType(String type) {
+        switch (type) {
+            case "switch":
+                return DeviceType.SWITCH;
+            case "multiswitch":
+                return DeviceType.MULTI_SWITCH;
+            default:
+                return DeviceType.NONE;
+        }
+    }
 
     private String ipAddress;
-    private String deviceType;
+    private DeviceType deviceType;
+
+
+
+    private String deviceTypeString;
     private String messageType;
     private String deviceName;
     private String deviceLocation;
     private String macAddress;
     private List<Boolean> states;
     private int numberOfSwitches;
-
 
 
     private int ID;
@@ -104,11 +112,12 @@ public class DeviceCapabilities {
     public int getID() {
         return ID;
     }
+
     public String getIpAddress() {
         return ipAddress;
     }
 
-    public String getDeviceType() {
+    public DeviceType getDeviceType() {
         return deviceType;
     }
 
@@ -136,6 +145,10 @@ public class DeviceCapabilities {
     public int getNumberOfSwitches() {
         return numberOfSwitches;
     }
+    public String getDeviceTypeString() {
+        return deviceTypeString;
+    }
+
 
     /**
      * setters
@@ -144,7 +157,7 @@ public class DeviceCapabilities {
         this.ipAddress = ipAddress;
     }
 
-    public void setDeviceType(String deviceType) {
+    public void setDeviceType(DeviceType deviceType) {
         this.deviceType = deviceType;
     }
 
@@ -168,7 +181,10 @@ public class DeviceCapabilities {
         this.states = states;
     }
 
-    public int getIdBasedOnMAC(String mac){
+    public int getIdBasedOnMAC(String mac) {
         return ApplicationContext.macIdMap.get(mac);
+    }
+    public void setDeviceTypeString(String deviceTypeString) {
+        this.deviceTypeString = deviceTypeString;
     }
 }

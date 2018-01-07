@@ -55,7 +55,6 @@ public class MessageHandler {
                 socket.receive(receivedPacket);
                 String receivedMessage = new String(buf,0,receivedPacket.getLength());
                 Log.d("MessageHandler","MESSAGE BACK: "+ receivedMessage);
-               // enchantedCaps =  receivedPacket.getAddress().getHostAddress() +";"+receivedMessage ;
                 enchantedCaps = receivedMessage;
                 socket.close();
             } catch (SocketException e) {

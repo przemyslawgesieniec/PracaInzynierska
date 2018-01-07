@@ -2,20 +2,15 @@ package com.gesieniec.przemyslaw.aviotsystemv001.systemhandler;
 
 import android.os.AsyncTask;
 import android.os.Build;
-import android.util.Log;
 
 import com.gesieniec.przemyslaw.aviotsystemv001.MainActivity;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.DeviceHandler;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.CommonDevice;
-import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.devices.LightSwitch;
 import com.gesieniec.przemyslaw.aviotsystemv001.iothandler.messagehandler.BroadcastListener;
 import com.gesieniec.przemyslaw.aviotsystemv001.voicehandler.VoiceRecognition;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Created by przem on 08.11.2017.
