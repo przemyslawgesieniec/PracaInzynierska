@@ -127,13 +127,10 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
 
 
     public void onClickStartStopCapturing(View view) {
-        Log.d("voice fragment", "onClickStartStopCapturing");
         if (voiceControlFragment.getAviotButtonState() == false) {
-            Log.d("voice fragment", "onClickS tartStopCapturing false");
             applicationContext.getVoiceRecognition().getSpeechRecognizer().startListening(applicationContext.getVoiceRecognition().getSpeechRecognizerIntent());
             voiceControlFragment.setAviotButtonState(true);
         } else {
-            Log.d("voice fragment", "onClickStartStopCapturing true");
             applicationContext.getVoiceRecognition().getSpeechRecognizer().stopListening();
             voiceControlFragment.setAviotButtonState(false);
         }
@@ -153,13 +150,11 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
         TextView t = new TextView(this);
         LinearLayout ll = (LinearLayout) findViewById(R.id.ll_console);
         t.setText("You:  " + arg.getBestMatchCommand());
-        Log.d("VoiceCommandActivity", "setBestMatchCommand: " + arg.getBestMatchCommand());
         if ((arg.getVoiceCommandType() != VoiceCommand.VoiceCommandType.INVALID)) {
             t.setTextColor(Color.rgb(255, 255, 255));
             ll.addView(t);
             scrollDownScrollView();
         } else {
-            //TODO : get language
             t.setTextColor(Color.rgb(255, 255, 40));
             ll.addView(t);
             writeAviotMessage("I can not do that");
@@ -177,27 +172,23 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
             }
         }
         writeAviotMessage(systemCommandHandler.getSystemAnswer());
-        Log.d("VoiceCommandActivity", "handleDispatchedSystemCommandExecution");
     }
 
     @Override
     public void handleDispatchedIoTCommandExecution(List<String> data) {
-        Log.d("VoiceCommandActivity", "New device trying to connect");
         writeAviotMessage("New device trying to connect");
     }
 
     @Override
     public void handleDispatchedIoTCommandExecution(String capabilities) {
         writeAviotMessage("New device: Switch, connected");
-
-        //TODO : zrobic osobne fragmenty dla roznego rodzaju urzadzen i metode pozwalajaca je odroznic
         addManualControlFragment(capabilities);
     }
 
 
     @Override
     public void handleDispatchedGUICommandExecution(DeviceCapabilities capabilities) {
-        //TODO: disable related button
+
     }
 
     @Override
@@ -267,7 +258,6 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
         bundle.putString("capabilities", capabilities);
         bundle.putInt("fragmentID", deviceID);
         DeviceCapabilities caps = new DeviceCapabilities(capabilities);
-        Log.d("ManualControlFragment", "devce type: " + caps.getDeviceType());
         if (caps.getDeviceType() == DeviceType.SWITCH) {
             SwitchInstanceFragment device = new SwitchInstanceFragment();
             device.setArguments(bundle);
@@ -284,7 +274,6 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
     }
 
     private void removeManualControlFragment(CommonDevice device) {
-        Log.d("removeFragment", "devce id: " + device.getDeviceId());
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("device" + device.getDeviceId());
         if (fragment != null)
             getSupportFragmentManager().beginTransaction().remove(fragment).commit();

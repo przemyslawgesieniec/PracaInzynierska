@@ -70,11 +70,9 @@ public class TaskDispatcher {
                     voiceCommandHandler.interpreteCommand(voiceResults);
                     try {
                         for (ITaskDispatcherListener executeVoiceCommandListener : listeners) {
-                            Log.d("TaskDispatcher", "setBestMatchCommand: " + data.getBestMatchCommand());
                             executeVoiceCommandListener.handleDispatchedVoiceCommandExecution(data);//->GUI Update //->Send UDP MSG
                         }
                     } catch (Exception e) {
-                        Log.d("TaskDispatcher:", e.toString());
                     }
                 }
                 break;
@@ -82,7 +80,6 @@ public class TaskDispatcher {
     }
 
     public static void newTask(SystemTaskContext cause, SystemCommandHandler data) {
-        Log.d("TaskDispatcher:", "new task SystemTaskContext");
         switch (cause) {
             case EXECUTE_SYSTEM_COMMAND:
                 if (data.getSystemCommandType() != SystemCommandHandler.SystemCommandType.NONE) {
@@ -97,7 +94,6 @@ public class TaskDispatcher {
     public static void newTask(IoTTaskContext cause, List<String> data) {
         switch (cause) {
             case ATTACH_REQUEST:
-                Log.d("TaskDispatcher:", "new task IoTCommand");
                 for (ITaskDispatcherListener executeSystemCommandListener : listeners) {
                     executeSystemCommandListener.handleDispatchedIoTCommandExecution(data);
                 }

@@ -61,13 +61,11 @@ public class VoiceRecognition implements RecognitionListener {
 
     @Override
     public void onError(int error) {
-        Log.d("VoiceRecognition","as: "+error);
+
     }
 
     @Override
     public void onResults(Bundle results) {
-
-        /* TODO change for try->catch */
         if (null != results) {
             TaskDispatcher.newTask(TaskDispatcher.VoiceTaskContext.EXECUTE_VOICE_COMMAND,
                     new VoiceCommand(results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)));

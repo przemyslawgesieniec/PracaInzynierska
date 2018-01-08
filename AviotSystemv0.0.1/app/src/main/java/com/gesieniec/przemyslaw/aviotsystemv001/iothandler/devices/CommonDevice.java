@@ -77,7 +77,7 @@ public abstract class CommonDevice {
         this.macAddress = macAddress;
         deviceId = id;
         id+=100;
-        Log.d("CommonDevice: ","New device:" );
+
     }
     public void restoreDeviceStatusCounter(){
         deviceStatusCounter = 3;

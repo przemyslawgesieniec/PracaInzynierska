@@ -31,7 +31,6 @@ public class DeviceHandler implements ITaskDispatcherListener {
     public void handleDispatchedVoiceCommandExecution(VoiceCommand voiceCommand) {
         if (voiceCommand.getVoiceCommandType() == VoiceCommand.VoiceCommandType.DEVICE_RELATED) {
             sendMessageToRelatedDevice(voiceCommand);
-            Log.d("DeviceHandler", "message sent");
         }
     }
 
@@ -41,12 +40,11 @@ public class DeviceHandler implements ITaskDispatcherListener {
 
     @Override
     public void handleDispatchedSystemCommandExecution(SystemCommandHandler systemCommandHandler) {
-        //TODO implement sth when system command need device action
+
     }
 
     @Override
     public void handleDispatchedIoTCommandExecution(List<String> data) {
-        Log.d("ATTACH REQ","sending capabilities");
         sendCapabilityRequest(data);
     }
 
@@ -56,7 +54,6 @@ public class DeviceHandler implements ITaskDispatcherListener {
         if (device != null) {
             ApplicationContext.addCommonDevice(device);
         }
-        Log.d("DeviceHandler", "new device: added");
     }
 
     @Override
@@ -118,7 +115,6 @@ public class DeviceHandler implements ITaskDispatcherListener {
     private DeviceAction getDeviceAction(CommonDevice device, String action) {
         for (String key : device.getActionMapENG().keySet()) {
             if (key == action) {
-                Log.d("POSZŁO", "IFIFIFIFIF");
                 return device.getActionMapENG().get(key);
             }
         }
@@ -126,13 +122,12 @@ public class DeviceHandler implements ITaskDispatcherListener {
     }
 
     private void sendMessageToRelatedDevice(VoiceCommand voiceCommand) {
-        Log.d("DeviceHandler", "sendMessageToRelatedDevice");
         List<CommonDevice> commonDevices = getDevicesByNameFromTheCommand(voiceCommand.getDeviceName());
         if (commonDevices.size() > 0) {
             for (CommonDevice device : commonDevices) {
                String message =  device.getMessageBasedOnAction(getDeviceAction(device, voiceCommand.getAction()));
                 if (message != null) {
-                    Log.d("DeviceHandler", "msg: " + message);
+                    Log.d("DeviceHandler", "message to send: " + message);
                     MessageHandler msgHandler = new MessageHandler();
                     msgHandler.sendAndReceiveUDPMessage(message, device.getDeviceAddress());
                 }
@@ -149,7 +144,6 @@ public class DeviceHandler implements ITaskDispatcherListener {
             new MessageHandler().sendAndReceiveUDPMessage(device.getMessageToSend(deviceCapabilities), device.getDeviceAddress());
         }
         catch (NullPointerException e) {
-            Log.d("MessageToRelatedDevice", "something gone wrong");
             e.printStackTrace();
         }
     }
@@ -173,10 +167,6 @@ public class DeviceHandler implements ITaskDispatcherListener {
         DeviceCapabilities deviceCapabilities = new DeviceCapabilities(capabilities);
 
         InetAddress deviceAddress = null;
-        Log.d("Device name", deviceCapabilities.getDeviceName());
-        Log.d("Device Ip", deviceCapabilities.getIpAddress());
-        Log.d("Device mac", deviceCapabilities.getMacAddress());
-        Log.d("number of switches", String.valueOf(deviceCapabilities.getNumberOfSwitches()));
 
         try {
             deviceAddress = InetAddress.getByName(deviceCapabilities.getIpAddress());
@@ -206,14 +196,12 @@ public class DeviceHandler implements ITaskDispatcherListener {
             @Override
             public void run() {
                 for(CommonDevice device : ApplicationContext.getCommonDevices()){
-                    Log.d("BUBUABUABAUBAUBAUBA","DEVICE , status counter: "+device.getDeviceStatusCounter());
                     if(device.getDeviceStatusCounter() > 0){
 
                         new MessageHandler().sendAndReceiveUDPMessage("connectionControl", device.getDeviceAddress());
                         device.decreseDeviceStatusCounter();
                     }
                     else {
-                        Log.d("UBUABSIUFDBAI","DEVICE DISCONNECTED, status counter: "+device.getDeviceStatusCounter());
                         TaskDispatcher.newTask(TaskDispatcher.IoTTaskContext.DEVICE_NOT_RESPONDING,device);
 
                     }

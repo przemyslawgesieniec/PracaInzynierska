@@ -54,7 +54,6 @@ public final class ApplicationContext {
         systemCommandHandler = new SystemCommandHandler();
         macIdMap = new HashMap<>();
 
-        //TODO: move to taskDispatcher (on application start)
         BroadcastListener asyncTask = new BroadcastListener();
         if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.HONEYCOMB){ // Above Api Level 13
             asyncTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

@@ -33,11 +33,9 @@ public class VoiceCommandHandler {
     }
 
     private void parseVoiceResultToCommand(List<String> capturedVoiceResult) {
-        Log.d("VoiceCommandHandler", "parseVoiceResult");
         CommandMathResult match = CommandMathResult.NO_MATCH;
         List<String> capturedVoiceResultLowerCase = new ArrayList<>(StringArrayToLowerCase(capturedVoiceResult));
         for (String possibleCommand : capturedVoiceResultLowerCase) {
-            Log.d("VoiceCommandHandler", "possibleCommand 1: " + possibleCommand);
             /**
              * Try to find keywords in possible command
              */
@@ -57,7 +55,7 @@ public class VoiceCommandHandler {
                 voiceCommand.setBestMatchCommand(possibleCommand);
                 return;
             } else if (tryToMachWitchSystemCommands(possibleCommand)) {
-                Log.d("VoiceCommandHandler", "system command try");
+                Log.d("VoiceCommandHandler", "system command check" + possibleCommand);
                 voiceCommand.setVoiceCommandType(VoiceCommand.VoiceCommandType.SYSTEM_RELATED);
                 voiceCommand.setBestMatchCommand(possibleCommand);
                 return;
@@ -80,12 +78,10 @@ public class VoiceCommandHandler {
         if (deviceNameOccurrences == 1) {
             return true;
         }
-        //TODO: poinformować w gui że partial match sie nie udał, bo jest wiecej niż jedno urzadenie o tej nazwie
         return false;
     }
 
     private boolean tryToMachWitchSystemCommands(String possibleCommand) {
-        Log.d("VoiceCommandHandler", "tryToMachWitchSystemCommands");
         for (String systemCommand : CommandDataClass.getSystemStatusCommandsENG()) {
             if (systemCommand.equals(possibleCommand)) {
                 voiceCommand.setCommandLanguage(VoiceCommand.Language.ENG_ENGLISH);
@@ -200,7 +196,6 @@ public class VoiceCommandHandler {
         voiceCommand.setCommandLanguage(VoiceCommand.Language.PL_POLISH);
     }
 
-        Log.d("VoiceCommandHandler","mAction="+mAction+"mDeviceName="+mDeviceName+"mPlace="+mPlace);
     /**
      * COMMON
      */

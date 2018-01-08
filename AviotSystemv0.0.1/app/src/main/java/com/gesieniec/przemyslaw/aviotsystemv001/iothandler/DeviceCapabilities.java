@@ -64,7 +64,6 @@ public class DeviceCapabilities {
         for (int i = 0; i < numberOfSwitches; i++) {
             try {
                 states.add(Boolean.parseBoolean(caps[7 + i]));
-                Log.d("ASDFASD states;", String.valueOf(states.get(i)));
             } catch (ArrayIndexOutOfBoundsException e) {
             }
         }
@@ -81,12 +80,12 @@ public class DeviceCapabilities {
         }
 
 
-        Log.d("ASDFASD ipAddress;", ipAddress);
-        Log.d("ASDFASD deviceType;", deviceType.toString());
-        Log.d("ASDFASD messageType;", messageType);
-        Log.d("ASDFASD deviceName;", deviceName);
-        Log.d("ASDFASD deviceLocation;", deviceLocation);
-        Log.d("ASDFASD macAddress;", macAddress);
+        Log.d("ipAddress;", ipAddress);
+        Log.d("deviceType;", deviceType.toString());
+        Log.d("messageType;", messageType);
+        Log.d("deviceName;", deviceName);
+        Log.d("deviceLocation;", deviceLocation);
+        Log.d("macAddress;", macAddress);
 
 
     }
