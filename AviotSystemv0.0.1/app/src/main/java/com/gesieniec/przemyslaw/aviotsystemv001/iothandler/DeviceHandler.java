@@ -156,8 +156,6 @@ public class DeviceHandler implements ITaskDispatcherListener {
 
     private void sendCapabilityRequest(List<String> data) {
         MessageHandler messageHandler = new MessageHandler();
-        Log.d("ATTACH REQ","przed sendAnd rcv");
-        Log.d("ATTACH REQ", "message: "+data.get(1));
         InetAddress ipAddress = null;
         try {
             ipAddress = InetAddress.getByName(data.get(1));
@@ -202,28 +200,20 @@ public class DeviceHandler implements ITaskDispatcherListener {
         return null;
     }
 
-    //TODO: make this as map in device handler and use find on map
-//    private DeviceType checkDeviceType(String deviceType) {
-//        switch (deviceType) {
-//            case "switch":
-//                return DeviceType.SWITCH;
-//            case "multiswitch":
-//                return DeviceType.MULTI_SWITCH;
-//            default:
-//                return null;
-//        }
-//    }
     public void startSendingConsistencyControlMessage(){
 
         new Timer().scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 for(CommonDevice device : ApplicationContext.getCommonDevices()){
+                    Log.d("BUBUABUABAUBAUBAUBA","DEVICE , status counter: "+device.getDeviceStatusCounter());
                     if(device.getDeviceStatusCounter() > 0){
+
                         new MessageHandler().sendAndReceiveUDPMessage("connectionControl", device.getDeviceAddress());
                         device.decreseDeviceStatusCounter();
                     }
                     else {
+                        Log.d("UBUABSIUFDBAI","DEVICE DISCONNECTED, status counter: "+device.getDeviceStatusCounter());
                         TaskDispatcher.newTask(TaskDispatcher.IoTTaskContext.DEVICE_NOT_RESPONDING,device);
 
                     }

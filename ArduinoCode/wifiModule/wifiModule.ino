@@ -12,7 +12,11 @@ bool saveConfig();
 
 IPAddress local_ip;
 unsigned long oldTimerStatus = 0;
+unsigned long oldConnectivityTimerStatus = 0;
 const int attachRequestResendTimer = 4000;
+const int conectivityCounterDecreseTime = 4000;
+int deviceReattachAttempts = 3;
+unsigned long currentConnectivityTimer = 0;
 
 unsigned int broadcastPort = 11000;
 unsigned int localPort = 2390;
@@ -183,7 +187,7 @@ class MultiLightSwitch : public CommonDevice
         else {
           switchState[i] = false;
         }
-        message.remove(0, state.length()+1);
+        message.remove(0, state.length() + 1);
       }
     }
 
@@ -205,9 +209,9 @@ class MultiLightSwitch : public CommonDevice
 };
 
 CommonDevice *device;
-IPAddress broadcastIp(192, 168, 137, 255); //TODO: zmienic zevby sam ustawial w zaleznosci od maski sieci
 
 WiFiUDP Udp;
+IPAddress broadcastIp;
 
 void setup() {
   pinMode(LED_BUILTIN, OUTPUT);
@@ -227,6 +231,8 @@ void setup() {
     Serial.println("Restoring default settings");
     deviceName_conf = "switch";
     deviceLocation_conf = "room";
+    ssid_conf = "DESKTOP_WIFI";
+    pass_conf = "przemek123";
   }
 
   if (digitalRead(CONF_PIN) == HIGH) {
@@ -253,6 +259,8 @@ void setup() {
   WiFi.macAddress(mac_char);
   mac += macToStr(mac_char);
 
+  broadcastIp = calculateBroadcastAddress();
+
   Serial.print("MAC:");
   Serial.println(mac);
 
@@ -262,6 +270,7 @@ void setup() {
   Udp.begin(localPort);
   Serial.print("UDP begun");
   waitForApplicationAttach();
+
 }
 
 void loop() {
@@ -271,6 +280,7 @@ void loop() {
     if (!device->handleIncomingMessage(msg)) {
       handleGeneralMessage(msg);
     }
+    currentConnectivityTimer = millis();
   }
   else
   {
@@ -279,6 +289,7 @@ void loop() {
 }
 void handleGeneralMessage(String message)
 {
+
   if (message.startsWith("UpdateDeviceData"))
   {
     String tmpDeviceName = device->getDeviceName();
@@ -296,13 +307,16 @@ void handleGeneralMessage(String message)
     replyBuffer = device->getCapabilities();
     sendReply();
   }
+
   if (message.startsWith("connectionControl"))
   {
+    deviceReattachAttempts = 3;
     message = "empty";
     messageType = "connectioncfm";
     replyBuffer = device->getCapabilities();
     sendReply();
   }
+  checkConnectivityTimer();
 }
 String receiveUDPPacket()
 {
@@ -341,6 +355,7 @@ void sendAttachRequest()
   String attachRequest = "AttachRequest;" + local_ip.toString();
   const char *attachRequestMsg = attachRequest.c_str();
   Serial.println("Send AttachRequest");
+  Serial.println(broadcastIp);
   Udp.beginPacket(broadcastIp, broadcastPort);
   Udp.write(attachRequestMsg);
   Udp.endPacket();
@@ -366,7 +381,19 @@ void waitForApplicationAttach()
     }
   }
 }
-
+void checkConnectivityTimer()
+{
+  if (deviceReattachAttempts < 0)
+  {
+    waitForApplicationAttach();
+    deviceReattachAttempts = 3;
+  }
+  if (currentConnectivityTimer - oldConnectivityTimerStatus >= conectivityCounterDecreseTime)
+  {
+    oldConnectivityTimerStatus = currentConnectivityTimer;
+    deviceReattachAttempts --;
+  }
+}
 void sendDeviceCapabilities()
 {
   String caps = device->getCapabilities();
@@ -412,6 +439,15 @@ String getDeviceLocationFromMessage(String message)
   int divider = shorterMessage.indexOf(";");
   String newLocation = shorterMessage.substring(0, divider);
   return newLocation;
+}
+
+IPAddress calculateBroadcastAddress()
+{
+  IPAddress subnet = WiFi.subnetMask();
+  IPAddress ip = WiFi.localIP();
+  IPAddress invertedSubnetMask = ~subnet;
+  IPAddress netAddress = ip & subnet;
+  return netAddress | invertedSubnetMask;
 }
 
 

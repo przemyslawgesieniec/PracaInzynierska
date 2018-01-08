@@ -36,7 +36,7 @@ public class MessageHandler {
         @Override
         protected String doInBackground(DatagramPacket... datagramPackets) {
             Log.d("SendAndReceive","doInBackground started");
-            String enchantedCaps = null;
+            String enchantedCaps = "";
             try {
                 /**
                  * send message
@@ -51,14 +51,14 @@ public class MessageHandler {
                 //TODO : TIMER Z retransmisjami !!!!
                 byte[] buf = new byte[512];
                 DatagramPacket receivedPacket = new DatagramPacket(buf,buf.length);
-//                socket.setSoTimeout(1000);
+                socket.setSoTimeout(300);
                 socket.receive(receivedPacket);
                 String receivedMessage = new String(buf,0,receivedPacket.getLength());
                 Log.d("MessageHandler","MESSAGE BACK: "+ receivedMessage);
                 enchantedCaps = receivedMessage;
                 socket.close();
             } catch (SocketException e) {
-                e.printStackTrace();
+                Log.d("SocketException"," message timeout");
             } catch (UnknownHostException e) {
                 e.printStackTrace();
             } catch (IOException e) {

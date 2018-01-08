@@ -62,7 +62,7 @@ public final class ApplicationContext {
         else{ // Below Api Level 13
             asyncTask.execute();
         }
-        //deviceHandler.startSendingConsistencyControlMessage();
+        deviceHandler.startSendingConsistencyControlMessage();
 
     }
 

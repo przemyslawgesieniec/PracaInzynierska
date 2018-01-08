@@ -268,23 +268,23 @@ public class MainActivity extends AppCompatActivity implements ITaskDispatcherLi
         bundle.putInt("fragmentID", deviceID);
         DeviceCapabilities caps = new DeviceCapabilities(capabilities);
         Log.d("ManualControlFragment", "devce type: " + caps.getDeviceType());
-        //TODO: DZIEDZICZENIE
         if (caps.getDeviceType() == DeviceType.SWITCH) {
             SwitchInstanceFragment device = new SwitchInstanceFragment();
             device.setArguments(bundle);
             fragmentTransaction.add(R.id.ll_devices, device, "device" + deviceID);
-            deviceID++;
+            deviceID+=100;
             fragmentTransaction.commit();
         } else if (caps.getDeviceType() == DeviceType.MULTI_SWITCH) {
             MultiSwitchInstanceFragment device = new MultiSwitchInstanceFragment();
             device.setArguments(bundle);
             fragmentTransaction.add(R.id.ll_devices, device, "device" + deviceID);
-            deviceID++;
+            deviceID+=100;
             fragmentTransaction.commit();
         }
     }
 
     private void removeManualControlFragment(CommonDevice device) {
+        Log.d("removeFragment", "devce id: " + device.getDeviceId());
         Fragment fragment = getSupportFragmentManager().findFragmentByTag("device" + device.getDeviceId());
         if (fragment != null)
             getSupportFragmentManager().beginTransaction().remove(fragment).commit();
